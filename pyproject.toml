@@ -1,0 +1,27 @@
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+
+[project]
+name = "shinybroker"
+authors = [
+  { name="Jake Vestal", email="jacob.vestal@duke.edu" },
+]
+description = "Python API for Interactive Brokers"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dynamic = ["version"]
+license-files = { paths = ["LICENSE"] }
+
+[project.urls]
+url="https://github.com/JakeVestal/shinybroker"
+
+[tool.hatch.version]
+path = "src/shinybroker/__init__.py"
