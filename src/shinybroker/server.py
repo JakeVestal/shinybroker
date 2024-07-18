@@ -8,11 +8,13 @@ import pandas as pd
 
 from io import StringIO
 from shinybroker.connection import (
-    create_ibkr_socket_conn, ib_msg_reader_run_loop
+    create_ibkr_socket_conn,
+    ib_msg_reader_run_loop
 )
 from shinybroker.msgs_to_ibkr import (
+    req_current_time,
     req_market_data_type,
-    req_current_time
+    req_matching_symbols
 )
 from shiny import Inputs, Outputs, Session, reactive, render, ui
 
@@ -156,7 +158,6 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
     @reactive.event(input.req_current_time, ignore_init=True)
     def request_current_time():
         (rd, wt, er) = select.select([], [ib_socket], [])
-        print(req_current_time())
         wt[0].send(req_current_time())
 
     @reactive.effect
@@ -179,69 +180,64 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
     def request_matching_symbols():
         (rd, wt, er) = select.select([], [ib_socket], [])
         wt[0].send(
-            rxt.req_matching_symbols(
+            req_matching_symbols(
                 reqId=next_valid_id(),
                 pattern=input.requested_symbol()
             )
         )
 
     @reactive.effect
-    @reactive.event(input.symbol_samples)
+    @reactive.event(input.symbol_samples, ignore_init=True)
     def update_matching_symbols():
 
         symbol_samples = list(input.symbol_samples())[2:]
 
-        bonds = rxt.initial_rx_values['matching_symbols']['bonds']
+        bonds = []
 
         while True:
             try:
                 bond_ind = symbol_samples.index('-1')
-                bonds = pd.concat(
-                    [
-                        bonds,
-                        pd.DataFrame.from_dict({
-                            'issuer': [symbol_samples[bond_ind + 3]],
-                            'issuer_id': [symbol_samples[bond_ind + 4]]
-                        })
-                    ],
-                    ignore_index=True
+                bonds.append(
+                    pd.DataFrame.from_dict({
+                        'issuer': [symbol_samples[bond_ind + 3]],
+                        'issuer_id': [symbol_samples[bond_ind + 4]]
+                    })
                 )
                 del symbol_samples[bond_ind:bond_ind + 5]
             except ValueError:
                 break
 
-        ui.update_switch(id='show_matching_bonds', value=bonds.shape[0] > 0)
+        ui.update_switch(id='show_matching_bonds', value=len(bonds) > 0)
 
-        stocks = rxt.initial_rx_values['matching_symbols']['stocks']
+        stocks = []
 
         while True:
             try:
                 n_derivative_contracts = int(symbol_samples[5])
-                stocks = pd.concat(
-                    [
-                        stocks,
-                        pd.DataFrame.from_dict({
-                            'con_id': [symbol_samples[0]],
-                            'symbol': [symbol_samples[1]],
-                            'sec_type': [symbol_samples[2]],
-                            'primary_exchange': [symbol_samples[3]],
-                            'currency': [symbol_samples[4]],
-                            'derivative_sec_types': ",".join(
-                                symbol_samples[6:5 + n_derivative_contracts]
-                            ),
-                            'description': [
-                                symbol_samples[6 + n_derivative_contracts]]
-                        })
-                    ],
-                    ignore_index=True
+                stocks.append(
+                    pd.DataFrame.from_dict({
+                        'con_id': [symbol_samples[0]],
+                        'symbol': [symbol_samples[1]],
+                        'sec_type': [symbol_samples[2]],
+                        'primary_exchange': [symbol_samples[3]],
+                        'currency': [symbol_samples[4]],
+                        'derivative_sec_types': ",".join(
+                            symbol_samples[6:5 + n_derivative_contracts]
+                        ),
+                        'description': [
+                            symbol_samples[6 + n_derivative_contracts]]
+                    })
                 )
                 del symbol_samples[:7 + n_derivative_contracts]
             except IndexError:
                 break
 
-        ui.update_switch(id='show_matching_stocks', value=stocks.shape[0] > 0)
+        ui.update_switch(id='show_matching_stocks', value=len(stocks) > 0)
 
-        matching_symbols.set({'stocks': stocks, 'bonds': bonds})
+        matching_symbols.set({
+            'stocks': pd.DataFrame(stocks),
+            'bonds': pd.DataFrame(bonds)
+        })
 
     @render.data_frame
     def matching_stock_symbols_df():
