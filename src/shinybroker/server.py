@@ -187,7 +187,7 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
         )
 
     @reactive.effect
-    @reactive.event(input.symbol_samples, ignore_init=True)
+    @reactive.event(input.symbol_samples)
     def update_matching_symbols():
 
         symbol_samples = list(input.symbol_samples())[2:]
@@ -235,8 +235,8 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
         ui.update_switch(id='show_matching_stocks', value=len(stocks) > 0)
 
         matching_symbols.set({
-            'stocks': pd.DataFrame(stocks),
-            'bonds': pd.DataFrame(bonds)
+            'stocks': pd.concat(stocks, ignore_index=True),
+            'bonds': pd.concat(bonds, ignore_index=True)
         })
 
     @render.data_frame
