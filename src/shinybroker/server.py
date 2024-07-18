@@ -79,28 +79,28 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
 
         return "Received Mkt Data Type " + mdt
 
-    # # Managed Accounts
-    #
-    # managed_accounts = reactive.value([])
-    #
-    # @reactive.effect
-    # @reactive.event(input.managed_accounts)
-    # def update_managed_accounts():
-    #     managed_accounts.set(list(input.managed_accounts())[1:])
-    #
-    # # Next Valid ID
-    #
-    # next_valid_id = reactive.value()
-    #
-    # @reactive.effect
-    # @reactive.event(input.next_valid_id)
-    # def update_next_valid_id():
-    #     next_valid_id.set(str(input.next_valid_id()[1]))
-    #
-    # @render.text
-    # def next_valid_id_txt():
-    #     return "Next Valid ID: " + next_valid_id()
-    #
+    # Managed Accounts
+
+    managed_accounts = reactive.value([])
+
+    @reactive.effect
+    @reactive.event(input.managed_accounts)
+    def update_managed_accounts():
+        managed_accounts.set(list(input.managed_accounts())[1:])
+
+    # Next Valid ID
+
+    next_valid_id = reactive.value()
+
+    @reactive.effect
+    @reactive.event(input.next_valid_id)
+    def update_next_valid_id():
+        next_valid_id.set(str(input.next_valid_id()[1]))
+
+    @render.text
+    def next_valid_id_txt():
+        return "Next Valid ID: " + next_valid_id()
+
     # # Error Messages
     #
     # error_messages = reactive.value(
