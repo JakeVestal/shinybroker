@@ -20,7 +20,7 @@ dynamic = ["version"]
 license-files = { paths = ["LICENSE"] }
 dependencies = [
     "faicons",
-    "Jinja2",
+    "jinja2",
     "pandas",
     "shiny"
 ]
