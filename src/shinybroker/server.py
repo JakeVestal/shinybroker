@@ -170,87 +170,87 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
     def current_time_txt():
         return current_time()
 
-    # # Matching Symbols #########################################################
-    #
-    # matching_symbols = reactive.value()
-    #
-    # @reactive.effect
-    # @reactive.event(input.req_matching_symbols)
-    # def request_matching_symbols():
-    #     (rd, wt, er) = select.select([], [ib_socket], [])
-    #     wt[0].send(
-    #         rxt.req_matching_symbols(
-    #             reqId=next_valid_id(),
-    #             pattern=input.requested_symbol()
-    #         )
-    #     )
-    #
-    # @reactive.effect
-    # @reactive.event(input.symbol_samples)
-    # def update_matching_symbols():
-    #
-    #     symbol_samples = list(input.symbol_samples())[2:]
-    #
-    #     bonds = rxt.initial_rx_values['matching_symbols']['bonds']
-    #
-    #     while True:
-    #         try:
-    #             bond_ind = symbol_samples.index('-1')
-    #             bonds = pd.concat(
-    #                 [
-    #                     bonds,
-    #                     pd.DataFrame.from_dict({
-    #                         'issuer': [symbol_samples[bond_ind + 3]],
-    #                         'issuer_id': [symbol_samples[bond_ind + 4]]
-    #                     })
-    #                 ],
-    #                 ignore_index=True
-    #             )
-    #             del symbol_samples[bond_ind:bond_ind + 5]
-    #         except ValueError:
-    #             break
-    #
-    #     ui.update_switch(id='show_matching_bonds', value=bonds.shape[0] > 0)
-    #
-    #     stocks = rxt.initial_rx_values['matching_symbols']['stocks']
-    #
-    #     while True:
-    #         try:
-    #             n_derivative_contracts = int(symbol_samples[5])
-    #             stocks = pd.concat(
-    #                 [
-    #                     stocks,
-    #                     pd.DataFrame.from_dict({
-    #                         'con_id': [symbol_samples[0]],
-    #                         'symbol': [symbol_samples[1]],
-    #                         'sec_type': [symbol_samples[2]],
-    #                         'primary_exchange': [symbol_samples[3]],
-    #                         'currency': [symbol_samples[4]],
-    #                         'derivative_sec_types': ",".join(
-    #                             symbol_samples[6:5 + n_derivative_contracts]
-    #                         ),
-    #                         'description': [
-    #                             symbol_samples[6 + n_derivative_contracts]]
-    #                     })
-    #                 ],
-    #                 ignore_index=True
-    #             )
-    #             del symbol_samples[:7 + n_derivative_contracts]
-    #         except IndexError:
-    #             break
-    #
-    #     ui.update_switch(id='show_matching_stocks', value=stocks.shape[0] > 0)
-    #
-    #     matching_symbols.set({'stocks': stocks, 'bonds': bonds})
-    #
-    # @render.data_frame
-    # def matching_stock_symbols_df():
-    #     return render.DataTable(matching_symbols()['stocks'])
-    #
-    # @render.data_frame
-    # def matching_bond_symbols_df():
-    #     return render.DataTable(matching_symbols()['bonds'])
-    #
+    # Matching Symbols #########################################################
+
+    matching_symbols = reactive.value()
+
+    @reactive.effect
+    @reactive.event(input.req_matching_symbols)
+    def request_matching_symbols():
+        (rd, wt, er) = select.select([], [ib_socket], [])
+        wt[0].send(
+            rxt.req_matching_symbols(
+                reqId=next_valid_id(),
+                pattern=input.requested_symbol()
+            )
+        )
+
+    @reactive.effect
+    @reactive.event(input.symbol_samples)
+    def update_matching_symbols():
+
+        symbol_samples = list(input.symbol_samples())[2:]
+
+        bonds = rxt.initial_rx_values['matching_symbols']['bonds']
+
+        while True:
+            try:
+                bond_ind = symbol_samples.index('-1')
+                bonds = pd.concat(
+                    [
+                        bonds,
+                        pd.DataFrame.from_dict({
+                            'issuer': [symbol_samples[bond_ind + 3]],
+                            'issuer_id': [symbol_samples[bond_ind + 4]]
+                        })
+                    ],
+                    ignore_index=True
+                )
+                del symbol_samples[bond_ind:bond_ind + 5]
+            except ValueError:
+                break
+
+        ui.update_switch(id='show_matching_bonds', value=bonds.shape[0] > 0)
+
+        stocks = rxt.initial_rx_values['matching_symbols']['stocks']
+
+        while True:
+            try:
+                n_derivative_contracts = int(symbol_samples[5])
+                stocks = pd.concat(
+                    [
+                        stocks,
+                        pd.DataFrame.from_dict({
+                            'con_id': [symbol_samples[0]],
+                            'symbol': [symbol_samples[1]],
+                            'sec_type': [symbol_samples[2]],
+                            'primary_exchange': [symbol_samples[3]],
+                            'currency': [symbol_samples[4]],
+                            'derivative_sec_types': ",".join(
+                                symbol_samples[6:5 + n_derivative_contracts]
+                            ),
+                            'description': [
+                                symbol_samples[6 + n_derivative_contracts]]
+                        })
+                    ],
+                    ignore_index=True
+                )
+                del symbol_samples[:7 + n_derivative_contracts]
+            except IndexError:
+                break
+
+        ui.update_switch(id='show_matching_stocks', value=stocks.shape[0] > 0)
+
+        matching_symbols.set({'stocks': stocks, 'bonds': bonds})
+
+    @render.data_frame
+    def matching_stock_symbols_df():
+        return render.DataTable(matching_symbols()['stocks'])
+
+    @render.data_frame
+    def matching_bond_symbols_df():
+        return render.DataTable(matching_symbols()['bonds'])
+
     # # Contract Details #########################################################
     #
     # contract_details = reactive.value()

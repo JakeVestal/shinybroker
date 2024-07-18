@@ -48,14 +48,14 @@ def req_market_data_type(marketDataType: str):
     )
 
 
-# def req_matching_symbols(reqId: TickerId, pattern: str):
-#     return make_msg(
-#         make_field(OUT.REQ_MATCHING_SYMBOLS) +
-#         make_field(reqId) +
-#         make_field(pattern)
-#     )
-#
-#
+def req_matching_symbols(reqId: str, pattern: str):
+    return pack_message(
+        functionary['outgoing_msg_codes']['REQ_MATCHING_SYMBOLS'] + "\0" +
+        reqId + "\0" +
+        pattern + "\0"
+    )
+
+
 # def req_mkt_data(
 #         reqId: TickerId,
 #         contract: Contract,
