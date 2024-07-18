@@ -13,6 +13,7 @@ from shinybroker.connection import (
 from shinybroker.msgs_to_ibkr import *
 from shiny import Inputs, Outputs, Session, reactive
 
+
 def sb_server(input: Inputs, output: Outputs, session: Session):
 
     ib_socket, API_VERSION, CONNECTION_TIME = create_ibkr_socket_conn(
@@ -32,7 +33,7 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
     #   - the Shiny session
     # Starts the thread
     ib_msg_reader_thread = threading.Thread(
-        target=rxt.ib_msg_reader_run_loop,
+        target=ib_msg_reader_run_loop,
         kwargs={
             'ib_sock': ib_socket,
             'shiny_sesh': session,
