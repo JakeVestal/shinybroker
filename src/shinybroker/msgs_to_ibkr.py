@@ -134,7 +134,6 @@ def req_market_data_type(marketDataType: str):
 
 
 def req_ids(numIds:int):
-    VERSION = 1
     return pack_message(
         functionary['outgoing_msg_codes']['REQ_IDS'] + "\0" +
         "1\0" +  # VERSION
