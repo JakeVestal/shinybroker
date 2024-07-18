@@ -14,7 +14,8 @@ from shinybroker.connection import (
 from shinybroker.msgs_to_ibkr import (
     req_current_time,
     req_market_data_type,
-    req_matching_symbols
+    req_matching_symbols,
+    req_sec_def_opt_params
 )
 from shiny import Inputs, Outputs, Session, reactive, render, ui
 
@@ -458,58 +459,58 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
     # @render.data_frame
     # def contract_details_df():
     #     return render.DataTable(contract_details())
-    #
-    # # Security-Defined Option Parameters #######################################
-    #
-    # sec_def_opt_params = reactive.value()
-    #
-    # @reactive.effect
-    # @reactive.event(
-    #     input.req_sec_def_opt_params_btn,
-    #     ignore_init=True
-    # )
-    # def request_sec_def_opt_params():
-    #     (rd, wt, er) = select.select([], [ib_socket], [])
-    #     wt[0].send(
-    #         rxt.req_sec_def_opt_params(
-    #             reqId=next_valid_id(),
-    #             underlyingSymbol=input.sdop_underlying_symbol(),
-    #             futFopExchange=input.sdop_fut_fop_exchange(),
-    #             underlyingSecType=input.sdop_underlying_sec_type(),
-    #             underlyingConId=input.sdop_underlying_con_id()
-    #         )
-    #     )
-    #
-    # @reactive.effect
-    # @reactive.event(input.sec_def_opt_params)
-    # def update_sec_def_opt_params():
-    #     sdop_lst = list(input.sec_def_opt_params())
-    #     sec_def_opt_params_lst = []
-    #
-    #     for i in range(len(sdop_lst)):
-    #         n_expiries = int(sdop_lst[i][4])
-    #         sec_def_opt_params_lst.append(
-    #             pd.DataFrame({
-    #                 'exchange': [sdop_lst[i][0]],
-    #                 'underlying_con_id': [sdop_lst[i][1]],
-    #                 'trading_class': [sdop_lst[i][2]],
-    #                 'multiplier': [sdop_lst[i][3]],
-    #                 'expirations': ",".join(sdop_lst[i][5:5+n_expiries]),
-    #                 'strikes': ",".join(
-    #                     sdop_lst[i][5+n_expiries:len(sdop_lst[i])]
-    #                 )
-    #             })
-    #         )
-    #
-    #     sec_def_opt_params.set(
-    #         pd.concat(sec_def_opt_params_lst, ignore_index=True)
-    #         .sort_values('exchange')
-    #     )
-    #
-    # @render.data_frame
-    # def sec_def_opt_params_df():
-    #     return render.DataTable(sec_def_opt_params())
-    #
+
+    # Security-Defined Option Parameters #######################################
+
+    sec_def_opt_params = reactive.value()
+
+    @reactive.effect
+    @reactive.event(
+        input.req_sec_def_opt_params_btn,
+        ignore_init=True
+    )
+    def request_sec_def_opt_params():
+        (rd, wt, er) = select.select([], [ib_socket], [])
+        wt[0].send(
+            req_sec_def_opt_params(
+                reqId=next_valid_id(),
+                underlyingSymbol=input.sdop_underlying_symbol(),
+                futFopExchange=input.sdop_fut_fop_exchange(),
+                underlyingSecType=input.sdop_underlying_sec_type(),
+                underlyingConId=input.sdop_underlying_con_id()
+            )
+        )
+
+    @reactive.effect
+    @reactive.event(input.sec_def_opt_params)
+    def update_sec_def_opt_params():
+        sdop_lst = list(input.sec_def_opt_params())
+        sec_def_opt_params_lst = []
+
+        for i in range(len(sdop_lst)):
+            n_expiries = int(sdop_lst[i][4])
+            sec_def_opt_params_lst.append(
+                pd.DataFrame({
+                    'exchange': [sdop_lst[i][0]],
+                    'underlying_con_id': [sdop_lst[i][1]],
+                    'trading_class': [sdop_lst[i][2]],
+                    'multiplier': [sdop_lst[i][3]],
+                    'expirations': ",".join(sdop_lst[i][5:5+n_expiries]),
+                    'strikes': ",".join(
+                        sdop_lst[i][5+n_expiries:len(sdop_lst[i])]
+                    )
+                })
+            )
+
+        sec_def_opt_params.set(
+            pd.concat(sec_def_opt_params_lst, ignore_index=True)
+            .sort_values('exchange')
+        )
+
+    @render.data_frame
+    def sec_def_opt_params_df():
+        return render.DataTable(sec_def_opt_params())
+
     # # Market Data ##############################################################
     #
     # mkt_data = reactive.value({})

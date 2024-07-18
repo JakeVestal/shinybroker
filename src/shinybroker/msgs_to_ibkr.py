@@ -110,27 +110,25 @@ def req_matching_symbols(reqId: str, pattern: str):
 #              make_field(mktDataOptions)]
 #
 #     return make_msg("".join(flds))
-#
-#
-# def req_sec_def_opt_params(
-#         reqId:int,
-#         underlyingSymbol:str,
-#         futFopExchange:str,
-#         underlyingSecType:str,
-#         underlyingConId:int
-# ):
-#     return make_msg(
-#         "".join(
-#             [
-#                 make_field(OUT.REQ_SEC_DEF_OPT_PARAMS),
-#                 make_field(reqId),
-#                 make_field(underlyingSymbol),
-#                 make_field(futFopExchange),
-#                 make_field(underlyingSecType),
-#                 make_field(underlyingConId)
-#             ]
-#         )
-#     )
+
+
+def req_sec_def_opt_params(
+        reqId:str,
+        underlyingSymbol:str,
+        futFopExchange:str,
+        underlyingSecType:str,
+        underlyingConId:str
+):
+    return pack_message(
+                functionary['outgoing_msg_codes'][
+                    'REQ_SEC_DEF_OPT_PARAMS'
+                ] + "\0" +
+                reqId + "\0" +
+                underlyingSymbol + "\0" +
+                futFopExchange + "\0" +
+                underlyingSecType + "\0" +
+                underlyingConId + "\0"
+    )
 
 
 def req_ids(numIds:int):
