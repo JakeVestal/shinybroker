@@ -1,12 +1,9 @@
+import os
+
 from faicons import icon_svg
-from pathlib import Path
 from shiny import App, reactive, render, ui, Inputs, Outputs, Session
 from shinybroker.contract_samples import contract_samples
 
-# https://github.com/posit-dev/py-shiny-templates/blob/main/map-distance/app-core.py
-# https://fontawesome.com/search?m=free&o=r
-
-print(Path(__file__))
 
 # UI
 sb_ui = ui.page_sidebar(
@@ -32,9 +29,11 @@ sb_ui = ui.page_sidebar(
         ui.input_dark_mode(mode="dark"),
     ),
     ui.page_fluid(
-        # ui.include_js(
-        #     Path(__file__).parent / "js" / "ib_message_handler.js"
-        # ),
+        ui.include_js(
+            os.path.join(
+                os.path.dirname(__file__), 'www', 'ib_message_handler.js'
+            )
+        ),
         ui.navset_pill(
             ui.nav_panel(
                 icon_svg('house'),

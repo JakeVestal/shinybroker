@@ -36,18 +36,18 @@ from shinybroker.utils import pack_message
 def req_current_time():
     return pack_message(
         functionary['outgoing_msg_codes']['REQ_CURRENT_TIME'] + "\0" +
-        "1" + "\0"  # VERSION
+        "1\0"  # VERSION
     )
 
-# def req_market_data_type(marketDataType: int):
-#     VERSION = 1
-#     return make_msg(
-#         make_field(OUT.REQ_MARKET_DATA_TYPE) +
-#         make_field(VERSION) +
-#         make_field(marketDataType)
-#     )
-#
-#
+
+def req_market_data_type(marketDataType: str):
+    return pack_message(
+        functionary['outgoing_msg_codes']['REQ_MARKET_DATA_TYPE'] +
+        "1\0" +  # VERSION
+        marketDataType + "\0"
+    )
+
+
 # def req_matching_symbols(reqId: TickerId, pattern: str):
 #     return make_msg(
 #         make_field(OUT.REQ_MATCHING_SYMBOLS) +
