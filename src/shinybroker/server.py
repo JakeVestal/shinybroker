@@ -11,7 +11,7 @@ from shinybroker.connection import (
     create_ibkr_socket_conn, ib_msg_reader_run_loop
 )
 from shinybroker.msgs_to_ibkr import *
-from shiny import Inputs, Outputs, Session, reactive
+from shiny import Inputs, Outputs, Session, reactive, render
 
 
 def sb_server(input: Inputs, output: Outputs, session: Session):
@@ -62,23 +62,23 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
     def update_market_data_type():
         market_data_type.set(input.market_data_type())
 
-    # @render.text
-    # def market_data_type_txt():
-    #
-    #     match market_data_type():
-    #         case "1":
-    #             mdt = "1: Live"
-    #         case "2":
-    #             mdt = "2: Frozen"
-    #         case "3":
-    #             mdt = "3: Delayed"
-    #         case "4":
-    #             mdt = "4: Delayed Frozen"
-    #         case _:
-    #             mdt = market_data_type()
-    #
-    #     return "Received Mkt Data Type " + mdt
-    #
+    @render.text
+    def market_data_type_txt():
+
+        match market_data_type():
+            case "1":
+                mdt = "1: Live"
+            case "2":
+                mdt = "2: Frozen"
+            case "3":
+                mdt = "3: Delayed"
+            case "4":
+                mdt = "4: Delayed Frozen"
+            case _:
+                mdt = market_data_type()
+
+        return "Received Mkt Data Type " + mdt
+
     # # Managed Accounts
     #
     # managed_accounts = reactive.value([])
