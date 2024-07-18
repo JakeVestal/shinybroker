@@ -156,6 +156,7 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
     @reactive.event(input.req_current_time, ignore_init=True)
     def request_current_time():
         (rd, wt, er) = select.select([], [ib_socket], [])
+        print(req_current_time())
         wt[0].send(req_current_time())
 
     @reactive.effect
