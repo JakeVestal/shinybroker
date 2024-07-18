@@ -11,7 +11,7 @@ from shinybroker.connection import (
     create_ibkr_socket_conn, ib_msg_reader_run_loop
 )
 from shinybroker.msgs_to_ibkr import *
-from shiny import Inputs, Outputs, Session, reactive, render
+from shiny import Inputs, Outputs, Session, reactive, render, ui
 
 
 def sb_server(input: Inputs, output: Outputs, session: Session):
@@ -101,71 +101,71 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
     def next_valid_id_txt():
         return "Next Valid ID: " + next_valid_id()
 
-    # # Error Messages
-    #
-    # error_messages = reactive.value(
-    #     pd.DataFrame(
-    #         columns=["error_id", "error_code", "error_message"],
-    #         index=None
-    #     )
-    # )
-    #
-    # @reactive.effect
-    # @reactive.event(input.error_message)
-    # def update_error_messages():
-    #     err_msgs = error_messages()
-    #     new_msg = input.error_message()
-    #     error_messages.set(
-    #         pd.concat(
-    #             [
-    #                 err_msgs,
-    #                 pd.DataFrame(
-    #                     {
-    #                         "error_id": new_msg[1],
-    #                         "error_code": new_msg[2],
-    #                         "error_message": new_msg[3]
-    #                     },
-    #                     index=[len(err_msgs)]
-    #                 )
-    #             ],
-    #             axis=0
-    #         )
-    #     )
-    #
-    # @render.table
-    # def error_messages_df():
-    #     return error_messages().style.set_table_attributes(
-    #         'class="dataframe shiny-table table w-auto"'
-    #     ).hide(axis="index")
-    #
-    # @reactive.effect
-    # @reactive.event(input.error_notification)
-    # def send_error_message_notification():
-    #     ui.notification_show(input.error_notification())
-    #
-    # # Current Time
-    # # Useful mostly just to check if i/o is working.
-    # # Runs when the user clicks the req_current_time button and updates the
-    #
-    # current_time = reactive.value()
-    #
-    # @reactive.effect
-    # @reactive.event(input.req_current_time, ignore_init=True)
-    # def request_current_time():
-    #     (rd, wt, er) = select.select([], [ib_socket], [])
-    #     wt[0].send(rxt.req_current_time())
-    #
-    # @reactive.effect
-    # @reactive.event(input.current_time)
-    # def update_current_time():
-    #     current_time.set(
-    #         str(datetime.datetime.fromtimestamp(int(input.current_time()[1])))
-    #     )
-    #
-    # @render.text
-    # def current_time_txt():
-    #     return current_time()
-    #
+    # Error Messages
+
+    error_messages = reactive.value(
+        pd.DataFrame(
+            columns=["error_id", "error_code", "error_message"],
+            index=None
+        )
+    )
+
+    @reactive.effect
+    @reactive.event(input.error_message)
+    def update_error_messages():
+        err_msgs = error_messages()
+        new_msg = input.error_message()
+        error_messages.set(
+            pd.concat(
+                [
+                    err_msgs,
+                    pd.DataFrame(
+                        {
+                            "error_id": new_msg[1],
+                            "error_code": new_msg[2],
+                            "error_message": new_msg[3]
+                        },
+                        index=[len(err_msgs)]
+                    )
+                ],
+                axis=0
+            )
+        )
+
+    @render.table
+    def error_messages_df():
+        return error_messages().style.set_table_attributes(
+            'class="dataframe shiny-table table w-auto"'
+        ).hide(axis="index")
+
+    @reactive.effect
+    @reactive.event(input.error_notification)
+    def send_error_message_notification():
+        ui.notification_show(input.error_notification())
+
+    # Current Time
+    # Useful mostly just to check if i/o is working.
+    # Runs when the user clicks the req_current_time button and updates the
+
+    current_time = reactive.value()
+
+    @reactive.effect
+    @reactive.event(input.req_current_time, ignore_init=True)
+    def request_current_time():
+        (rd, wt, er) = select.select([], [ib_socket], [])
+        wt[0].send(req_current_time())
+
+    @reactive.effect
+    @reactive.event(input.current_time)
+    def update_current_time():
+        current_time.set(
+            str(datetime.datetime.fromtimestamp(int(input.current_time()[1])))
+        )
+
+    @render.text
+    def current_time_txt():
+        return current_time()
+
     # # Matching Symbols #########################################################
     #
     # matching_symbols = reactive.value()
