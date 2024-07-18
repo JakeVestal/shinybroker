@@ -37,22 +37,7 @@ sb_ui = ui.page_sidebar(
         ui.navset_pill(
             ui.nav_panel(
                 icon_svg('house'),
-                ui.input_text(
-                    id='flying_bar_underlying_symbol',
-                    label='Underlying Symbol'
-                ),
-                ui.input_text(
-                    id='flying_bar_underlying_con_id',
-                    label='IBKR Underlying Contract ID'
-                ),
-                ui.input_text(
-                    id='flying_bar_underlying_sec_type',
-                    label='Underlying Security Type'
-                ),
-                ui.input_action_button(
-                    id='flying_bar_start_btn',
-                    label='BEGIN'
-                )
+                ui.p(str(os.path.dirname(os.path.realpath(__file__))))
             ),
             ui.nav_panel(
                 icon_svg('money-bill-transfer'),
