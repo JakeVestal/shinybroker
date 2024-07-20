@@ -11,7 +11,9 @@ from shinybroker.connection import (
     create_ibkr_socket_conn,
     ib_msg_reader_run_loop
 )
+from shinybroker.obj_defs import Contract
 from shinybroker.msgs_to_ibkr import (
+    req_contract_details,
     req_current_time,
     req_market_data_type,
     req_matching_symbols,
@@ -248,217 +250,217 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
     def matching_bond_symbols_df():
         return render.DataTable(matching_symbols()['bonds'])
 
-    # # Contract Details #########################################################
-    #
-    # contract_details = reactive.value()
-    #
-    # @reactive.effect
-    # def update_cd_contract_definition():
-    #     ui.update_text_area(
-    #         id='cd_contract_definition',
-    #         value=input.cd_example_contract()
-    #     )
-    #
-    # @reactive.effect
-    # @reactive.event(
-    #     input.cd_request_contract_details_btn,
-    #     ignore_init=True
-    # )
-    # def request_contract_details():
-    #
-    #     try:
-    #         exec(input.cd_contract_definition())
-    #     except Exception as e:
-    #         print(e)
-    #         return
-    #
-    #     rcd_contract = None
-    #     for key, value in locals().items():
-    #         if isinstance(value, Contract):
-    #             rcd_contract = value
-    #
-    #     if rcd_contract is None:
-    #         ui.notification_show('No viable contract object found')
-    #         return
-    #
-    #     (rd, wt, er) = select.select([], [ib_socket], [])
-    #     wt[0].send(
-    #         rxt.req_contract_details(
-    #             reqId=next_valid_id(),
-    #             contract=rcd_contract
-    #         )
-    #     )
-    #
-    # @reactive.effect
-    # @reactive.event(input.contract_details)
-    # def update_contract_details():
-    #
-    #     cdeets = input.contract_details()
-    #
-    #     contract_details_lst = []
-    #
-    #     for i in range(len(cdeets)):
-    #         match cdeets[i][1]:
-    #             case 'OPT':
-    #                 match len(cdeets[i]):
-    #                     case 34:
-    #                         contract_details_lst.append(
-    #                             pd.DataFrame({
-    #                                 'symbol': [cdeets[i][0]],
-    #                                 'secType': [cdeets[i][1]],
-    #                                 'lastTradeDate': [cdeets[i][2]],
-    #                                 'strike': [cdeets[i][3]],
-    #                                 'right': [cdeets[i][4]],
-    #                                 'exchange': [cdeets[i][5]],
-    #                                 'currency': [cdeets[i][6]],
-    #                                 'localSymbol': [cdeets[i][7]],
-    #                                 'marketName': [cdeets[i][8]],
-    #                                 'tradingClass': [cdeets[i][9]],
-    #                                 'conId': [cdeets[i][10]],
-    #                                 'minTick': [cdeets[i][11]],
-    #                                 'multiplier': [cdeets[i][12]],
-    #                                 'orderTypes': [cdeets[i][13]],
-    #                                 'validExchanges': [cdeets[i][14]],
-    #                                 'priceMagnifier': [cdeets[i][15]],
-    #                                 'underConID': [cdeets[i][16]],
-    #                                 'longName': [cdeets[i][17]],
-    #                                 'contractMonth': [cdeets[i][18]],
-    #                                 'industry': [cdeets[i][19]],
-    #                                 'category': [cdeets[i][20]],
-    #                                 'subcategory': [cdeets[i][21]],
-    #                                 'timeZoneId': [cdeets[i][22]],
-    #                                 'tradingHours': [cdeets[i][23]],
-    #                                 'liquidHours': [cdeets[i][24]],
-    #                                 'aggGroup': [cdeets[i][26]],
-    #                                 'underSymbol': [cdeets[i][27]],
-    #                                 'underSecType': [cdeets[i][28]],
-    #                                 'marketRuleIds': [cdeets[i][29]],
-    #                                 'realExpirationDate': [cdeets[i][30]],
-    #                                 'minSize': [cdeets[i][31]],
-    #                                 'sizeIncrement': [cdeets[i][32]],
-    #                                 'suggestedSizeIncrement': [cdeets[i][33]]
-    #                             })
-    #                         )
-    #                     case 31:
-    #                         contract_details_lst.append(
-    #                             pd.DataFrame({
-    #                                 'symbol': [cdeets[i][0]],
-    #                                 'secType': [cdeets[i][1]],
-    #                                 'lastTradeDate': [cdeets[i][2]],
-    #                                 'strike': [cdeets[i][3]],
-    #                                 'right': [cdeets[i][4]],
-    #                                 'exchange': [cdeets[i][5]],
-    #                                 'currency': [cdeets[i][6]],
-    #                                 'localSymbol': [cdeets[i][7]],
-    #                                 'marketName': [cdeets[i][8]],
-    #                                 'tradingClass': [cdeets[i][9]],
-    #                                 'conId': [cdeets[i][10]],
-    #                                 'minTick': [cdeets[i][11]],
-    #                                 'multiplier': [cdeets[i][12]],
-    #                                 'orderTypes': [cdeets[i][13]],
-    #                                 'validExchanges': [cdeets[i][14]],
-    #                                 'priceMagnifier': [cdeets[i][15]],
-    #                                 'underConID': [cdeets[i][16]],
-    #                                 'longName': [cdeets[i][17]],
-    #                                 'contractMonth': [cdeets[i][18]],
-    #                                 'industry': [cdeets[i][19]],
-    #                                 'category': [cdeets[i][20]],
-    #                                 'subcategory': [cdeets[i][21]],
-    #                                 'aggGroup': [cdeets[i][23]],
-    #                                 'underSymbol': [cdeets[i][24]],
-    #                                 'underSecType': [cdeets[i][25]],
-    #                                 'marketRuleIds': [cdeets[i][26]],
-    #                                 'realExpirationDate': [cdeets[i][27]],
-    #                                 'minSize': [cdeets[i][28]],
-    #                                 'sizeIncrement': [cdeets[i][29]],
-    #                                 'suggestedSizeIncrement': [cdeets[i][30]]
-    #                             })
-    #                         )
-    #                     case _:
-    #                         contract_details_lst.append(
-    #                             pd.DataFrame({
-    #                                 'symbol': [cdeets[i][0]],
-    #                                 'secType': [cdeets[i][1]],
-    #                                 'lastTradeDate': [cdeets[i][2]],
-    #                                 'strike': [cdeets[i][3]],
-    #                                 'right': [cdeets[i][4]],
-    #                                 'exchange': [cdeets[i][5]],
-    #                                 'currency': [cdeets[i][6]],
-    #                                 'localSymbol': [cdeets[i][7]],
-    #                                 'marketName': [cdeets[i][8]],
-    #                                 'tradingClass': [cdeets[i][9]],
-    #                                 'conId': [cdeets[i][10]],
-    #                                 'minTick': [cdeets[i][11]],
-    #                                 'multiplier': [cdeets[i][12]],
-    #                                 'orderTypes': [cdeets[i][13]],
-    #                                 'validExchanges': [cdeets[i][14]],
-    #                                 'priceMagnifier': [cdeets[i][15]],
-    #                                 'underConID': [cdeets[i][16]],
-    #                                 'longName': [cdeets[i][17]],
-    #                                 'contractMonth': [cdeets[i][18]],
-    #                                 'aggGroup': [cdeets[i][20]],
-    #                                 'underSymbol': [cdeets[i][21]],
-    #                                 'underSecType': [cdeets[i][22]],
-    #                                 'marketRuleIds': [cdeets[i][23]],
-    #                                 'realExpirationDate': [cdeets[i][24]],
-    #                                 'minSize': [cdeets[i][25]],
-    #                                 'sizeIncrement': [cdeets[i][26]],
-    #                                 'suggestedSizeIncrement': [cdeets[i][27]]
-    #                             })
-    #                         )
-    #             case 'STK':
-    #                 # 'STK' is the default case
-    #                 end_of_sec_id_list_ind = 23 + 2 * int(cdeets[i][22])
-    #                 contract_details_lst.append(
-    #                     pd.DataFrame({
-    #                         'symbol': [cdeets[i][0]],
-    #                         'secType': [cdeets[i][1]],
-    #                         'exchange': [cdeets[i][3]],
-    #                         'currency': [cdeets[i][4]],
-    #                         'localSymbol': [cdeets[i][5]],
-    #                         'marketName': [cdeets[i][6]],
-    #                         'tradingClass': [cdeets[i][7]],
-    #                         'conId': [cdeets[i][8]],
-    #                         'minTick': [cdeets[i][9]],
-    #                         'orderTypes': [cdeets[i][10]],
-    #                         'validExchanges': [cdeets[i][11]],
-    #                         'priceMagnifier': [cdeets[i][12]],
-    #                         'underConID': [cdeets[i][13]],
-    #                         'longName': [cdeets[i][14]],
-    #                         'primaryExchange': [cdeets[i][15]],
-    #                         'industry': [cdeets[i][16]],
-    #                         'category': [cdeets[i][17]],
-    #                         'subcategory': [cdeets[i][18]],
-    #                         'timeZoneId': [cdeets[i][19]],
-    #                         'tradingHours': [cdeets[i][20]],
-    #                         'liquidHours': [cdeets[i][21]],
-    #                         'secIdList': ["{" + ",".join([
-    #                             "'" + "':'".join(cdeets[i][x:(x + 2)]) + "'" for
-    #                             x in range(23, end_of_sec_id_list_ind, 2)
-    #                         ]) + "}"],
-    #                         'aggGroup': [cdeets[i][end_of_sec_id_list_ind]],
-    #                         'marketRuleIds': [
-    #                             cdeets[i][end_of_sec_id_list_ind + 1]
-    #                         ],
-    #                         'stockType': [
-    #                             cdeets[i][end_of_sec_id_list_ind + 2]],
-    #                         'minSize': [cdeets[i][end_of_sec_id_list_ind + 3]],
-    #                         'sizeIncrement': [
-    #                             cdeets[i][end_of_sec_id_list_ind + 4]
-    #                         ],
-    #                         'suggestedSizeIncrement': [
-    #                             cdeets[i][end_of_sec_id_list_ind + 5]
-    #                         ]
-    #                     })
-    #                 )
-    #             case _:
-    #                 pd.DataFrame({cdeets})
-    #
-    #     contract_details.set(pd.concat(contract_details_lst, ignore_index=True))
-    #
-    # @render.data_frame
-    # def contract_details_df():
-    #     return render.DataTable(contract_details())
+    # Contract Details #########################################################
+
+    contract_details = reactive.value()
+
+    @reactive.effect
+    def update_cd_contract_definition():
+        ui.update_text_area(
+            id='cd_contract_definition',
+            value=input.cd_example_contract()
+        )
+
+    @reactive.effect
+    @reactive.event(
+        input.cd_request_contract_details_btn,
+        ignore_init=True
+    )
+    def request_contract_details():
+
+        try:
+            exec(input.cd_contract_definition())
+        except Exception as e:
+            print(e)
+            return
+
+        rcd_contract = None
+        for key, value in locals().items():
+            if isinstance(value, Contract):
+                rcd_contract = value
+
+        if rcd_contract is None:
+            ui.notification_show('No viable contract object found')
+            return
+
+        (rd, wt, er) = select.select([], [ib_socket], [])
+        wt[0].send(
+            req_contract_details(
+                reqId=next_valid_id(),
+                contract=rcd_contract
+            )
+        )
+
+    @reactive.effect
+    @reactive.event(input.contract_details)
+    def update_contract_details():
+
+        cdeets = input.contract_details()
+
+        contract_details_lst = []
+
+        for i in range(len(cdeets)):
+            match cdeets[i][1]:
+                case 'OPT':
+                    match len(cdeets[i]):
+                        case 34:
+                            contract_details_lst.append(
+                                pd.DataFrame({
+                                    'symbol': [cdeets[i][0]],
+                                    'secType': [cdeets[i][1]],
+                                    'lastTradeDate': [cdeets[i][2]],
+                                    'strike': [cdeets[i][3]],
+                                    'right': [cdeets[i][4]],
+                                    'exchange': [cdeets[i][5]],
+                                    'currency': [cdeets[i][6]],
+                                    'localSymbol': [cdeets[i][7]],
+                                    'marketName': [cdeets[i][8]],
+                                    'tradingClass': [cdeets[i][9]],
+                                    'conId': [cdeets[i][10]],
+                                    'minTick': [cdeets[i][11]],
+                                    'multiplier': [cdeets[i][12]],
+                                    'orderTypes': [cdeets[i][13]],
+                                    'validExchanges': [cdeets[i][14]],
+                                    'priceMagnifier': [cdeets[i][15]],
+                                    'underConID': [cdeets[i][16]],
+                                    'longName': [cdeets[i][17]],
+                                    'contractMonth': [cdeets[i][18]],
+                                    'industry': [cdeets[i][19]],
+                                    'category': [cdeets[i][20]],
+                                    'subcategory': [cdeets[i][21]],
+                                    'timeZoneId': [cdeets[i][22]],
+                                    'tradingHours': [cdeets[i][23]],
+                                    'liquidHours': [cdeets[i][24]],
+                                    'aggGroup': [cdeets[i][26]],
+                                    'underSymbol': [cdeets[i][27]],
+                                    'underSecType': [cdeets[i][28]],
+                                    'marketRuleIds': [cdeets[i][29]],
+                                    'realExpirationDate': [cdeets[i][30]],
+                                    'minSize': [cdeets[i][31]],
+                                    'sizeIncrement': [cdeets[i][32]],
+                                    'suggestedSizeIncrement': [cdeets[i][33]]
+                                })
+                            )
+                        case 31:
+                            contract_details_lst.append(
+                                pd.DataFrame({
+                                    'symbol': [cdeets[i][0]],
+                                    'secType': [cdeets[i][1]],
+                                    'lastTradeDate': [cdeets[i][2]],
+                                    'strike': [cdeets[i][3]],
+                                    'right': [cdeets[i][4]],
+                                    'exchange': [cdeets[i][5]],
+                                    'currency': [cdeets[i][6]],
+                                    'localSymbol': [cdeets[i][7]],
+                                    'marketName': [cdeets[i][8]],
+                                    'tradingClass': [cdeets[i][9]],
+                                    'conId': [cdeets[i][10]],
+                                    'minTick': [cdeets[i][11]],
+                                    'multiplier': [cdeets[i][12]],
+                                    'orderTypes': [cdeets[i][13]],
+                                    'validExchanges': [cdeets[i][14]],
+                                    'priceMagnifier': [cdeets[i][15]],
+                                    'underConID': [cdeets[i][16]],
+                                    'longName': [cdeets[i][17]],
+                                    'contractMonth': [cdeets[i][18]],
+                                    'industry': [cdeets[i][19]],
+                                    'category': [cdeets[i][20]],
+                                    'subcategory': [cdeets[i][21]],
+                                    'aggGroup': [cdeets[i][23]],
+                                    'underSymbol': [cdeets[i][24]],
+                                    'underSecType': [cdeets[i][25]],
+                                    'marketRuleIds': [cdeets[i][26]],
+                                    'realExpirationDate': [cdeets[i][27]],
+                                    'minSize': [cdeets[i][28]],
+                                    'sizeIncrement': [cdeets[i][29]],
+                                    'suggestedSizeIncrement': [cdeets[i][30]]
+                                })
+                            )
+                        case _:
+                            contract_details_lst.append(
+                                pd.DataFrame({
+                                    'symbol': [cdeets[i][0]],
+                                    'secType': [cdeets[i][1]],
+                                    'lastTradeDate': [cdeets[i][2]],
+                                    'strike': [cdeets[i][3]],
+                                    'right': [cdeets[i][4]],
+                                    'exchange': [cdeets[i][5]],
+                                    'currency': [cdeets[i][6]],
+                                    'localSymbol': [cdeets[i][7]],
+                                    'marketName': [cdeets[i][8]],
+                                    'tradingClass': [cdeets[i][9]],
+                                    'conId': [cdeets[i][10]],
+                                    'minTick': [cdeets[i][11]],
+                                    'multiplier': [cdeets[i][12]],
+                                    'orderTypes': [cdeets[i][13]],
+                                    'validExchanges': [cdeets[i][14]],
+                                    'priceMagnifier': [cdeets[i][15]],
+                                    'underConID': [cdeets[i][16]],
+                                    'longName': [cdeets[i][17]],
+                                    'contractMonth': [cdeets[i][18]],
+                                    'aggGroup': [cdeets[i][20]],
+                                    'underSymbol': [cdeets[i][21]],
+                                    'underSecType': [cdeets[i][22]],
+                                    'marketRuleIds': [cdeets[i][23]],
+                                    'realExpirationDate': [cdeets[i][24]],
+                                    'minSize': [cdeets[i][25]],
+                                    'sizeIncrement': [cdeets[i][26]],
+                                    'suggestedSizeIncrement': [cdeets[i][27]]
+                                })
+                            )
+                case 'STK':
+                    # 'STK' is the default case
+                    end_of_sec_id_list_ind = 23 + 2 * int(cdeets[i][22])
+                    contract_details_lst.append(
+                        pd.DataFrame({
+                            'symbol': [cdeets[i][0]],
+                            'secType': [cdeets[i][1]],
+                            'exchange': [cdeets[i][3]],
+                            'currency': [cdeets[i][4]],
+                            'localSymbol': [cdeets[i][5]],
+                            'marketName': [cdeets[i][6]],
+                            'tradingClass': [cdeets[i][7]],
+                            'conId': [cdeets[i][8]],
+                            'minTick': [cdeets[i][9]],
+                            'orderTypes': [cdeets[i][10]],
+                            'validExchanges': [cdeets[i][11]],
+                            'priceMagnifier': [cdeets[i][12]],
+                            'underConID': [cdeets[i][13]],
+                            'longName': [cdeets[i][14]],
+                            'primaryExchange': [cdeets[i][15]],
+                            'industry': [cdeets[i][16]],
+                            'category': [cdeets[i][17]],
+                            'subcategory': [cdeets[i][18]],
+                            'timeZoneId': [cdeets[i][19]],
+                            'tradingHours': [cdeets[i][20]],
+                            'liquidHours': [cdeets[i][21]],
+                            'secIdList': ["{" + ",".join([
+                                "'" + "':'".join(cdeets[i][x:(x + 2)]) + "'" for
+                                x in range(23, end_of_sec_id_list_ind, 2)
+                            ]) + "}"],
+                            'aggGroup': [cdeets[i][end_of_sec_id_list_ind]],
+                            'marketRuleIds': [
+                                cdeets[i][end_of_sec_id_list_ind + 1]
+                            ],
+                            'stockType': [
+                                cdeets[i][end_of_sec_id_list_ind + 2]],
+                            'minSize': [cdeets[i][end_of_sec_id_list_ind + 3]],
+                            'sizeIncrement': [
+                                cdeets[i][end_of_sec_id_list_ind + 4]
+                            ],
+                            'suggestedSizeIncrement': [
+                                cdeets[i][end_of_sec_id_list_ind + 5]
+                            ]
+                        })
+                    )
+                case _:
+                    pd.DataFrame({cdeets})
+
+        contract_details.set(pd.concat(contract_details_lst, ignore_index=True))
+
+    @render.data_frame
+    def contract_details_df():
+        return render.DataTable(contract_details())
 
     # Security-Defined Option Parameters #######################################
 
