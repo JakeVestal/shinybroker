@@ -1,0 +1,23 @@
+project:
+  type: website
+  output-dir: docs
+
+# tell quarto to read the generated sidebar
+metadata-files:
+  - _sidebar.yml
+
+
+quartodoc:
+  # the name used to import the package you want to create reference docs for
+  package: shinybroker
+
+  # write sidebar data to this file
+  sidebar: _sidebar.yml
+
+  sections:
+    - title: ShinyBroker Objects
+      desc: These objects are the building blocks that your application uses 
+        to work with important tasks like fetching market data or submitting 
+        a trade order.
+      contents:
+        - Contract

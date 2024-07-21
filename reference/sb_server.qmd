@@ -1,0 +1,37 @@
+# sb_server { #shinybroker.sb_server }
+
+`sb_server(input, output, session)`
+
+Add up two integer numbers.
+
+This function simply wraps the ``+`` operator, and does not
+do anything interesting, except for illustrating what
+the docstring of a very simple function looks like.
+
+## Parameters
+
+| Name   | Type   | Description           | Default    |
+|--------|--------|-----------------------|------------|
+| `num1` | int    | First number to add.  | _required_ |
+| `num2` | int    | Second number to add. | _required_ |
+
+## Returns
+
+| Type   | Description                       |
+|--------|-----------------------------------|
+| int    | The sum of ``num1`` and ``num2``. |
+
+## See Also
+
+subtract : Subtract one integer from another.
+
+## Examples
+
+```python
+>>> add(2, 2)
+4
+>>> add(25, 0)
+25
+>>> add(10, -10)
+0
+```

@@ -2,8 +2,23 @@ from shinybroker.functionary import functionary
 
 
 class Contract:
+    """
+    Create a contract
 
-    def __init__(self, contract_params={}):
+    Parameters
+    ----------
+    contract_params : dict
+        First number to add.
+
+    Returns
+    -------
+    Contract
+        A Contract object
+
+    """
+    def __init__(self, contract_params=None):
+        if contract_params is None:
+            contract_params = {}
         contract_ = functionary['contract'].copy()
         contract_.update(contract_params)
         for key, value in contract_.items():
