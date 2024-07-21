@@ -1,4 +1,4 @@
-VERSION = '0.0.21'
+VERSION = '0.0.22'
 
 from shinybroker.connection import (
     create_ibkr_socket_conn, ib_msg_reader_run_loop
