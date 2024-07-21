@@ -1,0 +1,160 @@
+[
+  {
+    "objectID": "reference/obj_defs.Contract.html",
+    "href": "reference/obj_defs.Contract.html",
+    "title": "obj_defs.Contract",
+    "section": "",
+    "text": "obj_defs.Contract(self, contract_params=None)\nCreate a contract\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ncontract_params\ndict\nFirst number to add.\nNone\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nContract\nA Contract object"
+  },
+  {
+    "objectID": "reference/obj_defs.Contract.html#parameters",
+    "href": "reference/obj_defs.Contract.html#parameters",
+    "title": "obj_defs.Contract",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\ncontract_params\ndict\nFirst number to add.\nNone"
+  },
+  {
+    "objectID": "reference/obj_defs.Contract.html#returns",
+    "href": "reference/obj_defs.Contract.html#returns",
+    "title": "obj_defs.Contract",
+    "section": "",
+    "text": "Type\nDescription\n\n\n\n\nContract\nA Contract object"
+  },
+  {
+    "objectID": "reference/index.html",
+    "href": "reference/index.html",
+    "title": "Function reference",
+    "section": "",
+    "text": "These objects are the building blocks that your application uses to work with important tasks like fetching market data or submitting a trade order.\n\n\n\nContract\nCreate a contract",
+    "crumbs": [
+      "Function reference"
+    ]
+  },
+  {
+    "objectID": "reference/index.html#shinybroker-objects",
+    "href": "reference/index.html#shinybroker-objects",
+    "title": "Function reference",
+    "section": "",
+    "text": "These objects are the building blocks that your application uses to work with important tasks like fetching market data or submitting a trade order.\n\n\n\nContract\nCreate a contract",
+    "crumbs": [
+      "Function reference"
+    ]
+  },
+  {
+    "objectID": "reference/preview.html",
+    "href": "reference/preview.html",
+    "title": "preview",
+    "section": "",
+    "text": "preview(ast, max_depth=999, compact=False, as_string=False)\nPrint a friendly representation of a griffe object (e.g. function, docstring)\n\n\n&gt;&gt;&gt; from quartodoc import get_object\n&gt;&gt;&gt; obj = get_object(\"quartodoc\", \"get_object\")\n&gt;&gt;&gt; preview(obj.docstring.parsed)\n ...\n&gt;&gt;&gt; preview(obj)\n ..."
+  },
+  {
+    "objectID": "reference/preview.html#examples",
+    "href": "reference/preview.html#examples",
+    "title": "preview",
+    "section": "",
+    "text": "&gt;&gt;&gt; from quartodoc import get_object\n&gt;&gt;&gt; obj = get_object(\"quartodoc\", \"get_object\")\n&gt;&gt;&gt; preview(obj.docstring.parsed)\n ...\n&gt;&gt;&gt; preview(obj)\n ..."
+  },
+  {
+    "objectID": "reference/sb_server.html",
+    "href": "reference/sb_server.html",
+    "title": "sb_server",
+    "section": "",
+    "text": "sb_server(input, output, session)\nAdd up two integer numbers.\nThis function simply wraps the + operator, and does not do anything interesting, except for illustrating what the docstring of a very simple function looks like.\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nnum1\nint\nFirst number to add.\nrequired\n\n\nnum2\nint\nSecond number to add.\nrequired\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nint\nThe sum of num1 and num2.\n\n\n\n\n\n\nsubtract : Subtract one integer from another.\n\n\n\n&gt;&gt;&gt; add(2, 2)\n4\n&gt;&gt;&gt; add(25, 0)\n25\n&gt;&gt;&gt; add(10, -10)\n0"
+  },
+  {
+    "objectID": "reference/sb_server.html#parameters",
+    "href": "reference/sb_server.html#parameters",
+    "title": "sb_server",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nnum1\nint\nFirst number to add.\nrequired\n\n\nnum2\nint\nSecond number to add.\nrequired"
+  },
+  {
+    "objectID": "reference/sb_server.html#returns",
+    "href": "reference/sb_server.html#returns",
+    "title": "sb_server",
+    "section": "",
+    "text": "Type\nDescription\n\n\n\n\nint\nThe sum of num1 and num2."
+  },
+  {
+    "objectID": "reference/sb_server.html#see-also",
+    "href": "reference/sb_server.html#see-also",
+    "title": "sb_server",
+    "section": "",
+    "text": "subtract : Subtract one integer from another."
+  },
+  {
+    "objectID": "reference/sb_server.html#examples",
+    "href": "reference/sb_server.html#examples",
+    "title": "sb_server",
+    "section": "",
+    "text": "&gt;&gt;&gt; add(2, 2)\n4\n&gt;&gt;&gt; add(25, 0)\n25\n&gt;&gt;&gt; add(10, -10)\n0"
+  },
+  {
+    "objectID": "reference/get_object.html",
+    "href": "reference/get_object.html",
+    "title": "get_object",
+    "section": "",
+    "text": "get_object(path, object_name=None, parser='numpy', load_aliases=True, dynamic=False, loader=None)\nFetch a griffe object.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\npath\nstr\nAn import path to the object. This should have the form path.to.module:object. For example, quartodoc:get_object or quartodoc:MdRenderer.render.\nrequired\n\n\nobject_name\n‘str | None’\n(Deprecated). A function name.\nNone\n\n\nparser\nstr\nA docstring parser to use.\n'numpy'\n\n\nload_aliases\n\nFor aliases that were imported from other modules, should we load that module?\nTrue\n\n\ndynamic\n\nWhether to dynamically import object. Useful if docstring is not hard-coded, but was set on object by running python code.\nFalse\n\n\n\n\n\n\npreview: print a user-friendly preview of a griffe object.\n\n\n\n&gt;&gt;&gt; get_function(\"quartodoc\", \"get_function\")\n&lt;Function('get_function', ...\n\n\n\n\n\n\nType\nDescription\n\n\n\n\ndc.Object\nabc"
+  },
+  {
+    "objectID": "reference/get_object.html#parameters",
+    "href": "reference/get_object.html#parameters",
+    "title": "get_object",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\npath\nstr\nAn import path to the object. This should have the form path.to.module:object. For example, quartodoc:get_object or quartodoc:MdRenderer.render.\nrequired\n\n\nobject_name\n‘str | None’\n(Deprecated). A function name.\nNone\n\n\nparser\nstr\nA docstring parser to use.\n'numpy'\n\n\nload_aliases\n\nFor aliases that were imported from other modules, should we load that module?\nTrue\n\n\ndynamic\n\nWhether to dynamically import object. Useful if docstring is not hard-coded, but was set on object by running python code.\nFalse"
+  },
+  {
+    "objectID": "reference/get_object.html#see-also",
+    "href": "reference/get_object.html#see-also",
+    "title": "get_object",
+    "section": "",
+    "text": "preview: print a user-friendly preview of a griffe object."
+  },
+  {
+    "objectID": "reference/get_object.html#examples",
+    "href": "reference/get_object.html#examples",
+    "title": "get_object",
+    "section": "",
+    "text": "&gt;&gt;&gt; get_function(\"quartodoc\", \"get_function\")\n&lt;Function('get_function', ..."
+  },
+  {
+    "objectID": "reference/get_object.html#returns",
+    "href": "reference/get_object.html#returns",
+    "title": "get_object",
+    "section": "",
+    "text": "Type\nDescription\n\n\n\n\ndc.Object\nabc"
+  },
+  {
+    "objectID": "reference/Contract.html",
+    "href": "reference/Contract.html",
+    "title": "Contract",
+    "section": "",
+    "text": "Contract(self, contract_params=None)\nCreate a contract\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ncontract_params\ndict\nFirst number to add.\nNone\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nContract\nA Contract object",
+    "crumbs": [
+      "ShinyBroker Objects",
+      "Contract"
+    ]
+  },
+  {
+    "objectID": "reference/Contract.html#parameters",
+    "href": "reference/Contract.html#parameters",
+    "title": "Contract",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\ncontract_params\ndict\nFirst number to add.\nNone",
+    "crumbs": [
+      "ShinyBroker Objects",
+      "Contract"
+    ]
+  },
+  {
+    "objectID": "reference/Contract.html#returns",
+    "href": "reference/Contract.html#returns",
+    "title": "Contract",
+    "section": "",
+    "text": "Type\nDescription\n\n\n\n\nContract\nA Contract object",
+    "crumbs": [
+      "ShinyBroker Objects",
+      "Contract"
+    ]
+  }
+]
