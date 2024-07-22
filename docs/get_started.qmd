@@ -1,0 +1,16 @@
+---
+title: Get started with pins
+jupyter: python3
+---
+
+```{python}
+#| include: false
+import pandas as pd
+pd.options.display.max_rows = 25
+```
+
+coming soon
+
+```{python}
+print('coming soon')
+```

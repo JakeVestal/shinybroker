@@ -1,0 +1,72 @@
+[
+  {
+    "objectID": "reference/Contract.html",
+    "href": "reference/Contract.html",
+    "title": "Contract",
+    "section": "",
+    "text": "Contract(self, contract_params=None)\nCreate a contract\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ncontract_params\ndict\nFirst number to add.\nNone\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nContract\nA Contract object",
+    "crumbs": [
+      "Reference",
+      "ShinyBroker Objects",
+      "Contract"
+    ]
+  },
+  {
+    "objectID": "reference/Contract.html#parameters",
+    "href": "reference/Contract.html#parameters",
+    "title": "Contract",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\ncontract_params\ndict\nFirst number to add.\nNone",
+    "crumbs": [
+      "Reference",
+      "ShinyBroker Objects",
+      "Contract"
+    ]
+  },
+  {
+    "objectID": "reference/Contract.html#returns",
+    "href": "reference/Contract.html#returns",
+    "title": "Contract",
+    "section": "",
+    "text": "Type\nDescription\n\n\n\n\nContract\nA Contract object",
+    "crumbs": [
+      "Reference",
+      "ShinyBroker Objects",
+      "Contract"
+    ]
+  },
+  {
+    "objectID": "get_started.html",
+    "href": "get_started.html",
+    "title": "Get started with pins",
+    "section": "",
+    "text": "coming soon\n\nprint('coming soon')\n\ncoming soon"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Overview",
+    "section": "",
+    "text": "The ShinyBroker intro video will be here soon, but until I shoot it and upload it, here’s a stand-in test video about Quartodocs, the package I’m using to build the site.\nCheck out the below screencast for a walkthrough of creating a documentation site, or read on for instructions – it’s a good platform :)"
+  },
+  {
+    "objectID": "reference/index.html",
+    "href": "reference/index.html",
+    "title": "Reference",
+    "section": "",
+    "text": "These objects are the building blocks that your application uses to work with important tasks like fetching market data or submitting a trade order.\n\n\n\nContract\nCreate a contract",
+    "crumbs": [
+      "Reference"
+    ]
+  },
+  {
+    "objectID": "reference/index.html#shinybroker-objects",
+    "href": "reference/index.html#shinybroker-objects",
+    "title": "Reference",
+    "section": "",
+    "text": "These objects are the building blocks that your application uses to work with important tasks like fetching market data or submitting a trade order.\n\n\n\nContract\nCreate a contract",
+    "crumbs": [
+      "Reference"
+    ]
+  }
+]
