@@ -1,0 +1,7 @@
+---
+title: shinybroker
+replace_rel_path: "_site/get_started.html"
+format: gfm
+---
+
+{{< include get_started.qmd >}}
