@@ -1,0 +1,46 @@
+project:
+  type: website
+  output-dir: _site
+
+website:
+  title: "ShinyBroker"
+  description: "Visual Trading API for Interactive Brokers"
+  page-navigation: true
+  page-footer:
+    center: |
+      Developed by Jake Vestal of the [FinTech Program](https://fintech.meng.duke.edu/) at Duke University
+  navbar:
+    pinned: true
+    left:
+      - text: "Get started"
+        file: get_started.qmd
+      - text: "Reference"
+        file: reference/index.qmd
+    right:
+      - icon: github
+        href: https://github.com/JakeVestal/shinybroker
+        aria-label: shinybroker python GitHub
+
+format:
+  html:
+    theme: cyborg
+    css: styles.css
+    toc: true
+
+
+# tell quarto to read the generated sidebar
+metadata-files:
+  - _sidebar.yml
+
+quartodoc:
+  title: Reference
+  package: shinybroker
+  # write sidebar data to this file
+  sidebar: _sidebar.yml
+  sections:
+    - title: ShinyBroker Objects
+      desc: These objects are the building blocks that your application uses
+        to work with important tasks like fetching market data or submitting
+        a trade order.
+      contents:
+        - Contract
