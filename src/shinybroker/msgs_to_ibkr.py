@@ -2,6 +2,7 @@ from shinybroker.functionary import functionary
 from shinybroker.utils import pack_message
 from shinybroker.obj_defs import Contract
 
+
 def req_contract_details(reqId: str, contract: Contract):
     return pack_message(
         functionary['outgoing_msg_codes']['REQ_CONTRACT_DATA'] + "\0" +
@@ -49,60 +50,65 @@ def req_matching_symbols(reqId: str, pattern: str):
     )
 
 
-    # def req_mkt_data(
-    #         reqId: TickerId,
-    #         contract: Contract,
-    #         genericTickList: str,
-    #         snapshot: bool,
-    #         regulatorySnapshot: bool,
-    #         mktDataOptions: TagValueList
-    # ):
-    #
-    #     VERSION = 11
-    #
-    #     # send req mkt data msg
-    #     flds = []
-    #     flds += [make_field(OUT.REQ_MKT_DATA),
-    #              make_field(VERSION),
-    #              make_field(reqId),
-    #              make_field(contract.conId),
-    #              make_field(contract.symbol),
-    #              make_field(contract.secType),
-    #              make_field(contract.lastTradeDateOrContractMonth),
-    #              make_field(contract.strike),
-    #              make_field(contract.right),
-    #              make_field(contract.multiplier),  # srv v15 and above
-    #              make_field(contract.exchange),
-    #              make_field(contract.primaryExchange),  # srv v14 and above
-    #              make_field(contract.currency),
-    #              make_field(contract.localSymbol),
-    #              make_field(contract.tradingClass)]
-    #
-    #     # Send combo legs for BAG requests (srv v8 and above)
-    #     if contract.secType == "BAG":
-    #         comboLegsCount = len(
-    #             contract.comboLegs) if contract.comboLegs else 0
-    #         flds += [make_field(comboLegsCount), ]
-    #         for comboLeg in contract.comboLegs:
-    #             flds += [make_field(comboLeg.conId),
-    #                      make_field(comboLeg.ratio),
-    #                      make_field(comboLeg.action),
-    #                      make_field(comboLeg.exchange)]
-    #
-    #     if contract.deltaNeutralContract:
-    #         flds += [make_field(True),
-    #                  make_field(contract.deltaNeutralContract.conId),
-    #                  make_field(contract.deltaNeutralContract.delta),
-    #                  make_field(contract.deltaNeutralContract.price)]
-    #     else:
-    #         flds += [make_field(False)]
-    #
-    #     flds += [make_field(genericTickList),  # srv v31 and above
-    #              make_field(snapshot),
-    #              make_field(regulatorySnapshot),
-    #              make_field(mktDataOptions)]
-    #
-    #     return make_msg("".join(flds))
+def req_mkt_data(
+        reqId: str,
+        contract: Contract,
+        genericTickList: str,
+        snapshot: str,
+        regulatorySnapshot: str,
+        mktDataOptions: str
+):
+
+    VERSION = 11
+
+    # send req mkt data msg
+    msg = (
+            functionary['outgoing_msg_codes']['REQ_MKT_DATA'] + "\0" +
+            "11\0" +  # VERSION
+            reqId + "\0" +
+            contract.conId + "\0" +
+            contract.symbol + "\0" +
+            contract.secType + "\0" +
+            contract.lastTradeDateOrContractMonth + "\0" +
+            contract.strike + "\0" +
+            contract.right + "\0" +
+            contract.multiplier + "\0" +
+            contract.exchange + "\0" +
+            contract.primaryExchange + "\0" + # srv v14 and above
+            contract.currency + "\0" +
+            contract.localSymbol + "\0" +
+            contract.tradingClass + "\0"
+    )
+
+    # Send combo legs for BAG requests (srv v8 and above)
+    if contract.secType == "BAG":
+        comboLegsCount = len(contract.comboLegs) if contract.comboLegs else 0
+        for comboLeg in contract.comboLegs:
+            msg += (
+                    comboLeg.conId + "\0" +
+                    comboLeg.ratio + "\0" +
+                    comboLeg.action + "\0" +
+                    comboLeg.exchange + "\0"
+            )
+
+    if contract.deltaNeutralContract:
+        msg += (
+                "1\0" +
+                contract.deltaNeutralContract.conId + "\0" +
+                contract.deltaNeutralContract.delta + "\0" +
+                contract.deltaNeutralContract.price + "\0"
+        )
+    else:
+        msg += "0\0"
+
+    msg += (
+            genericTickList + "\0" + # srv v31 and above
+            snapshot + "\0" +
+            regulatorySnapshot + "\0" +
+            mktDataOptions + "\0"
+    )
+
+    return pack_message(msg)
 
 
 def req_sec_def_opt_params(
