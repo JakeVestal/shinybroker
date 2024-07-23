@@ -304,6 +304,32 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
         contract_details_lst = []
 
         for i in range(len(cdeets)):
+            if cdeets[i][0] == 'BOND':
+                end_of_sec_id_list_ind = 13 + 2 * int(cdeets[i][12])
+                contract_details_lst.append(
+                    pd.DataFrame({
+                        'descAppend': [cdeets[i][4]],
+                        'underSymbol': [cdeets[i][6]],
+                        'conId': [cdeets[i][7]],
+                        'minTick': [cdeets[i][8]],
+                        'orderTypes': [cdeets[i][9]],
+                        'validExchanges': [cdeets[i][10]],
+                        'secIdList': ["{" + ",".join([
+                            "'" + "':'".join(cdeets[i][x:(x + 2)]) + "'" for
+                            x in range(13, end_of_sec_id_list_ind, 2)
+                        ]) + "}"],
+                        'aggGroup': [cdeets[i][end_of_sec_id_list_ind]],
+                        'marketRuleIds': [cdeets[i][end_of_sec_id_list_ind+1]],
+                        'minSize': [cdeets[i][end_of_sec_id_list_ind+2]],
+                        'sizeIncrement': [
+                            cdeets[i][end_of_sec_id_list_ind + 3]
+                        ],
+                        'suggestedSizeIncrement': [
+                            cdeets[i][end_of_sec_id_list_ind + 4]
+                        ]
+                    })
+                )
+                continue
             match cdeets[i][1]:
                 case 'CASH':
                     contract_details_lst.append(
@@ -436,7 +462,6 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
                                 pd.DataFrame({cdeets[i]})
                             )
                 case 'STK':
-                    # 'STK' is the default case
                     end_of_sec_id_list_ind = 23 + 2 * int(cdeets[i][22])
                     contract_details_lst.append(
                         pd.DataFrame({

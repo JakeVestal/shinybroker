@@ -198,8 +198,8 @@ sb_ui = ui.page_sidebar(
                 ui.h3('Error Messages'),
                 ui.h5('Reactive variable: ', ui.code('error_messages()')),
                 ui.p(
-                    'All error messages received during your session are ' +
-                    'stored in ', ui.code('error_messages()'), '. Some ' +
+                    'All error messages received during your session ' +
+                    'are stored in ', ui.code('error_messages()'), '. Some ' +
                     'error messages will cause alerts to appear in the ' +
                     'webpage to alert the user (e.g., no matching contracts ' +
                     'found for a call to ',
@@ -212,10 +212,10 @@ sb_ui = ui.page_sidebar(
                 ),
                 ui.output_table("error_messages_df")
             ),
-            id="main_tab",
+            id="main_tab"
         )
     ),
-    title="RX Trader: Visual Reactive Trading with IBKR",
+    title="ShinyTrader: Visual Reactive Trading with IBKR",
     fillable=True,
     class_="bslib-page-dashboard"
 )
