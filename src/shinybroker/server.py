@@ -299,6 +299,8 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
 
         cdeets = input.contract_details()
 
+        print(cdeets)
+
         contract_details_lst = []
 
         for i in range(len(cdeets)):
@@ -327,6 +329,31 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
                             'minSize': [cdeets[i][21]],
                             'sizeIncrement': [cdeets[i][22]],
                             'suggestedSizeIncrement': [cdeets[i][23]]
+                        })
+                    )
+                case 'IND':
+                    contract_details_lst.append(
+                        pd.DataFrame({
+                            'symbol': [cdeets[i][0]],
+                            'secType': [cdeets[i][1]],
+                            'exchange': [cdeets[i][3]],
+                            'currency': [cdeets[i][4]],
+                            'localSymbol': [cdeets[i][5]],
+                            'conId': [cdeets[i][6]],
+                            'minTick': [cdeets[i][7]],
+                            'orderTypes': [cdeets[i][8]],
+                            'validExchanges': [cdeets[i][9]],
+                            'priceMagnifier': [cdeets[i][10]],
+                            'longName': [cdeets[i][12]],
+                            'timeZoneId': [cdeets[i][13]],
+                            'tradingHours': [cdeets[i][14]],
+                            'liquidHours': [cdeets[i][15]],
+                            'aggGroup': [cdeets[i][16]],
+                            'underSymbol': [cdeets[i][17]],
+                            'marketRuleIds': [cdeets[i][18]],
+                            'minSize': [cdeets[i][19]],
+                            'sizeIncrement': [cdeets[i][20]],
+                            'suggestedSizeIncrement': [cdeets[i][21]]
                         })
                     )
                 case 'OPT':
@@ -405,44 +432,8 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
                                 })
                             )
                         case _:
-
-                            print(cdeets[i][1] + ' is unhandled contract type')
-                            print('cdeets = ' + str(cdeets))
-                            print('---')
-
                             contract_details_lst.append(
-                                pd.DataFrame({
-                                    'symbol': [cdeets[i][0]],
-                                    'secType': [cdeets[i][1]],
-                                    'lastTradeDate': [cdeets[i][2]],
-                                    'strike': [cdeets[i][3]],
-                                    'right': [cdeets[i][4]],
-                                    'exchange': [cdeets[i][5]],
-                                    'currency': [cdeets[i][6]],
-                                    'localSymbol': [cdeets[i][7]],
-                                    'marketName': [cdeets[i][8]],
-                                    'tradingClass': [cdeets[i][9]],
-                                    'conId': [cdeets[i][10]],
-                                    'minTick': [cdeets[i][11]],
-                                    'multiplier': [cdeets[i][12]],
-                                    'orderTypes': [cdeets[i][13]],
-                                    'validExchanges': [cdeets[i][14]],
-                                    'priceMagnifier': [cdeets[i][15]],
-                                    'underConID': [cdeets[i][16]],
-                                    'longName': [cdeets[i][17]],
-                                    'contractMonth': [cdeets[i][18]],
-                                    'industry': [cdeets[i][19]],
-                                    'category': [cdeets[i][20]],
-                                    'subcategory': [cdeets[i][21]],
-                                    'aggGroup': [cdeets[i][23]],
-                                    'underSymbol': [cdeets[i][24]],
-                                    'underSecType': [cdeets[i][25]],
-                                    'marketRuleIds': [cdeets[i][26]],
-                                    'realExpirationDate': [cdeets[i][27]],
-                                    'minSize': [cdeets[i][28]],
-                                    'sizeIncrement': [cdeets[i][29]],
-                                    'suggestedSizeIncrement': [cdeets[i][30]]
-                                })
+                                pd.DataFrame({cdeets[i]})
                             )
                 case 'STK':
                     # 'STK' is the default case
