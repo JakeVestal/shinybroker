@@ -357,6 +357,94 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
                             'suggestedSizeIncrement': [cdeets[i][23]]
                         })
                     )
+                case 'FUND':
+                    end_of_sec_id_list_ind = 19 + 2 * int(cdeets[i][18])
+                    contract_details_lst.append(
+                        pd.DataFrame({
+                            'symbol': [cdeets[i][0]],
+                            'secType': [cdeets[i][1]],
+                            'exchange': [cdeets[i][3]],
+                            'currency': [cdeets[i][4]],
+                            'localSymbol': [cdeets[i][5]],
+                            'marketName': [cdeets[i][6]],
+                            'tradingClass': [cdeets[i][7]],
+                            'conId': [cdeets[i][8]],
+                            'minTick': [cdeets[i][9]],
+                            'orderTypes': [cdeets[i][10]],
+                            'validExchanges': [cdeets[i][11]],
+                            'priceMagnifier': [cdeets[i][12]],
+                            'longName': [cdeets[i][14]],
+                            'timeZoneId': [cdeets[i][15]],
+                            'tradingHours': [cdeets[i][16]],
+                            'liquidHours': [cdeets[i][17]],
+                            'secIdList': ["{" + ",".join([
+                                "'" + "':'".join(cdeets[i][x:(x + 2)]) + "'" for
+                                x in range(19, end_of_sec_id_list_ind, 2)
+                            ]) + "}"],
+                            'marketRuleIds': [
+                                cdeets[i][end_of_sec_id_list_ind + 1]
+                            ],
+                            'minSize': [
+                                cdeets[i][end_of_sec_id_list_ind + 2]
+                            ],
+                            'sizeIncrement': [
+                                cdeets[i][end_of_sec_id_list_ind + 3]
+                            ],
+                            'suggestedSizeIncrement': [
+                                cdeets[i][end_of_sec_id_list_ind + 4]
+                            ],
+                            'fundName': [
+                                cdeets[i][end_of_sec_id_list_ind + 5]
+                            ],
+                            'fundFamily': [
+                                cdeets[i][end_of_sec_id_list_ind + 6]
+                            ],
+                            'fundFrontLoad': [
+                                cdeets[i][end_of_sec_id_list_ind + 7]
+                            ],
+                            'fundBackLoad': [
+                                cdeets[i][end_of_sec_id_list_ind + 8]
+                            ],
+                            'fundBackLoadTimeInterval': [
+                                cdeets[i][end_of_sec_id_list_ind + 9]
+                            ],
+                            'fundManagementFee': [
+                                cdeets[i][end_of_sec_id_list_ind + 10]
+                            ],
+                            'fundClosed': [
+                                cdeets[i][end_of_sec_id_list_ind + 11]
+                            ],
+                            'fundClosedForNewInvestors': [
+                                cdeets[i][end_of_sec_id_list_ind + 12]
+                            ],
+                            'fundClosedForNewMoney': [
+                                cdeets[i][end_of_sec_id_list_ind + 13]
+                            ],
+                            'fundNotifyAmount': [
+                                cdeets[i][end_of_sec_id_list_ind + 14]
+                            ],
+                            'fundMinimumInitialPurchase': [
+                                cdeets[i][end_of_sec_id_list_ind + 15]
+                            ],
+                            'fundSubsequentMinimumPurchase': [
+                                cdeets[i][end_of_sec_id_list_ind + 16]
+                            ],
+                            'fundBlueSkyStates': [
+                                cdeets[i][end_of_sec_id_list_ind + 17]
+                            ],
+                            'fundBlueSkyTerritories': [
+                                cdeets[i][end_of_sec_id_list_ind + 18]
+                            ],
+                            'ineligibilityReasonList': ["{" + ",".join([
+                                "'" + "':'".join(cdeets[i][x:(x + 2)]) + "'" for
+                                x in range(
+                                    end_of_sec_id_list_ind + 20,
+                                    len(cdeets[i]),
+                                    2
+                                )
+                            ]) + "}"]
+                        })
+                    )
                 case 'IND':
                     contract_details_lst.append(
                         pd.DataFrame({
