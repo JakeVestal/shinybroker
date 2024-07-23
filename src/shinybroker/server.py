@@ -17,8 +17,10 @@ from shinybroker.msgs_to_ibkr import (
     req_current_time,
     req_market_data_type,
     req_matching_symbols,
+    req_mkt_data,
     req_sec_def_opt_params
 )
+from shinybroker.functionary import functionary
 from shiny import Inputs, Outputs, Session, reactive, render, ui
 
 
@@ -301,6 +303,32 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
 
         for i in range(len(cdeets)):
             match cdeets[i][1]:
+                case 'CASH':
+                    contract_details_lst.append(
+                        pd.DataFrame({
+                            'symbol': [cdeets[i][0]],
+                            'secType': [cdeets[i][1]],
+                            'exchange': [cdeets[i][3]],
+                            'currency': [cdeets[i][4]],
+                            'localSymbol': [cdeets[i][5]],
+                            'marketName': [cdeets[i][6]],
+                            'tradingClass': [cdeets[i][7]],
+                            'conId': [cdeets[i][8]],
+                            'minTick': [cdeets[i][9]],
+                            'orderTypes': [cdeets[i][10]],
+                            'validExchanges': [cdeets[i][11]],
+                            'priceMagnifier': [cdeets[i][12]],
+                            'longName': [cdeets[i][14]],
+                            'timeZoneId': [cdeets[i][15]],
+                            'tradingHours': [cdeets[i][16]],
+                            'liquidHours': [cdeets[i][17]],
+                            'aggGroup': [cdeets[i][19]],
+                            'marketRuleIds': [cdeets[i][20]],
+                            'minSize': [cdeets[i][21]],
+                            'sizeIncrement': [cdeets[i][22]],
+                            'suggestedSizeIncrement': [cdeets[i][23]]
+                        })
+                    )
                 case 'OPT':
                     match len(cdeets[i]):
                         case 34:
@@ -377,6 +405,11 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
                                 })
                             )
                         case _:
+
+                            print(cdeets[i][1] + ' is unhandled contract type')
+                            print('cdeets = ' + str(cdeets))
+                            print('---')
+
                             contract_details_lst.append(
                                 pd.DataFrame({
                                     'symbol': [cdeets[i][0]],
@@ -398,14 +431,17 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
                                     'underConID': [cdeets[i][16]],
                                     'longName': [cdeets[i][17]],
                                     'contractMonth': [cdeets[i][18]],
-                                    'aggGroup': [cdeets[i][20]],
-                                    'underSymbol': [cdeets[i][21]],
-                                    'underSecType': [cdeets[i][22]],
-                                    'marketRuleIds': [cdeets[i][23]],
-                                    'realExpirationDate': [cdeets[i][24]],
-                                    'minSize': [cdeets[i][25]],
-                                    'sizeIncrement': [cdeets[i][26]],
-                                    'suggestedSizeIncrement': [cdeets[i][27]]
+                                    'industry': [cdeets[i][19]],
+                                    'category': [cdeets[i][20]],
+                                    'subcategory': [cdeets[i][21]],
+                                    'aggGroup': [cdeets[i][23]],
+                                    'underSymbol': [cdeets[i][24]],
+                                    'underSecType': [cdeets[i][25]],
+                                    'marketRuleIds': [cdeets[i][26]],
+                                    'realExpirationDate': [cdeets[i][27]],
+                                    'minSize': [cdeets[i][28]],
+                                    'sizeIncrement': [cdeets[i][29]],
+                                    'suggestedSizeIncrement': [cdeets[i][30]]
                                 })
                             )
                 case 'STK':
@@ -454,7 +490,7 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
                         })
                     )
                 case _:
-                    pd.DataFrame({cdeets})
+                    contract_details_lst.append(pd.DataFrame({cdeets}))
 
         contract_details.set(pd.concat(contract_details_lst, ignore_index=True))
 
@@ -513,108 +549,103 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
     def sec_def_opt_params_df():
         return render.DataTable(sec_def_opt_params())
 
-    # # Market Data ##############################################################
-    #
-    # mkt_data = reactive.value({})
-    #
-    # @reactive.effect
-    # def update_md_contract_definition():
-    #     ui.update_text_area(
-    #         id='md_contract_definition',
-    #         value=input.md_example_contract() +
-    #               "\n" +
-    #               "genericTickList=''\n" +
-    #               "snapshot=0\n" +
-    #               "regulatorySnapshot=0\n" +
-    #               "mktDataOptions=''"
-    #     )
-    #
-    # @reactive.effect
-    # @reactive.event(
-    #     input.md_request_market_data_btn,
-    #     ignore_init=True
-    # )
-    # def request_market_data():
-    #     mkt_dta = mkt_data()
-    #     exec(input.md_contract_definition())
-    #     # creates the following local variables from the user's input:
-    #     #   contract: a contract object
-    #     #   genericTickList: '' by default
-    #     #   snapshot: 0 by default
-    #     #   regulatorySnapshot: 0 by default
-    #     #   mktDataOptions: '' by default
-    #     (rd, wt, er) = select.select([], [ib_socket], [])
-    #     nxt_valid_id = next_valid_id()
-    #     wt[0].send(
-    #         eval(
-    #             "rxt.req_mkt_data(" + str(nxt_valid_id) + ", contract, " +
-    #             "genericTickList, snapshot, regulatorySnapshot, mktDataOptions)"
-    #         )
-    #     )
-    #     mkt_dta.update({
-    #         nxt_valid_id: {
-    #             key: value for (key, value) in
-    #             eval('contract.__dict__.items()') if
-    #             value is not None and value != 0 and value != ''
-    #         }
-    #     })
-    #     mkt_data.set(mkt_dta.copy())
-    #
-    # @reactive.effect
-    # @reactive.event(input.tick_req_params)
-    # def update_tick_req_params():
-    #     mkt_dta = mkt_data()
-    #     trp = input.tick_req_params()
-    #     t_r_p = {
-    #         'minTick': trp[1],
-    #         'bboExchange': trp[2]
-    #     }
-    #     try:
-    #         t_r_p['snapshotPermissions'] = trp[3]
-    #     except IndexError:
-    #         pass
-    #     mkt_dta[trp[0]].update(t_r_p)
-    #     mkt_data.set(mkt_dta.copy())
-    #
-    # @reactive.effect
-    # @reactive.event(input.tick_price)
-    # def update_tick_price():
-    #     mkt_dta = mkt_data()
-    #     tp = input.tick_price()
-    #     mkt_dta[tp[1]].update({
-    #         TickTypeEnum.to_str(int(tp[2])): float(tp[3])
-    #     })
-    #     mkt_data.set(mkt_dta.copy())
-    #
-    # @reactive.effect
-    # @reactive.event(input.tick_size)
-    # def update_tick_size():
-    #     mkt_dta = mkt_data()
-    #     tp = input.tick_size()
-    #     mkt_dta[tp[1]].update({TickTypeEnum.to_str(int(tp[2])): float(tp[3])})
-    #     mkt_data.set(mkt_dta.copy())
-    #
-    # @reactive.effect
-    # @reactive.event(input.tick_generic)
-    # def update_tick_generic():
-    #     mkt_dta = mkt_data()
-    #     tp = input.tick_generic()
-    #     mkt_dta[tp[1]].update({TickTypeEnum.to_str(int(tp[2])): float(tp[3])})
-    #     mkt_data.set(mkt_dta.copy())
-    #
-    # @reactive.effect
-    # @reactive.event(input.tick_string)
-    # def update_tick_generic():
-    #     mkt_dta = mkt_data()
-    #     tp = input.tick_string()
-    #     mkt_dta[tp[1]].update({TickTypeEnum.to_str(int(tp[2])): tp[3]})
-    #     mkt_data.set(mkt_dta.copy())
-    #
-    # @render.text
-    # def mkt_data_txt():
-    #     temp_out = StringIO()
-    #     sys.stdout = temp_out
-    #     print(mkt_data())
-    #     sys.stdout = sys.__stdout__
-    #     return temp_out.getvalue()
-    #
+    # Market Data ##############################################################
+
+    mkt_data = reactive.value({})
+
+    @reactive.effect
+    def update_md_contract_definition():
+        ui.update_text_area(
+            id='md_contract_definition',
+            value=input.md_example_contract() +
+                  "\n" +
+                  "genericTickList=''\n" +
+                  "snapshot='0'\n" +
+                  "regulatorySnapshot='0'\n" +
+                  "mktDataOptions=''"
+        )
+
+    @reactive.effect
+    @reactive.event(
+        input.md_request_market_data_btn,
+        ignore_init=True
+    )
+    def request_market_data():
+        exec(input.md_contract_definition())
+        (rd, wt, er) = select.select([], [ib_socket], [])
+        nxt_valid_id = next_valid_id()
+        mkt_string = "req_mkt_data(" + str(nxt_valid_id) + ", contract, " + \
+                     "genericTickList, snapshot, regulatorySnapshot, mktDataOptions)"
+        print(mkt_string)
+        msg = eval(
+            mkt_string
+        )
+        print(msg)
+        wt[0].send(
+            msg
+        )
+
+    @reactive.effect
+    @reactive.event(input.tick_req_params)
+    def update_tick_req_params():
+        mkt_dta = mkt_data()
+        trp = input.tick_req_params()
+        t_r_p = {
+            'minTick': trp[1],
+            'bboExchange': trp[2]
+        }
+        try:
+            t_r_p['snapshotPermissions'] = trp[3]
+        except IndexError:
+            pass
+        mkt_dta[trp[0]].update(t_r_p)
+        mkt_data.set(mkt_dta.copy())
+
+    @reactive.effect
+    @reactive.event(input.tick_price)
+    def update_tick_price():
+        mkt_dta = mkt_data()
+        tp = input.tick_price()
+        mkt_dta[tp[1]].update({
+            functionary['tick_type'][int(tp[2])]: float(tp[3])
+        })
+        mkt_data.set(mkt_dta.copy())
+
+    @reactive.effect
+    @reactive.event(input.tick_size)
+    def update_tick_size():
+        mkt_dta = mkt_data()
+        tp = input.tick_size()
+        mkt_dta[tp[1]].update(
+            {functionary['tick_type'][int(tp[2])]: float(tp[3])}
+        )
+        mkt_data.set(mkt_dta.copy())
+
+    @reactive.effect
+    @reactive.event(input.tick_generic)
+    def update_tick_generic():
+        mkt_dta = mkt_data()
+        tp = input.tick_generic()
+        mkt_dta[tp[1]].update(
+            {functionary['tick_type'][int(tp[2])]: float(tp[3])}
+        )
+        mkt_data.set(mkt_dta.copy())
+
+    @reactive.effect
+    @reactive.event(input.tick_string)
+    def update_tick_generic():
+        mkt_dta = mkt_data()
+        tp = input.tick_string()
+        mkt_dta[tp[1]].update(
+            {functionary['tick_type'][int(tp[2])]: tp[3]}
+        )
+        mkt_data.set(mkt_dta.copy())
+
+    @render.text
+    def mkt_data_txt():
+        temp_out = StringIO()
+        sys.stdout = temp_out
+        print(mkt_data())
+        sys.stdout = sys.__stdout__
+        return temp_out.getvalue()
+

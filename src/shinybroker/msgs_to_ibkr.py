@@ -1,29 +1,29 @@
 from shinybroker.functionary import functionary
-from shinybroker.utils import pack_message
+from shinybroker.utils import pack_message, pack_element
 from shinybroker.obj_defs import Contract
 
 
-def req_contract_details(reqId: str, contract: Contract):
+def req_contract_details(reqId: int, contract: Contract):
     return pack_message(
         functionary['outgoing_msg_codes']['REQ_CONTRACT_DATA'] + "\0" +
         "8\0" +  # VERSION
-        reqId + "\0" +
-        contract.conId + "\0" +  # srv v37 and above
-        contract.symbol + "\0" +
-        contract.secType + "\0" +
-        contract.lastTradeDateOrContractMonth + "\0" +
-        contract.strike + "\0" +
-        contract.right + "\0" +
-        contract.multiplier + "\0" +
-        contract.exchange + "\0" +
-        contract.primaryExchange + "\0" +
-        contract.currency + "\0" +
-        contract.localSymbol + "\0" +
-        contract.tradingClass + "\0" +
-        contract.includeExpired + "\0" +
-        contract.secIdType + "\0" +
-        contract.secId + "\0" +
-        contract.issuerId  + "\0"
+        pack_element(reqId) +
+        pack_element(contract.conId) +  # srv v37 and above
+        pack_element(contract.symbol) +
+        pack_element(contract.secType) +
+        pack_element(contract.lastTradeDateOrContractMonth) +
+        pack_element(contract.strike) +
+        pack_element(contract.right) +
+        pack_element(contract.multiplier) +
+        pack_element(contract.exchange) +
+        pack_element(contract.primaryExchange) +
+        pack_element(contract.currency) +
+        pack_element(contract.localSymbol) +
+        pack_element(contract.tradingClass) +
+        pack_element(contract.includeExpired) +
+        pack_element(contract.secIdType) +
+        pack_element(contract.secId) +
+        pack_element(contract.issuerId)
     )
 
 
@@ -54,12 +54,10 @@ def req_mkt_data(
         reqId: str,
         contract: Contract,
         genericTickList: str,
-        snapshot: str,
-        regulatorySnapshot: str,
+        snapshot: bool,
+        regulatorySnapshot: bool,
         mktDataOptions: str
 ):
-
-    VERSION = 11
 
     # send req mkt data msg
     msg = (
@@ -102,10 +100,10 @@ def req_mkt_data(
         msg += "0\0"
 
     msg += (
-            genericTickList + "\0" + # srv v31 and above
-            snapshot + "\0" +
-            regulatorySnapshot + "\0" +
-            mktDataOptions + "\0"
+            str(genericTickList) + "\0" + # srv v31 and above
+            str(snapshot) + "\0" +
+            str(regulatorySnapshot) + "\0" +
+            str(mktDataOptions) + "\0"
     )
 
     return pack_message(msg)

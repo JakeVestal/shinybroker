@@ -23,6 +23,7 @@ Shiny.addCustomMessageHandler('9', function(msg) {
 );
 Shiny.addCustomMessageHandler('10', function(msg) {
         msg.shift(); // don't need reqID (first element)
+        console.log(msg)
         contract_data_buf.push(msg);
     }
 );
