@@ -31,6 +31,12 @@ Shiny.addCustomMessageHandler('15', function(msg) {
         Shiny.setInputValue('managed_accounts', msg, {priority: 'event'});
     }
 );
+Shiny.addCustomMessageHandler('18', function(msg) {
+        msg.shift(); // don't need reqID (first element)
+        console.log(msg)
+        contract_data_buf.push(msg);
+    }
+);
 Shiny.addCustomMessageHandler('45', function(msg) {
         Shiny.setInputValue('tick_generic', msg, {priority: 'event'});
     }

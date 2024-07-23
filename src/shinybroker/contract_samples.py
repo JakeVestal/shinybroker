@@ -1,10 +1,8 @@
 contract_samples = {
 	'contract = Contract()\ncontract.symbol = "EUR"\ncontract.secType = "CASH"\ncontract.currency = "GBP"\ncontract.exchange = "IDEALPRO"': 'EurGbpFx',
 	'contract = Contract()\ncontract.symbol = "DAX"\ncontract.secType = "IND"\ncontract.currency = "EUR"\ncontract.exchange = "EUREX"': 'Index',
-	'contract = Contract()\ncontract.symbol = "IBDE30"\ncontract.secType = "CFD"\ncontract.currency = "EUR"\ncontract.exchange = "SMART"': 'CFD',
 	'contract = Contract()\ncontract.symbol = "BMW"\ncontract.secType = "STK"\ncontract.currency = "EUR"\ncontract.exchange = "SMART"\ncontract.primaryExchange = "IBIS"': 'EuropeanStock',
 	'contract = Contract()\ncontract.symbol = "NOKIA"\ncontract.secType = "STK"\ncontract.currency = "EUR"\ncontract.exchange = "SMART"\ncontract.primaryExchange = "HEX"': 'EuropeanStock2',
-	'contract = Contract()\ncontract.symbol = "COF"\ncontract.secType = "OPT"\ncontract.currency = "USD"\ncontract.exchange = "ISE"\ncontract.lastTradeDateOrContractMonth = "20190315"\ncontract.right = "P"\ncontract.strike = 105\ncontract.multiplier = "100"': 'OptionAtIse',
 	'contract = Contract()\ncontract.symbol= "449276AA2"\ncontract.secType = "BOND"\ncontract.exchange = "SMART"\ncontract.currency = "USD"': 'BondWithCusip',
 	'contract = Contract()\ncontract.conId = 456467716\ncontract.exchange = "SMART"': 'Bond',
 	'contract = Contract()\ncontract.symbol = "VINIX"\ncontract.secType = "FUND"\ncontract.exchange = "FUNDSERV"\ncontract.currency = "USD"': 'MutualFund',
