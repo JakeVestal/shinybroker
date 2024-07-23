@@ -100,7 +100,7 @@ def req_mkt_data(
         msg += "0\0"
 
     msg += (
-            pack_element(genericTickList) + # srv v31 and above
+            pack_element(genericTickList) +  # srv v31 and above
             pack_element(snapshot) +
             pack_element(regulatorySnapshot) +
             pack_element(mktDataOptions)
