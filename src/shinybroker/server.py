@@ -357,6 +357,33 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
                             'suggestedSizeIncrement': [cdeets[i][23]]
                         })
                     )
+                case 'CMDTY':
+                    contract_details_lst.append(
+                        pd.DataFrame({
+                            'symbol': [cdeets[i][0]],
+                            'secType': [cdeets[i][1]],
+                            'exchange': [cdeets[i][3]],
+                            'currency': [cdeets[i][4]],
+                            'localSymbol': [cdeets[i][5]],
+                            'marketName': [cdeets[i][6]],
+                            'tradingClass': [cdeets[i][7]],
+                            'conId': [cdeets[i][8]],
+                            'minTick': [cdeets[i][9]],
+                            'orderTypes': [cdeets[i][10]],
+                            'validExchanges': [cdeets[i][11]],
+                            'priceMagnifier': [cdeets[i][12]],
+                            'longName': [cdeets[i][14]],
+                            'timeZoneId': [cdeets[i][15]],
+                            'tradingHours': [cdeets[i][16]],
+                            'liquidHours': [cdeets[i][17]],
+                            'evMultiplier': [cdeets[i][18]],
+                            'aggGroup': [cdeets[i][19]],
+                            'marketRuleIds': [cdeets[i][20]],
+                            'minSize': [cdeets[i][21]],
+                            'sizeIncrement': [cdeets[i][22]],
+                            'suggestedSizeIncrement': [cdeets[i][23]]
+                        })
+                    )
                 case 'FUND':
                     end_of_sec_id_list_ind = 19 + 2 * int(cdeets[i][18])
                     contract_details_lst.append(
