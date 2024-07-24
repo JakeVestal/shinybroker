@@ -1,4 +1,5 @@
 contract_samples = {
+	'contract = Contract()\ncontract.symbol="AAPL"\ncontract.secType="STK"\ncontract.exchange="SMART"\ncontract.currency="USD"': 'Apple Inc. (Stock)',
 	'contract = Contract()\ncontract.symbol = "EUR"\ncontract.secType = "CASH"\ncontract.currency = "GBP"\ncontract.exchange = "IDEALPRO"': 'EurGbpFx',
 	'contract = Contract()\ncontract.symbol = "DAX"\ncontract.secType = "IND"\ncontract.currency = "EUR"\ncontract.exchange = "EUREX"': 'Index',
 	'contract = Contract()\ncontract.symbol = "IBDE30"\ncontract.secType = "CFD"\ncontract.currency = "EUR"\ncontract.exchange = "SMART"': 'CFD',
