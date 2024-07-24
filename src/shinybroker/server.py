@@ -291,9 +291,6 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
     def update_contract_details():
 
         cdeets = input.contract_details()
-
-        print(cdeets)
-
         contract_details_lst = []
 
         for i in range(len(cdeets)):
@@ -301,7 +298,7 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
                 end_of_sec_id_list_ind = 13 + 2 * int(cdeets[i][12])
                 contract_details_lst.append(
                     pd.DataFrame({
-                        'descAppend': [cdeets[i][4]],
+                        'symbol': [cdeets[i][4]],
                         'underSymbol': [cdeets[i][6]],
                         'conId': [cdeets[i][7]],
                         'minTick': [cdeets[i][8]],
@@ -744,19 +741,24 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
         ignore_init=True
     )
     def request_market_data():
+        mkt_dta = mkt_data()
         exec(input.md_contract_definition())
         (rd, wt, er) = select.select([], [ib_socket], [])
         nxt_valid_id = next_valid_id()
-        mkt_string = "req_mkt_data(" + str(nxt_valid_id) + ", contract, " + \
-                     "genericTickList, snapshot, regulatorySnapshot, mktDataOptions)"
-        print(mkt_string)
-        msg = eval(
-            mkt_string
-        )
-        print(msg)
         wt[0].send(
-            msg
+            eval(
+                "req_mkt_data(" + str(nxt_valid_id) + ", contract, " +
+                "genericTickList, snapshot, regulatorySnapshot, mktDataOptions)"
+            )
         )
+        mkt_dta.update({
+            nxt_valid_id: {
+                key: value for (key, value) in
+                eval('contract.__dict__.items()') if
+                value is not None and value != 0 and value != ''
+            }
+        })
+        mkt_data.set(mkt_dta.copy())
 
     @reactive.effect
     @reactive.event(input.tick_req_params)
@@ -818,7 +820,6 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
     def mkt_data_txt():
         temp_out = StringIO()
         sys.stdout = temp_out
-        print(mkt_data())
         sys.stdout = sys.__stdout__
         return temp_out.getvalue()
 
