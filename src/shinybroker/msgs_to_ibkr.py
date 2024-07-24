@@ -34,11 +34,11 @@ def req_current_time():
     )
 
 
-def req_market_data_type(marketDataType: str):
+def req_market_data_type(marketDataType: int):
     return pack_message(
         functionary['outgoing_msg_codes']['REQ_MARKET_DATA_TYPE'] + "\0" +
         "1\0" +  # VERSION
-        marketDataType + "\0"
+        pack_element(marketDataType)
     )
 
 

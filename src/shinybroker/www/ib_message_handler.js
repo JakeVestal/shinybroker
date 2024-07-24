@@ -10,7 +10,7 @@ Shiny.addCustomMessageHandler('2', function(msg) {
 );
 Shiny.addCustomMessageHandler('4', function(msg) {
         Shiny.setInputValue('error_message', msg, {priority: 'event'});
-        if (['200', '321', '322', '2130'].includes(msg[2])) {
+        if (['200', '321', '322', '2130', '10089'].includes(msg[2])) {
             Shiny.setInputValue(
                 'error_notification', msg[3], {priority: 'event'}
             );
