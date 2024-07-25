@@ -1,12 +1,9 @@
 import datetime
-import json
 import select
-import sys
 import threading
 
 import pandas as pd
 
-from io import StringIO
 from shinybroker.connection import (
     create_ibkr_socket_conn,
     ib_msg_reader_run_loop
@@ -744,15 +741,19 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
         mkt_dta = mkt_data()
         exec(input.md_contract_definition())
         (rd, wt, er) = select.select([], [ib_socket], [])
-        nxt_valid_id = next_valid_id()
+        try:
+            subscription_id = max(list(map(int, mkt_dta.keys()))) + 1
+        except ValueError:
+            subscription_id = 1
+        subscription_id = str(subscription_id)
         wt[0].send(
             eval(
-                "req_mkt_data(" + str(nxt_valid_id) + ", contract, " +
+                "req_mkt_data(" + subscription_id + ", contract, " +
                 "genericTickList, snapshot, regulatorySnapshot, mktDataOptions)"
             )
         )
         mkt_dta.update({
-            nxt_valid_id: {
+            subscription_id: {
                 key: value for (key, value) in
                 eval('contract.__dict__.items()') if
                 value is not None and value != 0 and value != ''
@@ -818,8 +819,5 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
 
     @render.text
     def mkt_data_txt():
-        temp_out = StringIO()
-        sys.stdout = temp_out
-        sys.stdout = sys.__stdout__
-        return temp_out.getvalue()
+        return mkt_data().__repr__()
 
