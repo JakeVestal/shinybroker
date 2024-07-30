@@ -215,7 +215,7 @@ sb_ui = ui.page_sidebar(
             id="main_tab"
         )
     ),
-    title="ShinyTrader: Visual Reactive Trading with IBKR",
+    title="ShinyBroker: Visual Reactive Trading with IBKR",
     fillable=True,
     class_="bslib-page-dashboard"
 )
