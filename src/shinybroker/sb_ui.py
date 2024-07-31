@@ -5,18 +5,7 @@ from shiny import ui
 from shinybroker.contract_samples import contract_samples
 
 
-def sb_ui(
-        home_ui = ui.div(
-            ui.h5('Shiny App home directory:'),
-            ui.p(str(os.path.dirname(os.path.realpath(__file__)))),
-            ui.br(),
-            ui.input_text(
-                id='sb_example_text_in',
-                label='Example Input. Type something!'
-            ),
-            ui.output_code('sb_example_text_out')
-        )
-):
+def sb_ui(home_ui = ui.p('no ui passed to sb_ui().')):
     return ui.page_sidebar(
         ui.sidebar(
             ui.output_text('next_valid_id_txt'),
