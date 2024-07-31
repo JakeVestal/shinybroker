@@ -9,7 +9,13 @@ from shinybroker.connection import (
     ib_msg_reader_run_loop
 )
 from shinybroker.obj_defs import Contract
-from shinybroker.msgs_to_ibkr import *
+from shinybroker.msgs_to_ibkr import (
+    req_contract_details,
+    req_current_time,
+    req_market_data_type,
+    req_matching_symbols,
+    req_sec_def_opt_params
+)
 from shinybroker.functionary import functionary
 from shiny import Inputs, Outputs, Session, reactive, render, ui
 
@@ -825,8 +831,3 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
             {functionary['tick_type'][int(tp[2])]: tp[3]}
         )
         mkt_data.set(mkt_dta.copy())
-
-    @render.text
-    def mkt_data_txt():
-        return mkt_data().__repr__()
-
