@@ -16,8 +16,17 @@ from shiny import Inputs, Outputs, Session, reactive, render, ui
 
 def sb_server(input: Inputs, output: Outputs, session: Session):
 
+    try:
+        hst = eval('IB_HOST'),
+        prt = eval('IB_PORT'),
+        cid = eval('IB_CLIENT_ID')
+    except NameError as exc:
+        hst = '127.0.0.1'
+        prt = 7497
+        cid = 0
+
     ib_socket, API_VERSION, CONNECTION_TIME = create_ibkr_socket_conn(
-        client_id=10645
+        host=hst, port=prt, client_id=cid
     )
     session.on_ended(ib_socket.close)
 
