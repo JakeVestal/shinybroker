@@ -6,9 +6,15 @@ from shinybroker.contract_samples import contract_samples
 
 
 def sb_ui(
-        home_ui=ui.div(
-            ui.p('Shiny App home directory:'),
-            ui.span(str(os.path.dirname(os.path.realpath(__file__))))
+        home_ui = ui.div(
+            ui.h5('Shiny App home directory:'),
+            ui.p(str(os.path.dirname(os.path.realpath(__file__)))),
+            ui.br(),
+            ui.input_text(
+                id='sb_example_text_in',
+                label='Example Input. Type something!'
+            ),
+            ui.output_code('sb_example_text_out')
         )
 ):
     return ui.page_sidebar(
@@ -40,10 +46,7 @@ def sb_ui(
                 )
             ),
             ui.navset_pill(
-                ui.nav_panel(
-                    icon_svg('house'),
-                    home_ui
-                ),
+                ui.nav_panel(icon_svg('house'),home_ui),
                 ui.nav_panel(
                     icon_svg('money-bill-transfer'),
                     ui.h2('Orders')
@@ -63,8 +66,8 @@ def sb_ui(
                     ui.br(),
                     ui.a(
                         'Tick Types',
-                        href='https://ibkrcampus.com/ibkr-api-page/twsapi-doc/' +
-                             '#available-tick-types'
+                        href='https://ibkrcampus.com/ibkr-api-page/' +
+                             'twsapi-doc/#available-tick-types'
                     ),
                     ui.input_text_area(
                         id="md_contract_definition",
@@ -87,18 +90,18 @@ def sb_ui(
                     ui.h2('Interactive Queries'),
                     ui.p(
                         'You can use this section to view the values of the ' +
-                        'reactive variables below, but you can also run queries ' +
-                        'and explore the results.'
+                        'reactive variables below, but you can also run ' +
+                        'queries and explore the results.'
                     ),
                     ui.accordion(
                         ui.accordion_panel(
                             'Matching Symbols',
                             ui.p(
-                                'Fetch all symbols at IBKR that approximately ' +
-                                'match your search parameters. Results are ' +
-                                'are separated into "stocks" and "bonds". ' +
-                                '"Stocks" includes "stock-like" contracts ' +
-                                'such as ETFs.'
+                                'Fetch all symbols at IBKR that ' +
+                                'approximately match your search ' +
+                                'parameters. Results are separated into ' +
+                                '"stocks" and "bonds". "Stocks" includes ' +
+                                '"stock-like" contracts such as ETFs.'
                             ),
                             ui.a(
                                 'IBKR Documentation',
@@ -130,7 +133,9 @@ def sb_ui(
                             ui.panel_conditional(
                                 "input.show_matching_stocks",
                                 ui.h6('Matching Stocks:'),
-                                ui.output_data_frame("matching_stock_symbols_df")
+                                ui.output_data_frame(
+                                    "matching_stock_symbols_df"
+                                )
                             ),
                             ui.input_switch(
                                 id="show_matching_bonds",
@@ -190,7 +195,7 @@ def sb_ui(
                             ).add_style('width:125px;display:inline-block;'),
                             ui.input_action_button(
                                 id="req_sec_def_opt_params_btn",
-                                label="Request Security-Defined Option Parameters"
+                                label="Request Sec-Def Option Parameters"
                             ).add_style('display:block;'),
                             ui.output_data_frame("sec_def_opt_params_df")
                         ),
@@ -201,14 +206,16 @@ def sb_ui(
                 ui.nav_panel(
                     icon_svg('info'),
                     ui.h3('Error Messages'),
-                    ui.h5('Reactive variable: ', ui.code('error_messages()')),
+                    ui.h5(
+                        'Reactive variable: ',
+                        ui.code('error_messages()')
+                    ),
                     ui.p(
-                        'All error messages received during your session ' +
-                        'are stored in ', ui.code('error_messages()'), '. Some ' +
-                        'error messages will cause alerts to appear in the ' +
-                        'webpage to alert the user (e.g., no matching contracts ' +
-                        'found for a call to ',
-                        ui.code('req_matching_contracts()'), "."
+                        'All error messages received during your '
+                        'session are stored in ', ui.code('error_messages()'),
+                        '. Some error messages will cause alerts to appear ' +
+                        'in the webpage as they are received (e.g., "no ' +
+                        'matching contracts").'
                     ),
                     ui.p(
                         'Not all "error messages" mean that something went ' +
