@@ -23,6 +23,12 @@ dependencies = [
     "pandas",
     "shiny"
 ]
+optional-dependencies = [
+    "quarto",
+    "hatch",
+    "twine",
+    "pytest"
+]
 
 [project.urls]
 url="https://github.com/JakeVestal/shinybroker"

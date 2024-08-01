@@ -14,10 +14,6 @@ def create_ibkr_socket_conn(host='127.0.0.1', port=7497, client_id=0):
     # create the socket object
     ib_socket = socket.socket()
     try:
-        print('host')
-        print(host)
-        print('port')
-        print(port)
         ib_socket.connect((host, port))
     except ConnectionRefusedError as noconn:
         print(noconn)
