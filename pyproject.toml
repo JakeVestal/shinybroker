@@ -27,7 +27,8 @@ optional-dependencies = [
     "quarto",
     "hatch",
     "twine",
-    "pytest"
+    "pytest",
+    "build"
 ]
 
 [project.urls]
