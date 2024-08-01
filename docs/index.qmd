@@ -9,18 +9,141 @@ jupyter:
     name: python3
 ---
 
+ShinyBroker is based on the realization that in trading, everything is a
+reactive variable. Your orders, the prices of assets you're tracking, current
+positions, Greeks, p/l-- *everything* is time-dynamic, and can trigger trade
+order events according to algorithms written by the user. In ShinyBroker, those
+dynamic variables are kept updated over a socket connection to your account --
+live or paper -- at [Interactive Brokers](https://www.interactivebrokers
+.com/en/trading/ib-api.php), and are made accessible within [Posit's Shiny
+framework](https://shiny.posit.co/) -- a brilliant piece of coding that provides
+ a natural sandbox for reactive variables and their live visualization as
+ webpages.
 
-The ShinyBroker intro video will be here soon, but until I shoot it and upload
-it, here's a stand-in test video about Quartodocs, the package I'm using to
-build the site.
+The 'hello world' example below will walk you through a trivial setup case.
+**You do not need an account at Interactive Brokers** in order to follow the
+example, but it is suggested that you set up a free paper trader account with
+them if you're interested in keeping track of your trades.
 
-Check out the below screencast for a walkthrough of creating a documentation
-site, or read on for instructions -- it's a good platform :)
+
+## Hello World Example
+*Run the base ShinyBroker app, and inject a simple bit of UI & server code.*
+
+1) Download and install [**TWS Latest**](https://www.interactivebrokers
+.com/en/trading/tws.php#:~:text=TWS%20SOFTWARE) for your OS
+
+2) Open up TWS and sign in to the demo by clicking the link indicated by the
+yellow rectangle below. You'll be asked for an email and whether or not you'd
+like IBKR to contact you. If you have a paper account already then you can
+certainly use it, just sign in as usual.
+![TWS Demo Login](data/tws_demo_login)
+
+3) Once you're signed in, familiarize yourself with the system until you're
+ready to move on. If you used a demo account, know that any trades you make will
+ be erased when you log out.
+
+4) Open the API Configuration menu using the **File** dropdown. You can find the
+ menu at File > Global Configuration > API > Settings.
+
+5) Check **Enable ActiveX and Socket Clients**
+
+6) Un-check **Read-only API**
+
+7) You can leave the rest of the settings alone. By default, your settings menu
+should look like the below:
+![Settings Menu](data/api_config)
+
+8) Install ShinyBroker with `pip install shinybroker`
+
+9) In Python, run the following:
+
+```{python}
+#| eval: false
+import shinybroker as sb
+from shiny import Inputs, Outputs, Session, App, ui, render
+
+# Connection Parameters
+IB_HOST = '127.0.0.1'
+IB_PORT = 7497
+IB_CLIENT_ID = 10645     # client ID chosen at random
+
+app_ui = sb.sb_ui()
+server = sb.sb_server
+
+app = App(app_ui, server)
+
+app.run()
+```
+
+10) Click the link to open up a web browser at localhost and explore the app.
+
+**Note that there is nothing in the "home" tab.** That space is reserved for
+you, the user, to inject your own graphics, controls, inputs & outputs, as well
+as your algorithm logic. Let's demonstrate that functionality by injecting some
+UI, and the server code to handle the backend, into the base ShinyBroker app.
+
+11) Stop the running instance of the ShinyBroker app and modify your code as
+shown below:
+
+```{python}
+#| eval: false
+import shinybroker as sb
+from shiny import Inputs, Outputs, Session, App, ui, render
+
+IB_HOST = '127.0.0.1'
+IB_PORT = 7497
+IB_CLIENT_ID = 10645
+VERBOSE = False
+
+app_ui = sb.sb_ui(
+    ui.div(
+        ui.input_text(
+            id='sb_example_text_in',
+            label='Example Input. Type something!'
+        ),
+        ui.output_code('sb_example_text_out')
+    )
+)
+
+
+def user_defined_server(input:Inputs, outputs:Outputs, session:Session):
+    @render.code
+    def sb_example_text_out():
+        return f"You entered '{input.sb_example_text_in()}'."
+
+
+def server(input:Inputs, outputs:Outputs, session:Session):
+    sb.sb_server(input, outputs, session)
+    user_defined_server(input, outputs, session)
+
+
+app = App(app_ui, server)
+
+
+app.run()
+```
+
+Here, we have done two things:
+
+- added a **ui**: We added a text input and a text output contained within a div
+- added a **server** function: it reads whatever text has been input by the user
+ into the text_input, appends "You entered " to the beginning of it, and returns
+  the text to the text output.
+
+12) Run the modified code above. Your app should now look something like the
+screenshot below:
+![Hello World Screenshot](data/hello_world)
+
+If you can get that far, **success**! From this simple starting point you can
+build trading algorithm that does just about anything. More usage examples that
+cover market data, orders, positions, and other topics will be treated in other
+tutorials and videos accessible on this site.
 
 
 ```{python}
 #| echo: false
 #| output: asis
+#| eval: false
 
 # this code ensures that the proper html for the tutorial screencast is used,
 # depending on whether it's being rendered for the github README, or doc site.
