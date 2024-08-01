@@ -23,7 +23,9 @@ dependencies = [
     "pandas",
     "shiny"
 ]
-optional-dependencies = [
+
+[project.optional-dependencies]
+dev = [
     "quarto",
     "hatch",
     "twine",
