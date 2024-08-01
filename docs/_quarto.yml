@@ -32,6 +32,9 @@ format:
 metadata-files:
   - _sidebar.yml
 
+resources:
+  - "data/*"
+
 quartodoc:
   title: Reference
   package: shinybroker

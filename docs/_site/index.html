@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -113,8 +147,14 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#hello-world-example" id="toc-hello-world-example" class="nav-link active" data-scroll-target="#hello-world-example">Hello World Example</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -138,15 +178,93 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>The ShinyBroker intro video will be here soon, but until I shoot it and upload it, here’s a stand-in test video about Quartodocs, the package I’m using to build the site.</p>
-<p>Check out the below screencast for a walkthrough of creating a documentation site, or read on for instructions – it’s a good platform :)</p>
-<div style="position: relative; padding-bottom: 64.5933014354067%; height: 0;">
-<iframe src="https://www.loom.com/embed/fb4eb736848e470b8409ba46b514e2ed?sid=31db7652-43c6-4474-bab3-19dea2170775" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
-</iframe>
+<p>ShinyBroker is based on the realization that in trading, everything is a reactive variable. Your orders, the prices of assets you’re tracking, current positions, Greeks, p/l– <em>everything</em> is time-dynamic, and can trigger trade order events according to algorithms written by the user. In ShinyBroker, those dynamic variables are kept updated over a socket connection to your account – live or paper – at <a href="https://www.interactivebrokers%20.com/en/trading/ib-api.php">Interactive Brokers</a>, and are made accessible within <a href="https://shiny.posit.co/">Posit’s Shiny framework</a> – a brilliant piece of coding that provides a natural sandbox for reactive variables and their live visualization as webpages.</p>
+<p>The ‘hello world’ example below will walk you through a trivial setup case. <strong>You do not need an account at Interactive Brokers</strong> in order to follow the example, but it is suggested that you set up a free paper trader account with them if you’re interested in keeping track of your trades.</p>
+<section id="hello-world-example" class="level2">
+<h2 class="anchored" data-anchor-id="hello-world-example">Hello World Example</h2>
+<p><em>Run the base ShinyBroker app, and inject a simple bit of UI &amp; server code.</em></p>
+<ol type="1">
+<li><p>Download and install <a href="https://www.interactivebrokers%20.com/en/trading/tws.php#:~:text=TWS%20SOFTWARE"><strong>TWS Latest</strong></a> for your OS</p></li>
+<li><p>Open up TWS and sign in to the demo by clicking the link indicated by the yellow rectangle below. You’ll be asked for an email and whether or not you’d like IBKR to contact you. If you have a paper account already then you can certainly use it, just sign in as usual. <img src="data/tws_demo_login.png" class="img-fluid" alt="TWS Demo Login"></p></li>
+<li><p>Once you’re signed in, familiarize yourself with the system until you’re ready to move on. If you used a demo account, know that any trades you make will be erased when you log out.</p></li>
+<li><p>Open the API Configuration menu using the <strong>File</strong> dropdown. You can find the menu at File &gt; Global Configuration &gt; API &gt; Settings.</p></li>
+<li><p>Check <strong>Enable ActiveX and Socket Clients</strong></p></li>
+<li><p>Un-check <strong>Read-only API</strong></p></li>
+<li><p>You can leave the rest of the settings alone. By default, your settings menu should look like the below: <img src="data/api_config.png" class="img-fluid" alt="Settings Menu"></p></li>
+<li><p>Install ShinyBroker with <code>pip install shinybroker</code></p></li>
+<li><p>In Python, run the following:</p></li>
+</ol>
+<div id="8b35e099" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shinybroker <span class="im">as</span> sb</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shiny <span class="im">import</span> Inputs, Outputs, Session, App, ui, render</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Connection Parameters</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>IB_HOST <span class="op">=</span> <span class="st">'127.0.0.1'</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>IB_PORT <span class="op">=</span> <span class="dv">7497</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>IB_CLIENT_ID <span class="op">=</span> <span class="dv">10645</span>     <span class="co"># client ID chosen at random</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>app_ui <span class="op">=</span> sb.sb_ui()</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>server <span class="op">=</span> sb.sb_server</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>app <span class="op">=</span> App(app_ui, server)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>app.run()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><br></p>
+<ol start="10" type="1">
+<li>Click the link to open up a web browser at localhost and explore the app.</li>
+</ol>
+<p><strong>Note that there is nothing in the “home” tab.</strong> That space is reserved for you, the user, to inject your own graphics, controls, inputs &amp; outputs, as well as your algorithm logic. Let’s demonstrate that functionality by injecting some UI, and the server code to handle the backend, into the base ShinyBroker app.</p>
+<ol start="11" type="1">
+<li>Stop the running instance of the ShinyBroker app and modify your code as shown below:</li>
+</ol>
+<div id="c413f3db" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shinybroker <span class="im">as</span> sb</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shiny <span class="im">import</span> Inputs, Outputs, Session, App, ui, render</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>IB_HOST <span class="op">=</span> <span class="st">'127.0.0.1'</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>IB_PORT <span class="op">=</span> <span class="dv">7497</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>IB_CLIENT_ID <span class="op">=</span> <span class="dv">10645</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>VERBOSE <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>app_ui <span class="op">=</span> sb.sb_ui(</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    ui.div(</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        ui.input_text(</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>            <span class="bu">id</span><span class="op">=</span><span class="st">'sb_example_text_in'</span>,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>            label<span class="op">=</span><span class="st">'Example Input. Type something!'</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        ui.output_code(<span class="st">'sb_example_text_out'</span>)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> user_defined_server(<span class="bu">input</span>:Inputs, outputs:Outputs, session:Session):</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">@render.code</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> sb_example_text_out():</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="ss">f"You entered '</span><span class="sc">{</span><span class="bu">input</span><span class="sc">.</span>sb_example_text_in()<span class="sc">}</span><span class="ss">'."</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> server(<span class="bu">input</span>:Inputs, outputs:Outputs, session:Session):</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    sb.sb_server(<span class="bu">input</span>, outputs, session)</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    user_defined_server(<span class="bu">input</span>, outputs, session)</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>app <span class="op">=</span> App(app_ui, server)</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>app.run()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Here, we have done two things:</p>
+<ul>
+<li>added a <strong>ui</strong>: We added a text input and a text output contained within a div</li>
+<li>added a <strong>server</strong> function: it reads whatever text has been input by the user into the text_input, appends “You entered” to the beginning of it, and returns the text to the text output.</li>
+</ul>
+<ol start="12" type="1">
+<li>Run the modified code above. Your app should now look something like the screenshot below: <img src="data/hello_world.png" class="img-fluid" alt="Hello World Screenshot"></li>
+</ol>
+<p>If you can get that far, <strong>success</strong>! From this simple starting point you can build trading algorithm that does just about anything. More usage examples that cover market data, orders, positions, and other topics will be treated in other tutorials and videos accessible on this site.</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
