@@ -133,6 +133,6 @@ screenshot below:
 ![Hello World Screenshot](data/hello_world)
 
 If you can get that far, **success**! From this simple starting point you can
-build trading algorithm that does just about anything. More usage examples that
-cover market data, orders, positions, and other topics will be treated in other
-tutorials and videos accessible on this site.
+build a trading algorithm that does just about anything. More usage examples
+that cover market data, orders, positions, and other topics will be treated in
+other tutorials and videos accessible on this site.
