@@ -46,7 +46,7 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
         kwargs={
             'ib_sock': ib_socket,
             'shiny_sesh': session,
-            'verbose': True
+            'verbose': eval('VERBOSE')
         }
     )
     ib_msg_reader_thread.start()
