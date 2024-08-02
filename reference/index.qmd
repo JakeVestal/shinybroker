@@ -1,0 +1,9 @@
+# Reference {.doc .doc-index}
+
+## ShinyBroker Objects
+
+These objects are the building blocks that your application uses to work with important tasks like fetching market data or submitting a trade order.
+
+| | |
+| --- | --- |
+| [Contract](Contract.qmd#shinybroker.Contract) | Create a contract |

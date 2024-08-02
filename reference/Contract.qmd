@@ -1,0 +1,17 @@
+# Contract { #shinybroker.Contract }
+
+`Contract(self, contract_params=None)`
+
+Create a contract
+
+## Parameters
+
+| Name              | Type   | Description          | Default   |
+|-------------------|--------|----------------------|-----------|
+| `contract_params` | dict   | First number to add. | `None`    |
+
+## Returns
+
+| Type     | Description       |
+|----------|-------------------|
+| Contract | A Contract object |
