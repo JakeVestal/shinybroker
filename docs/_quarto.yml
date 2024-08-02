@@ -5,6 +5,7 @@ project:
 website:
   title: "ShinyBroker"
   description: "Visual Trading API for Interactive Brokers"
+  site-url: "https://shinybroker.com"
   page-navigation: true
   page-footer:
     center: |
