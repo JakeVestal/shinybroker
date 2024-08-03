@@ -1,6 +1,4 @@
-import datetime
-import select
-import threading
+import datetime, select, threading, os
 
 import pandas as pd
 
@@ -16,14 +14,11 @@ from shiny import Inputs, Outputs, Session, reactive, render, ui
 
 def sb_server(input: Inputs, output: Outputs, session: Session):
 
-    try:
-        hst = eval('IB_HOST')
-        prt = eval('IB_PORT')
-        cid = eval('IB_CLIENT_ID')
-    except NameError as exc:
-        hst = '127.0.0.1'
-        prt = 7497
-        cid = 0
+    hst = os.environ.get('IB_HOST', '127.0.0.1')
+    prt = int(os.environ.get('IB_PORT', 7497))
+    cid = int(os.environ.get('IB_CLIENT_ID', 0))
+    vrb = bool(os.environ.get('IB_VERBOSE', False))
+
 
     ib_socket, API_VERSION, CONNECTION_TIME = create_ibkr_socket_conn(
         host=hst, port=prt, client_id=cid
@@ -33,6 +28,9 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
     print(
         'Connected to IBKR at ' + CONNECTION_TIME +
         ' under API protocol version ' + API_VERSION
+    )
+    print(
+        'host: ' + hst + "\nport: " + str(prt) + "\nclient_id: " + str(cid)
     )
 
     # Creates a thread object for the async function that reads incoming
@@ -46,7 +44,7 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
         kwargs={
             'ib_sock': ib_socket,
             'shiny_sesh': session,
-            'verbose': eval('VERBOSE')
+            'verbose': vrb
         }
     )
     ib_msg_reader_thread.start()

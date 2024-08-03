@@ -184,47 +184,52 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="hello-world-example">Hello World Example</h2>
 <p><em>Run the base ShinyBroker app, and inject a simple bit of UI &amp; server code.</em></p>
 <ol type="1">
-<li><p>Download and install <a href="https://www.interactivebrokers%20.com/en/trading/tws.php#:~:text=TWS%20SOFTWARE"><strong>TWS Latest</strong></a> for your OS</p></li>
-<li><p>Open up TWS and sign in to the demo by clicking the link indicated by the yellow rectangle below. You’ll be asked for an email and whether or not you’d like IBKR to contact you. If you have a paper account already then you can certainly use it, just sign in as usual. <img src="data/tws_demo_login.png" class="img-fluid" alt="TWS Demo Login"></p></li>
+<li><p>Download and install <a href="https://www.interactivebrokers%20.com/en/trading/tws.php#:~:text=TWS%20SOFTWARE"><strong>TWS Latest</strong></a> for your OS. TWS (Trader Workstation) is what ShinyBroker connects to in order to communicate with IBKR and the market exchanges. Whenever you use ShinyBroker, you’ll need to have TWS open and running.</p></li>
+<li><p>Open up TWS and sign in to the demo by clicking the link indicated by the yellow rectangle below. You’ll be asked for an email and whether or not you’d like IBKR to contact you. If you have a paper account already then you can certainly use it, so just sign in as usual. <img src="data/tws_demo_login.png" class="img-fluid" alt="TWS Demo Login"></p></li>
 <li><p>Once you’re signed in, familiarize yourself with the system until you’re ready to move on. If you used a demo account, know that any trades you make will be erased when you log out.</p></li>
 <li><p>Open the API Configuration menu using the <strong>File</strong> dropdown. You can find the menu at File &gt; Global Configuration &gt; API &gt; Settings.</p></li>
 <li><p>Check <strong>Enable ActiveX and Socket Clients</strong></p></li>
 <li><p>Un-check <strong>Read-only API</strong></p></li>
 <li><p>You can leave the rest of the settings alone. By default, your settings menu should look like the below: <img src="data/api_config.png" class="img-fluid" alt="Settings Menu"></p></li>
 <li><p>Install ShinyBroker with <code>pip install shinybroker</code></p></li>
-<li><p>In Python, run the following:</p></li>
+<li><p>In Python, run the following: (<em>make sure TWS is open and running</em>)</p></li>
 </ol>
-<div id="632d07c7" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shinybroker <span class="im">as</span> sb</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shiny <span class="im">import</span> Inputs, Outputs, Session, App, ui, render</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Connection Parameters</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>IB_HOST <span class="op">=</span> <span class="st">'127.0.0.1'</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>IB_PORT <span class="op">=</span> <span class="dv">7497</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>IB_CLIENT_ID <span class="op">=</span> <span class="dv">10645</span>     <span class="co"># client ID chosen at random</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>app_ui <span class="op">=</span> sb.sb_ui()</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>server <span class="op">=</span> sb.sb_server</span>
+<div id="958a7bd5" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shinybroker <span class="im">as</span> sb</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shiny <span class="im">import</span> Inputs, Outputs, Session, App</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Project Settings</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>os.environ[<span class="st">'IB_HOST'</span>] <span class="op">=</span> <span class="st">'127.0.0.1'</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>os.environ[<span class="st">'IB_PORT'</span>] <span class="op">=</span> <span class="st">'7497'</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>os.environ[<span class="st">'IB_CLIENT_ID'</span>] <span class="op">=</span> <span class="st">'10645'</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>app <span class="op">=</span> App(sb.sb_ui(), sb.sb_server)</span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>app <span class="op">=</span> App(app_ui, server)</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>app.run()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>app.run()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>This code performs three main operations:</p>
+<ul>
+<li>Defines where ShinyBroker can find a running instance of an IBKR client (TWS)</li>
+<li>Creates a Shiny <code>app</code> object using only the base ShinyBroker ui and server</li>
+<li>Runs the app</li>
+</ul>
 <ol start="10" type="1">
-<li>Click the link to open up a web browser at localhost and explore the app.</li>
+<li>Click the link in the command line to open up a web browser at localhost and explore the app.</li>
 </ol>
-<p><strong>Note that there is nothing in the “home” tab.</strong> That space is reserved for you, the user, to inject your own graphics, controls, inputs &amp; outputs, as well as your algorithm logic. Let’s demonstrate that functionality by injecting some UI, and the server code to handle the backend, into the base ShinyBroker app.</p>
+<p><strong>Note that there is nothing in the “home” tab.</strong> That space is reserved for you, the user, to inject your own graphics, controls, inputs &amp; outputs, as well as your algorithm logic.</p>
+<p>Let’s demonstrate that functionality by injecting some UI, and the server code to handle the backend, into this base ShinyBroker app.</p>
 <ol start="11" type="1">
 <li>Stop the running instance of the ShinyBroker app and modify your code as shown below:</li>
 </ol>
-<div id="bb7c26f2" class="cell" data-execution_count="2">
+<div id="d014b287" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shinybroker <span class="im">as</span> sb</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shiny <span class="im">import</span> Inputs, Outputs, Session, App, ui, render</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>IB_HOST <span class="op">=</span> <span class="st">'127.0.0.1'</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>IB_PORT <span class="op">=</span> <span class="dv">7497</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>IB_CLIENT_ID <span class="op">=</span> <span class="dv">10645</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>VERBOSE <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Project Settings</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>IB_HOST <span class="op">=</span> <span class="st">'127.0.0.1'</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>IB_PORT <span class="op">=</span> <span class="dv">7497</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>IB_CLIENT_ID <span class="op">=</span> <span class="dv">10645</span></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>app_ui <span class="op">=</span> sb.sb_ui(</span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    ui.div(</span>

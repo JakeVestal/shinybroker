@@ -133,6 +133,7 @@ def sb_ui(home_ui = ui.p('no ui passed to sb_ui().')):
                             ).add_style("display:none;"),
                             ui.panel_conditional(
                                 "input.show_matching_bonds",
+                                ui.br(),
                                 ui.h6('Matching bonds:'),
                                 ui.output_data_frame("matching_bond_symbols_df")
                             )

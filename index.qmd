@@ -28,12 +28,15 @@ them if you're interested in keeping track of your trades.
 *Run the base ShinyBroker app, and inject a simple bit of UI & server code.*
 
 1) Download and install [**TWS Latest**](https://www.interactivebrokers
-.com/en/trading/tws.php#:~:text=TWS%20SOFTWARE) for your OS
+.com/en/trading/tws.php#:~:text=TWS%20SOFTWARE) for your OS. TWS (Trader
+Workstation) is what ShinyBroker connects to in order to communicate with IBKR
+and the market exchanges. Whenever you use ShinyBroker, you'll need to have TWS
+open and running.
 
 2) Open up TWS and sign in to the demo by clicking the link indicated by the
 yellow rectangle below. You'll be asked for an email and whether or not you'd
 like IBKR to contact you. If you have a paper account already then you can
-certainly use it, just sign in as usual.
+certainly use it, so just sign in as usual.
 ![TWS Demo Login](data/tws_demo_login)
 
 3) Once you're signed in, familiarize yourself with the system until you're
@@ -54,44 +57,56 @@ should look like the below:
 8) Install ShinyBroker with `pip install shinybroker`
 
 9) In Python, run the following:
+(*make sure TWS is open and running*)
 
 ```{python}
 #| eval: false
+import os
 import shinybroker as sb
-from shiny import Inputs, Outputs, Session, App, ui, render
+from shiny import Inputs, Outputs, Session, App
 
-# Connection Parameters
-IB_HOST = '127.0.0.1'
-IB_PORT = 7497
-IB_CLIENT_ID = 10645     # client ID chosen at random
 
-app_ui = sb.sb_ui()
-server = sb.sb_server
+# Project Settings
+os.environ['IB_HOST'] = '127.0.0.1'
+os.environ['IB_PORT'] = '7497'
+os.environ['IB_CLIENT_ID'] = '10645'
 
-app = App(app_ui, server)
+app = App(sb.sb_ui(), sb.sb_server)
 
 app.run()
 ```
 
-10) Click the link to open up a web browser at localhost and explore the app.
+This code performs three main operations:
+
+- Defines where ShinyBroker can find a running instance of an IBKR client (TWS)
+- Creates a Shiny `app` object using only the base ShinyBroker ui and server
+- Runs the app
+
+10) Click the link in the command line to open up a web browser at localhost and
+ explore the app.
 
 **Note that there is nothing in the "home" tab.** That space is reserved for
 you, the user, to inject your own graphics, controls, inputs & outputs, as well
-as your algorithm logic. Let's demonstrate that functionality by injecting some
-UI, and the server code to handle the backend, into the base ShinyBroker app.
+as your algorithm logic.
+
+Let's demonstrate that functionality by injecting some UI, and the server code
+to handle the backend, into this base ShinyBroker app.
 
 11) Stop the running instance of the ShinyBroker app and modify your code as
 shown below:
 
 ```{python}
 #| eval: false
+import os
 import shinybroker as sb
 from shiny import Inputs, Outputs, Session, App, ui, render
 
-IB_HOST = '127.0.0.1'
-IB_PORT = 7497
-IB_CLIENT_ID = 10645
-VERBOSE = False
+
+# Project Settings
+os.environ['IB_HOST'] = '127.0.0.1'
+os.environ['IB_PORT'] = '7497'
+os.environ['IB_CLIENT_ID'] = '10645'
+
 
 app_ui = sb.sb_ui(
     ui.div(
