@@ -8,5 +8,4 @@ from shinybroker.obj_defs import(
 )
 from shinybroker.msgs_to_ibkr import *
 from shinybroker.sb_server import sb_server
-from shinybroker.sb_server_txt import sb_server_code
 from shinybroker.sb_ui import sb_ui
