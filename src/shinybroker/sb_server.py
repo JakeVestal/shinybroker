@@ -1,4 +1,4 @@
-import datetime, select, threading, os
+import datetime, select, threading, os, re
 
 import pandas as pd
 
@@ -761,9 +761,11 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
         )
         mkt_dta.update({
             subscription_id: {
-                key: value for (key, value) in
-                eval('contract.__dict__.items()') if
-                value is not None and value != 0 and value != ''
+                "contract": {
+                    key: value for (key, value) in
+                    eval('contract.__dict__.items()') if
+                    value is not None and value != 0 and value != ''
+                }
             }
         })
         mkt_data.set(mkt_dta.copy())
@@ -826,4 +828,4 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
 
     @render.text
     def mkt_data_txt():
-        return mkt_data().__repr__()
+        return re.sub("},", "},\n\t", str(mkt_data().__repr__()))
