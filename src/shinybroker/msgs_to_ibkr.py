@@ -108,6 +108,14 @@ def req_mkt_data(
     return pack_message(msg)
 
 
+def cancel_mkt_data(reqId: int):
+    return pack_message(
+        functionary['outgoing_msg_codes']['CANCEL_MKT_DATA'] + "\0" +
+        "2\0" +  # VERSION
+        pack_element(reqId)
+    )
+
+
 def req_sec_def_opt_params(
         reqId: str,
         underlyingSymbol: str,
@@ -187,3 +195,11 @@ def req_historical_data(
     )
 
     return pack_message(msg)
+
+
+def cancel_historical_data(reqId: int):
+    return pack_message(
+        functionary['outgoing_msg_codes']['CANCEL_HISTORICAL_DATA'] + "\0" +
+        "1\0" +  # VERSION
+        pack_element(reqId)
+    )
