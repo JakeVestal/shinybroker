@@ -19,7 +19,7 @@ def sb_ui(home_ui = ui.p('no ui passed to sb_ui().')):
                     "3": "3: Delayed",
                     "4": "4: Delayed Frozen"
                 },
-                selected="4"
+                selected="3"
             ),
             ui.output_text("current_time_txt"),
             ui.input_action_button(
