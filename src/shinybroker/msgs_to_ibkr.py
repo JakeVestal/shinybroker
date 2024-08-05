@@ -78,7 +78,6 @@ def req_mkt_data(
             pack_element(contract.tradingClass)
     )
 
-    # Send combo legs for BAG requests (srv v8 and above)
     if contract.secType == "BAG":
         comboLegsCount = len(contract.comboLegs) if contract.comboLegs else 0
         for comboLeg in contract.comboLegs:
