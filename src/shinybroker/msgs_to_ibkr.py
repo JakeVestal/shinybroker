@@ -8,7 +8,7 @@ def req_contract_details(reqId: int, contract: Contract):
         functionary['outgoing_msg_codes']['REQ_CONTRACT_DATA'] + "\0" +
         "8\0" +  # VERSION
         pack_element(reqId) +
-        pack_element(contract.conId) +  # srv v37 and above
+        pack_element(contract.conId) +
         pack_element(contract.symbol) +
         pack_element(contract.secType) +
         pack_element(contract.lastTradeDateOrContractMonth) +
@@ -45,7 +45,7 @@ def req_market_data_type(marketDataType: int):
 def req_matching_symbols(reqId: int, pattern: str):
     return pack_message(
         functionary['outgoing_msg_codes']['REQ_MATCHING_SYMBOLS'] + "\0" +
-        pack_element(reqId) + 
+        pack_element(reqId) +
         pack_element(pattern)
     )
 
@@ -72,7 +72,7 @@ def req_mkt_data(
             pack_element(contract.right) +
             pack_element(contract.multiplier) +
             pack_element(contract.exchange) +
-            pack_element(contract.primaryExchange) + # srv v14 and above
+            pack_element(contract.primaryExchange) +
             pack_element(contract.currency) +
             pack_element(contract.localSymbol) +
             pack_element(contract.tradingClass)
@@ -99,7 +99,7 @@ def req_mkt_data(
         msg += "0\0"
 
     msg += (
-            pack_element(genericTickList) +  # srv v31 and above
+            pack_element(genericTickList) +
             pack_element(snapshot) +
             pack_element(regulatorySnapshot) +
             pack_element(mktDataOptions)
@@ -133,3 +133,57 @@ def req_ids(numIds:int):
         "1\0" +  # VERSION
         pack_element(numIds)
     )
+
+
+def req_historical_data(
+        reqId: int,
+        contract: Contract,
+        endDateTime="",
+        durationStr="1 D",
+        barSizeSetting='1 hour',
+        whatToShow='Trades',
+        useRTH=1,
+        formatDate=1,
+        keepUpToDate=1
+):
+    msg = (
+            functionary['outgoing_msg_codes']['REQ_HISTORICAL_DATA'] + "\0" +
+            pack_element(reqId) +
+            pack_element(contract.conId) +
+            pack_element(contract.symbol) +
+            pack_element(contract.secType) +
+            pack_element(contract.lastTradeDateOrContractMonth) +
+            pack_element(contract.strike) +
+            pack_element(contract.right) +
+            pack_element(contract.multiplier) +
+            pack_element(contract.exchange) +
+            pack_element(contract.primaryExchange) +
+            pack_element(contract.currency) +
+            pack_element(contract.localSymbol) +
+            pack_element(contract.tradingClass) +
+            pack_element(contract.includeExpired) +
+            pack_element(endDateTime) +
+            pack_element(barSizeSetting) +
+            pack_element(durationStr) +
+            pack_element(useRTH) +
+            pack_element(whatToShow) +
+            pack_element(formatDate)
+    )
+
+    # Send combo legs for BAG requests
+    if contract.secType == "BAG":
+        msg += pack_element(len(contract.comboLegs))
+        for comboLeg in contract.comboLegs:
+            msg += (
+                    pack_element(comboLeg.conId) +
+                    pack_element(comboLeg.ratio) +
+                    pack_element(comboLeg.action) +
+                    pack_element(comboLeg.exchange)
+            )
+
+    msg += (
+            pack_element(keepUpToDate) +
+            "\x00"  # chartOptionsStr not used in ShinyBroker
+    )
+
+    return pack_message(msg)
