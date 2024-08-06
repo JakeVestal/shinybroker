@@ -1,5 +1,20 @@
 contract_samples = {
-	'contract = Contract()\ncontract.symbol="AAPL"\ncontract.secType="STK"\ncontract.exchange="SMART"\ncontract.currency="USD"': 'Apple Inc. (Stock)',
+	"""contract = Contract()
+contract.symbol="AAPL"
+contract.secType="STK"
+contract.exchange="SMART"
+contract.currency="USD"
+""": 'Apple Inc. (Stock)',
+	"""contract = Contract()
+contract.symbol = "GOOG"
+contract.secType = "OPT"
+contract.exchange = "SMART"
+contract.currency = "USD"
+contract.lastTradeDateOrContractMonth = "20261218"
+contract.strike = 160
+contract.right = "C"
+contract.multiplier = "100"
+""": 'US Option',
 	'contract = Contract()\ncontract.symbol = "EUR"\ncontract.secType = "CASH"\ncontract.currency = "GBP"\ncontract.exchange = "IDEALPRO"': 'EurGbpFx',
 	'contract = Contract()\ncontract.symbol = "DAX"\ncontract.secType = "IND"\ncontract.currency = "EUR"\ncontract.exchange = "EUREX"': 'Index',
 	'contract = Contract()\ncontract.symbol = "IBDE30"\ncontract.secType = "CFD"\ncontract.currency = "EUR"\ncontract.exchange = "SMART"': 'CFD',
@@ -14,7 +29,6 @@ contract_samples = {
 	'contract = Contract()\ncontract.symbol = "SPY"\ncontract.secType = "STK"\ncontract.currency = "USD"\ncontract.exchange = "SMART"\ncontract.primaryExchange = "ARCA"': 'USStockWithPrimaryExch',
 	'contract = Contract()\ncontract.symbol = "IBM"\ncontract.secType = "STK"\ncontract.currency = "USD"\ncontract.exchange = "SMART"': 'USStockAtSmart',
 	'contract = Contract()\ncontract.symbol = "QQQ"\ncontract.secType = "STK"\ncontract.currency = "USD"\ncontract.exchange = "SMART"': 'etf',
-	'contract = Contract()\ncontract.symbol = "GOOG"\ncontract.secType = "OPT"\ncontract.exchange = "SMART"\ncontract.currency = "USD"\ncontract.lastTradeDateOrContractMonth = "20190315"\ncontract.strike = 1180\ncontract.right = "C"\ncontract.multiplier = "100"': 'USOptionContract',
 	'contract = Contract()\ncontract.symbol = "GOOG"\ncontract.secType = "OPT"\ncontract.exchange = "BOX"\ncontract.currency = "USD"\ncontract.lastTradeDateOrContractMonth = "20190315"\ncontract.strike = 1180\ncontract.right = "C"\ncontract.multiplier = "100"': 'OptionAtBOX',
 	'contract = Contract()\ncontract.symbol = "SANT"\ncontract.secType = "OPT"\ncontract.exchange = "MEFFRV"\ncontract.currency = "EUR"\ncontract.lastTradeDateOrContractMonth = "20190621"\ncontract.strike = 7.5\ncontract.right = "C"\ncontract.multiplier = "100"\ncontract.tradingClass = "SANEU"': 'OptionWithTradingClass',
 	'contract = Contract()\ncontract.localSymbol = "P BMW  20221216 72 M"\ncontract.secType = "OPT"\ncontract.exchange = "EUREX"\ncontract.currency = "EUR"': 'OptionWithLocalSymbol',

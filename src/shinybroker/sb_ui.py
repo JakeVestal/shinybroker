@@ -35,22 +35,28 @@ def sb_ui(home_ui = ui.p('no ui passed to sb_ui().')):
                 )
             ),
             ui.navset_pill(
-                ui.nav_panel(icon_svg('house'),home_ui),
                 ui.nav_panel(
-                    icon_svg('money-bill-transfer'),
+                    icon_svg('house'),
+                    home_ui
+                ),
+                ui.nav_panel(
+                    ui.div(icon_svg('money-bill-transfer'), " Orders"),
                     ui.h2('Orders')
                 ),
                 ui.nav_panel(
-                    icon_svg('money-check-dollar'),
+                    ui.div(icon_svg('money-check-dollar'), " Holdings"),
                     ui.h2('Holdings')
                 ),
                 ui.nav_panel(
-                    icon_svg('city'),
+                    ui.div(icon_svg('satellite-dish'), " Scanner")
+                ),
+                ui.nav_panel(
+                    ui.div(icon_svg('city'), ' Market Data'),
                     ui.h2('Market Data'),
                     ui.a(
                         'IBKR Market Data Documentation',
-                        href='https://ibkrcampus.com/ibkr-api-page/twsapi-doc' +
-                             '/#delayed-market-data'
+                        href='https://ibkrcampus.com/ibkr-api-page/' +
+                             'twsapi-doc/#live-md'
                     ),
                     ui.br(),
                     ui.a(
@@ -58,24 +64,34 @@ def sb_ui(home_ui = ui.p('no ui passed to sb_ui().')):
                         href='https://ibkrcampus.com/ibkr-api-page/' +
                              'twsapi-doc/#available-tick-types'
                     ),
-                    ui.input_text_area(
-                        id="md_contract_definition",
-                        label='Contract Definition',
-                        autoresize=True
-                    ),
-                    ui.input_select(
-                        id='md_example_contract',
-                        label='Example Contracts',
-                        choices=contract_samples
-                    ),
-                    ui.input_action_button(
-                        id="md_request_market_data_btn",
-                        label="Request Market Data"
+                    ui.row(
+                        ui.column(
+                            4,
+                            ui.input_text_area(
+                                id="md_contract_definition",
+                                label='Contract Definition',
+                                width='450px',
+                                autoresize=True
+                            ),
+                            ui.input_select(
+                                id='md_example_contract',
+                                label='Example Contracts',
+                                choices=contract_samples,
+                                width='450px'
+                            ),
+                            ui.input_action_button(
+                                id="md_request_market_data_btn",
+                                label="Request Market Data"
+                            )
+                        ),
+                        ui.column(
+                            8
+                        )
                     ),
                     ui.output_text_verbatim("mkt_data_txt")
                 ),
                 ui.nav_panel(
-                    icon_svg('eye'),
+                    ui.div(icon_svg('eye'), " Inspect"),
                     ui.h2('Interactive Queries'),
                     ui.p(
                         'You can use this section to view the values of the ' +
@@ -194,7 +210,7 @@ def sb_ui(home_ui = ui.p('no ui passed to sb_ui().')):
                     )
                 ),
                 ui.nav_panel(
-                    icon_svg('info'),
+                    ui.div(icon_svg('info'), " Error Messages"),
                     ui.h3('Error Messages'),
                     ui.h5(
                         'Reactive variable: ',
@@ -208,7 +224,7 @@ def sb_ui(home_ui = ui.p('no ui passed to sb_ui().')):
                         'matching contracts").'
                     ),
                     ui.p(
-                        'Not all "error messages" mean that something went ' +
+                        'Not all "error" messages mean that something went ' +
                         'wrong; for example, those an error id of "-1" are ' +
                         'informative messages about your API connection.'
                     ),

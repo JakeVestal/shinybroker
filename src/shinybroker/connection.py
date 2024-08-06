@@ -22,8 +22,8 @@ def create_ibkr_socket_conn(host='127.0.0.1', port=7497, client_id=0):
             "; port: " + str(port) + ".\n" + \
             "Make sure that there is a running instance of TWS or IBG at " + \
             "that host & port,\n" + \
-            "and that the API settings in the client have been configured to " + \
-            "accept a connection!"
+            "and that the API settings in the client have been configured " + \
+            "to accept a connection!"
         )
 
     ib_socket.send(

@@ -203,3 +203,10 @@ def cancel_historical_data(reqId: int):
         "1\0" +  # VERSION
         pack_element(reqId)
     )
+
+
+def req_scanner_parameters():
+    return pack_message(
+        functionary['outgoing_msg_codes']['REQ_SCANNER_PARAMS'] + "\0" +
+        "1\0"  # VERSION
+    )
