@@ -5,5 +5,4 @@ from shinybroker.connection import (
 )
 from shinybroker.obj_defs import Contract, ComboLeg, DeltaNeutralContract
 from shinybroker.msgs_to_ibkr import *
-from shinybroker.sb_server import sb_server
-from shinybroker.sb_ui import sb_ui
+from shinybroker.sb_app import sb_app

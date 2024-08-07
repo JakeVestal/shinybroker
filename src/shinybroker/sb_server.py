@@ -12,16 +12,11 @@ from shinybroker.functionary import functionary
 from shiny import Inputs, Outputs, Session, reactive, render, ui
 
 
-def sb_server(input: Inputs, output: Outputs, session: Session):
-
-    hst = os.environ.get('IB_HOST', '127.0.0.1')
-    prt = int(os.environ.get('IB_PORT', 7497))
-    cid = int(os.environ.get('IB_CLIENT_ID', 0))
-    vrb = bool(os.environ.get('IB_VERBOSE', False))
-
+def sb_server(input: Inputs, output: Outputs, session: Session, host, port,
+              client_id, verbose):
 
     ib_socket, API_VERSION, CONNECTION_TIME = create_ibkr_socket_conn(
-        host=hst, port=prt, client_id=cid
+        host=host, port=port, client_id=client_id
     )
     session.on_ended(ib_socket.close)
 
@@ -30,7 +25,8 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
         ' under API protocol version ' + API_VERSION
     )
     print(
-        'host: ' + hst + "\nport: " + str(prt) + "\nclient_id: " + str(cid)
+        'host: ' + host + "\nport: " + str(port) +
+        "\nclient_id: " + str(client_id)
     )
 
     # Creates a thread object for the async function that reads incoming
@@ -44,7 +40,7 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
         kwargs={
             'ib_sock': ib_socket,
             'shiny_sesh': session,
-            'verbose': vrb
+            'verbose': verbose
         }
     )
     ib_msg_reader_thread.start()
@@ -493,6 +489,44 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
                     )
                 case 'OPT':
                     match len(cdeets[i]):
+                        case 36:
+                            contract_details_lst.append(
+                                pd.DataFrame({
+                                    'symbol': [cdeets[i][0]],
+                                    'secType': [cdeets[i][1]],
+                                    'lastTradeDate': [cdeets[i][2]],
+                                    'strike': [cdeets[i][4]],
+                                    'right': [cdeets[i][5]],
+                                    'exchange': [cdeets[i][6]],
+                                    'currency': [cdeets[i][7]],
+                                    'localSymbol': [cdeets[i][8]],
+                                    'marketName': [cdeets[i][9]],
+                                    'tradingClass': [cdeets[i][10]],
+                                    'conId': [cdeets[i][11]],
+                                    'minTick': [cdeets[i][12]],
+                                    'multiplier': [cdeets[i][13]],
+                                    'orderTypes': [cdeets[i][14]],
+                                    'validExchanges': [cdeets[i][15]],
+                                    'priceMagnifier': [cdeets[i][16]],
+                                    'underConID': [cdeets[i][17]],
+                                    'longName': [cdeets[i][18]],
+                                    'contractMonth': [cdeets[i][19]],
+                                    'industry': [cdeets[i][20]],
+                                    'category': [cdeets[i][21]],
+                                    'subcategory': [cdeets[i][22]],
+                                    'timeZoneId': [cdeets[i][23]],
+                                    'tradingHours': [cdeets[i][24]],
+                                    'liquidHours': [cdeets[i][25]],
+                                    'aggGroup': [cdeets[i][26]],
+                                    'underSymbol': [cdeets[i][28]],
+                                    'underSecType': [cdeets[i][29]],
+                                    'marketRuleIds': [cdeets[i][30]],
+                                    'realExpirationDate': [cdeets[i][31]],
+                                    'minSize': [cdeets[i][32]],
+                                    'sizeIncrement': [cdeets[i][33]],
+                                    'suggestedSizeIncrement': [cdeets[i][34]]
+                                })
+                            )
                         case 34:
                             contract_details_lst.append(
                                 pd.DataFrame({
@@ -761,11 +795,9 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
         )
         mkt_dta.update({
             subscription_id: {
-                "contract": {
-                    key: value for (key, value) in
-                    eval('contract.__dict__.items()') if
-                    value is not None and value != 0 and value != ''
-                }
+                key: value for (key, value) in
+                eval('contract.__dict__.items()') if
+                value is not None and value != 0 and value != ''
             }
         })
         mkt_data.set(mkt_dta.copy())
@@ -829,3 +861,5 @@ def sb_server(input: Inputs, output: Outputs, session: Session):
     @render.text
     def mkt_data_txt():
         return re.sub("},", "},\n\t", str(mkt_data().__repr__()))
+
+    return ib_socket

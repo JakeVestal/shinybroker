@@ -66,7 +66,7 @@ def sb_ui(home_ui = ui.p('no ui passed to sb_ui().')):
                     ),
                     ui.row(
                         ui.column(
-                            4,
+                            5,
                             ui.input_text_area(
                                 id="md_contract_definition",
                                 label='Contract Definition',
@@ -85,7 +85,7 @@ def sb_ui(home_ui = ui.p('no ui passed to sb_ui().')):
                             )
                         ),
                         ui.column(
-                            8
+                            7
                         )
                     ),
                     ui.output_text_verbatim("mkt_data_txt")
@@ -164,11 +164,13 @@ def sb_ui(home_ui = ui.p('no ui passed to sb_ui().')):
                             ui.input_text_area(
                                 id="cd_contract_definition",
                                 label='Contract Definition',
+                                width='450px',
                                 autoresize=True
                             ),
                             ui.input_select(
                                 id='cd_example_contract',
                                 label='Example Contracts',
+                                width='450px',
                                 choices=contract_samples
                             ),
                             ui.input_action_button(

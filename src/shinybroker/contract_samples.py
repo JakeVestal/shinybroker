@@ -14,7 +14,7 @@ contract.lastTradeDateOrContractMonth = "20261218"
 contract.strike = 160
 contract.right = "C"
 contract.multiplier = "100"
-""": 'US Option',
+""": 'Google Call Option (US Option)',
 	'contract = Contract()\ncontract.symbol = "EUR"\ncontract.secType = "CASH"\ncontract.currency = "GBP"\ncontract.exchange = "IDEALPRO"': 'EurGbpFx',
 	'contract = Contract()\ncontract.symbol = "DAX"\ncontract.secType = "IND"\ncontract.currency = "EUR"\ncontract.exchange = "EUREX"': 'Index',
 	'contract = Contract()\ncontract.symbol = "IBDE30"\ncontract.secType = "CFD"\ncontract.currency = "EUR"\ncontract.exchange = "SMART"': 'CFD',
