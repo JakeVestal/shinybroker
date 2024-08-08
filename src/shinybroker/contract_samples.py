@@ -15,6 +15,27 @@ contract.strike = 160
 contract.right = "C"
 contract.multiplier = "100"
 """: 'Google Call Option (US Option)',
+	"""contract = Contract()
+contract.symbol = "IBKR,MCD"
+contract.secType = "BAG",
+contract.currency = "USD",
+contract.exchange = "SMART",
+
+leg1 = ComboLeg(),
+leg1.conId = 43645865
+leg1.ratio = 1
+leg1.action = "BUY"
+leg1.exchange = "SMART"
+
+leg2 = ComboLeg()
+leg2.conId = 9408
+leg2.ratio = 1
+leg2.action = "SELL"
+leg2.exchange = "SMART"
+
+contract.comboLegs.append(leg1)
+contract.comboLegs.append(leg2)
+""": 'IBKR and MCD Stock Combo (BAG)',
 	'contract = Contract()\ncontract.symbol = "EUR"\ncontract.secType = "CASH"\ncontract.currency = "GBP"\ncontract.exchange = "IDEALPRO"': 'EurGbpFx',
 	'contract = Contract()\ncontract.symbol = "DAX"\ncontract.secType = "IND"\ncontract.currency = "EUR"\ncontract.exchange = "EUREX"': 'Index',
 	'contract = Contract()\ncontract.symbol = "IBDE30"\ncontract.secType = "CFD"\ncontract.currency = "EUR"\ncontract.exchange = "SMART"': 'CFD',
@@ -43,7 +64,6 @@ contract.multiplier = "100"
 	'contract = Contract()\ncontract.secType = "CASH"\ncontract.conId = 12087792\ncontract.exchange = "IDEALPRO"': 'ByConId',
 	'contract = Contract()\ncontract.symbol = "FISV"\ncontract.secType = "OPT"\ncontract.exchange = "SMART"\ncontract.currency = "USD"': 'OptionForQuery',
 	'contract = Contract()\ncontract.symbol = "DBK"\ncontract.secType = "BAG"\ncontract.currency = "EUR"\ncontract.exchange = "EUREX"\nleg1 = ComboLeg()\nleg1.conId = 577164786\nleg1.ratio = 1\nleg1.action = "BUY"\nleg1.exchange = "EUREX"\nleg2 = ComboLeg()\nleg2.conId = 577164767\nleg2.ratio = 1\nleg2.action = "SELL"\nleg2.exchange = "EUREX"\ncontract.comboLegs = []\ncontract.comboLegs.append(leg1)\ncontract.comboLegs.append(leg2)': 'OptionComboContract',
-	'contract = Contract()\ncontract.symbol = "IBKR,MCD"\ncontract.secType = "BAG"\ncontract.currency = "USD"\ncontract.exchange = "SMART"\nleg1 = ComboLeg()\nleg1.conId = 43645865\nleg1.ratio = 1\nleg1.action = "BUY"\nleg1.exchange = "SMART"\nleg2 = ComboLeg()\nleg2.conId = 9408\nleg2.ratio = 1\nleg2.action = "SELL"\nleg2.exchange = "SMART"\ncontract.comboLegs = []\ncontract.comboLegs.append(leg1)\ncontract.comboLegs.append(leg2)': 'StockComboContract',
 	'contract = Contract()\ncontract.symbol = "VIX"\ncontract.secType = "BAG"\ncontract.currency = "USD"\ncontract.exchange = "CFE"\nleg1 = ComboLeg()\nleg1.conId = 326501438\nleg1.ratio = 1\nleg1.action = "BUY"\nleg1.exchange = "CFE"\nleg2 = ComboLeg()\nleg2.conId = 323072528\nleg2.ratio = 1\nleg2.action = "SELL"\nleg2.exchange = "CFE"\ncontract.comboLegs = []\ncontract.comboLegs.append(leg1)\ncontract.comboLegs.append(leg2)': 'FutureComboContract',
 	'contract = Contract()\ncontract.symbol = "WTI"\ncontract.secType = "BAG"\ncontract.currency = "USD"\ncontract.exchange = "SMART"\nleg1 = ComboLeg()\nleg1.conId = 55928698\nleg1.ratio = 1\nleg1.action = "BUY"\nleg1.exchange = "IPE"\nleg2 = ComboLeg()\nleg2.conId = 55850663\nleg2.ratio = 1\nleg2.action = "SELL"\nleg2.exchange = "IPE"\ncontract.comboLegs = []\ncontract.comboLegs.append(leg1)\ncontract.comboLegs.append(leg2)': 'SmartFutureComboContract',
 	'contract = Contract()\ncontract.symbol = "COL.WTI"\ncontract.secType = "BAG"\ncontract.currency = "USD"\ncontract.exchange = "IPE"\nleg1 = ComboLeg()\nleg1.conId = 183405603\nleg1.ratio = 1\nleg1.action = "BUY"\nleg1.exchange = "IPE"\nleg2 = ComboLeg()\nleg2.conId = 254011009\nleg2.ratio = 1\nleg2.action = "SELL"\nleg2.exchange = "IPE"\ncontract.comboLegs = []\ncontract.comboLegs.append(leg1)\ncontract.comboLegs.append(leg2)': 'InterCmdtyFuturesContract',
