@@ -61,25 +61,24 @@ should look like the below:
 
 ```{python}
 #| eval: false
-import os
 import shinybroker as sb
-from shiny import Inputs, Outputs, Session, App
 
+# Create an instance of a ShinyBroker App object using the default ui and server
+app = sb.sb_app(
+    host='127.0.0.1',  # localhost TWS is being served on your local machine
+    port=7497,         # make this match the port in your API Settings config
+    client_id=10742    # picked at random, choose another Client ID if preferred
+)
 
-# Project Settings
-os.environ['IB_HOST'] = '127.0.0.1'
-os.environ['IB_PORT'] = '7497'
-os.environ['IB_CLIENT_ID'] = '10645'
-
-app = App(sb.sb_ui(), sb.sb_server)
-
+# Run the app
 app.run()
 ```
 
 This code performs three main operations:
 
 - Defines where ShinyBroker can find a running instance of an IBKR client (TWS)
-- Creates a Shiny `app` object using only the base ShinyBroker ui and server
+    (`host` and `port`) and what client ID to use when connecting (`client_id`)
+- Creates a ShinyBroker `sb_app` object
 - Runs the app
 
 10) Click the link in the command line to open up a web browser at localhost and
@@ -97,51 +96,49 @@ shown below:
 
 ```{python}
 #| eval: false
-import os
 import shinybroker as sb
-from shiny import Inputs, Outputs, Session, App, ui, render
+from shiny import Inputs, Outputs, Session, ui, render
 
 
-# Project Settings
-os.environ['IB_HOST'] = '127.0.0.1'
-os.environ['IB_PORT'] = '7497'
-os.environ['IB_CLIENT_ID'] = '10645'
-
-
-app_ui = sb.sb_ui(
-    ui.div(
-        ui.input_text(
-            id='sb_example_text_in',
-            label='Example Input. Type something!'
-        ),
-        ui.output_code('sb_example_text_out')
-    )
+# Some UI to add to the app
+a_piece_of_new_ui = ui.div(
+    ui.input_text(
+        id='sb_example_text_in',
+        label='Example Input. Type something!'
+    ),
+    ui.output_code('sb_example_text_out')
 )
 
-
-def user_defined_server(input:Inputs, outputs:Outputs, session:Session):
+# Server to support the new UI
+# Must always contain input, output, session, and ib_socket in the signature
+def a_server_function(
+        input: Inputs, outputs: Outputs, session: Session, ib_socket
+):
     @render.code
     def sb_example_text_out():
         return f"You entered '{input.sb_example_text_in()}'."
 
-
-def server(input:Inputs, outputs:Outputs, session:Session):
-    sb.sb_server(input, outputs, session)
-    user_defined_server(input, outputs, session)
-
-
-app = App(app_ui, server)
-
+# Create a ShinyBroker app with the new ui and server
+app = sb.sb_app(
+    a_piece_of_new_ui,
+    a_server_function,
+    host='127.0.0.1',
+    port=7497,
+    client_id=10742
+)
 
 app.run()
 ```
 
-Here, we have done two things:
+Here, we have added two additional elements: a `ui` and a `server()`, just like
+we normally would when building a Shiny app with the **Core** syntax.
 
-- added a **ui**: We added a text input and a text output contained within a div
-- added a **server** function: it reads whatever text has been input by the user
- into the text_input, appends "You entered " to the beginning of it, and returns
-  the text to the text output.
+- **ui**: We added a text input and a text output contained within a div
+- **server**: A Shiny server function just like a normal server function except
+that its signature includes a fourth argument -- `ib_socket` -- in addition to
+the usual three (`input`, `output`, `session`). The simple function in this
+example reads whatever text has been input by the user into the text_input,
+appends "You entered " to the beginning of it, and renders the text as output.
 
 12) Run the modified code above. Your app should now look something like the
 screenshot below:
