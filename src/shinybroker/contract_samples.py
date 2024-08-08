@@ -17,11 +17,11 @@ contract.multiplier = "100"
 """: 'Google Call Option (US Option)',
 	"""contract = Contract()
 contract.symbol = "IBKR,MCD"
-contract.secType = "BAG",
-contract.currency = "USD",
-contract.exchange = "SMART",
+contract.secType = "BAG"
+contract.currency = "USD"
+contract.exchange = "SMART"
 
-leg1 = ComboLeg(),
+leg1 = ComboLeg()
 leg1.conId = 43645865
 leg1.ratio = 1
 leg1.action = "BUY"
