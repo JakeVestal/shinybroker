@@ -109,14 +109,17 @@ a_piece_of_new_ui = ui.div(
     ui.output_code('sb_example_text_out')
 )
 
+
 # Server to support the new UI
-# Must always contain input, output, session, and ib_socket in the signature
+# Signature must always contain the following five parameters:
+#   input, output, session, ib_socket, and sb_rvs
 def a_server_function(
-        input: Inputs, outputs: Outputs, session: Session, ib_socket
+        input: Inputs, output: Outputs, session: Session, ib_socket, sb_rvs
 ):
     @render.code
     def sb_example_text_out():
         return f"You entered '{input.sb_example_text_in()}'."
+
 
 # Create a ShinyBroker app with the new ui and server
 app = sb.sb_app(

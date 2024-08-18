@@ -12,8 +12,10 @@ from shinybroker.functionary import functionary
 from shiny import Inputs, Outputs, Session, reactive, render, ui
 
 
-def sb_server(input: Inputs, output: Outputs, session: Session, host, port,
-              client_id, verbose):
+def sb_server(
+        input: Inputs, output: Outputs, session: Session,
+        host, port, client_id, verbose
+):
 
     ib_socket, API_VERSION, CONNECTION_TIME = create_ibkr_socket_conn(
         host=host, port=port, client_id=client_id
@@ -743,7 +745,7 @@ def sb_server(input: Inputs, output: Outputs, session: Session, host, port,
                     'multiplier': [sdop_lst[i][3]],
                     'expirations': ",".join(sdop_lst[i][5:5+n_expiries]),
                     'strikes': ",".join(
-                        sdop_lst[i][5+n_expiries:len(sdop_lst[i])]
+                        sdop_lst[i][6+n_expiries:len(sdop_lst[i])]
                     )
                 })
             )
@@ -793,13 +795,7 @@ def sb_server(input: Inputs, output: Outputs, session: Session, host, port,
                 "genericTickList, snapshot, regulatorySnapshot, mktDataOptions)"
             )
         )
-        mkt_dta.update({
-            subscription_id: {
-                key: value for (key, value) in
-                eval('contract.__dict__.items()') if
-                value is not None and value != 0 and value != ''
-            }
-        })
+        mkt_dta.update({subscription_id: eval('contract.compact()')})
         mkt_data.set(mkt_dta.copy())
 
     @reactive.effect
@@ -862,4 +858,17 @@ def sb_server(input: Inputs, output: Outputs, session: Session, host, port,
     def mkt_data_txt():
         return re.sub("},", "},\n\t", str(mkt_data().__repr__()))
 
-    return ib_socket
+
+    sb_rvs = dict({
+        'contract_details': contract_details,
+        'current_time': current_time,
+        'error_messages': error_messages,
+        'managed_accounts': managed_accounts,
+        'market_data_type': market_data_type,
+        'matching_symbols': matching_symbols,
+        'mkt_data': mkt_data,
+        'next_valid_id': next_valid_id,
+        'sec_def_opt_params': sec_def_opt_params
+    })
+
+    return ib_socket, sb_rvs

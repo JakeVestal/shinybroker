@@ -39,17 +39,17 @@ def sb_ui(home_ui = ui.p('no ui passed to sb_ui().')):
                     icon_svg('house'),
                     home_ui
                 ),
-                ui.nav_panel(
-                    ui.div(icon_svg('money-bill-transfer'), " Orders"),
-                    ui.h2('Orders')
-                ),
-                ui.nav_panel(
-                    ui.div(icon_svg('money-check-dollar'), " Holdings"),
-                    ui.h2('Holdings')
-                ),
-                ui.nav_panel(
-                    ui.div(icon_svg('satellite-dish'), " Scanner")
-                ),
+                # ui.nav_panel(
+                #     ui.div(icon_svg('money-bill-transfer'), " Orders"),
+                #     ui.h2('Orders')
+                # ),
+                # ui.nav_panel(
+                #     ui.div(icon_svg('money-check-dollar'), " Holdings"),
+                #     ui.h2('Holdings')
+                # ),
+                # ui.nav_panel(
+                #     ui.div(icon_svg('satellite-dish'), " Scanner")
+                # ),
                 ui.nav_panel(
                     ui.div(icon_svg('city'), ' Market Data'),
                     ui.h2('Market Data'),

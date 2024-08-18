@@ -27,6 +27,18 @@ class Contract:
     def __repr__(self):
         return str(self.__dict__)
 
+    def compact(self):
+        def lentest(x):
+            try:
+                y = len(x) > 0
+            except TypeError:
+                y = True
+            return y
+        return {
+            key: value for (key, value) in self.__dict__.items() if
+            value is not None and value != 0 and value != '' and lentest(value)
+        }
+
 
 class ComboLeg:
 

@@ -1,27 +1,38 @@
-from shinybroker.sb_ui import sb_ui
+from shiny import Inputs, Outputs, Session, App
 from shinybroker.sb_server import sb_server
-from shiny import Inputs, Outputs, Session, App, ui
-
-
-def blank_server(input, outputs, session, ib_socket):
-    pass
+from shinybroker.sb_ui import sb_ui
 
 
 def sb_app(
-        user_ui=ui.div("UI goes here"),
-        user_defined_server=blank_server,
+        home_ui=None,
+        server_fn=None,
         host='127.0.0.1',
-        port=7497,
+        port=7496,
         client_id=0,
         verbose=False
 ):
+    if home_ui is not None:
+        app_ui = sb_ui(home_ui)
+    else:
+        app_ui = sb_ui()
 
-    app_ui = sb_ui(user_ui)
-
-    def server(input: Inputs, outputs: Outputs, session: Session):
-        ib_socket = sb_server(
-            input, outputs, session, host, port, client_id, verbose
+    def server(input: Inputs, output: Outputs, session: Session):
+        ib_socket, sb_rvs = sb_server(
+            input=input,
+            output=output,
+            session=session,
+            host=host,
+            port=port,
+            client_id=client_id,
+            verbose=verbose
         )
-        user_defined_server(input, outputs, session, ib_socket)
+        if server_fn is not None:
+            server_fn(
+                input=input,
+                output=output,
+                session=session,
+                ib_socket=ib_socket,
+                sb_rvs=sb_rvs
+            )
 
     return App(app_ui, server)
