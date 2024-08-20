@@ -152,7 +152,7 @@ def req_historical_data(
         whatToShow='Trades',
         useRTH=1,
         formatDate=1,
-        keepUpToDate=1
+        keepUpToDate=0
 ):
     msg = (
             functionary['outgoing_msg_codes']['REQ_HISTORICAL_DATA'] + "\0" +

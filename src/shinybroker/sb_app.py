@@ -7,7 +7,7 @@ def sb_app(
         home_ui=None,
         server_fn=None,
         host='127.0.0.1',
-        port=7496,
+        port=7497,
         client_id=0,
         verbose=False
 ):

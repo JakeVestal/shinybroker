@@ -858,11 +858,18 @@ def sb_server(
     def mkt_data_txt():
         return re.sub("},", "},\n\t", str(mkt_data().__repr__()))
 
+    # Historical Data ##########################################################
+
+    historical_data = reactive.value({})
+
+
+
 
     sb_rvs = dict({
         'contract_details': contract_details,
         'current_time': current_time,
         'error_messages': error_messages,
+        'historical_data': historical_data,
         'managed_accounts': managed_accounts,
         'market_data_type': market_data_type,
         'matching_symbols': matching_symbols,
