@@ -31,6 +31,10 @@ Shiny.addCustomMessageHandler('15', function(msg) {
         Shiny.setInputValue('managed_accounts', msg, {priority: 'event'});
     }
 );
+Shiny.addCustomMessageHandler('17', function(msg) {
+        Shiny.setInputValue('historical_data', msg, {priority: 'event'});
+    }
+);
 Shiny.addCustomMessageHandler('18', function(msg) {
         msg.shift(); // don't need reqID (first element)
         console.log(msg)
@@ -76,5 +80,9 @@ Shiny.addCustomMessageHandler('79', function(msg) {
 );
 Shiny.addCustomMessageHandler('81', function(msg) {
         Shiny.setInputValue('tick_req_params', msg, {priority: 'event'});
+    }
+);
+Shiny.addCustomMessageHandler('90', function(msg) {
+        Shiny.setInputValue('historical_data_update', msg, {priority: 'event'});
     }
 );

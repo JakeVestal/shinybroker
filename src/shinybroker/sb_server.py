@@ -1,5 +1,6 @@
 import datetime, select, threading, os, re
 
+import numpy as np
 import pandas as pd
 
 from shinybroker.connection import (
@@ -767,12 +768,7 @@ def sb_server(
     def update_md_contract_definition():
         ui.update_text_area(
             id='md_contract_definition',
-            value=input.md_example_contract() +
-                  "\n" +
-                  "genericTickList=''\n" +
-                  "snapshot='0'\n" +
-                  "regulatorySnapshot='0'\n" +
-                  "mktDataOptions=''"
+            value=input.md_example_contract()
         )
 
     @reactive.effect
@@ -792,7 +788,7 @@ def sb_server(
         wt[0].send(
             eval(
                 "req_mkt_data(" + subscription_id + ", contract, " +
-                "genericTickList, snapshot, regulatorySnapshot, mktDataOptions)"
+                "genericTickList, snapshot, regulatorySnapshot)"
             )
         )
         mkt_dta.update({subscription_id: eval('contract.compact()')})
@@ -862,8 +858,96 @@ def sb_server(
 
     historical_data = reactive.value({})
 
+    @reactive.effect
+    def update_hd_contract_definition():
+        ui.update_text_area(
+            id='hd_contract_definition',
+            value=input.hd_example_contract()
+        )
 
+    @reactive.effect
+    @reactive.event(
+        input.hd_request_market_data_btn,
+        ignore_init=True
+    )
+    def request_market_data():
+        hd = historical_data()
+        exec(input.hd_contract_definition())
+        (rd, wt, er) = select.select([], [ib_socket], [])
+        try:
+            subscription_id = max(list(map(int, hd.keys()))) + 1
+        except ValueError:
+            subscription_id = 1
+        subscription_id = str(subscription_id)
+        wt[0].send(
+            eval(
+                "req_historical_data(" + subscription_id + ", contract, " +
+                "endDateTime, durationStr, barSizeSetting, whatToShow, " +
+                "useRTH, formatDate, keepUpToDate)"
+            )
+        )
+        hd.update({subscription_id: eval('contract.compact()')})
+        historical_data.set(hd.copy())
 
+    @reactive.effect
+    @reactive.event(input.historical_data)
+    def add_new_historical_data():
+        hd = historical_data()
+        hst_dta = input.historical_data()
+        hd_len = len(hst_dta)
+        hd[hst_dta[0]].update({
+            'startDateStr': hst_dta[1],
+            'endDateStr': hst_dta[2],
+            'hst_dta': pd.DataFrame({
+                'timestamp': [hst_dta[i] for i in range(4, hd_len, 8)],
+                'open': [float(hst_dta[i]) for i in range(5, hd_len, 8)],
+                'high': [float(hst_dta[i]) for i in range(6, hd_len, 8)],
+                'low': [float(hst_dta[i]) for i in range(7, hd_len, 8)],
+                'close': [float(hst_dta[i]) for i in range(8, hd_len, 8)],
+                'volume': [int(hst_dta[i]) for i in range(9, hd_len, 8)],
+                'wap': [
+                    round(float(hst_dta[i]), 3) for i in range(10, hd_len, 8)
+                ],
+                'barCount': [int(hst_dta[i]) for i in range(11, hd_len, 8)]
+                # np.array(hst_dta[4:]).reshape(int(hst_dta[3]), 8),
+                # columns=['date', 'open', 'high', 'low', 'close', 'volume',
+                #          'wap', 'barCount']
+            })
+        })
+        historical_data.set(hd.copy())
+
+    @reactive.effect
+    @reactive.event(input.historical_data_update)
+    def update_historical_data():
+        hd = historical_data()
+        hdu = list(input.historical_data_update())
+        hdu[7] = round(float(hdu[7]), 3)
+        try:
+            hd[hdu[0]]['hst_dta'].loc[
+            np.where(hd[hdu[0]]['hst_dta']['timestamp'] == hdu[2])[0][0], :
+            ] = [hdu[i] for i in [2, 3, 5, 6, 4, 8, 7, 1]]
+        except IndexError:
+            hd[hdu[0]]['hst_dta'] = pd.concat(
+                [
+                    hd[hdu[0]]['hst_dta'],
+                    pd.DataFrame(
+                        hdu[1:],
+                        index=['barCount', 'timestamp', 'open', 'close', 'high',
+                               'low', 'wap', 'volume']
+                    ).transpose()
+                ],
+                axis=0,
+                ignore_index=True
+            )
+        historical_data.set(hd.copy())
+
+    @render.text
+    def historical_data_txt():
+        return re.sub(
+            pattern="},",
+            repl="},\n\t",
+            string=str(historical_data().__repr__())
+        )
 
     sb_rvs = dict({
         'contract_details': contract_details,

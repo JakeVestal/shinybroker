@@ -52,43 +52,106 @@ def sb_ui(home_ui = ui.p('no ui passed to sb_ui().')):
                 # ),
                 ui.nav_panel(
                     ui.div(icon_svg('city'), ' Market Data'),
-                    ui.h2('Market Data'),
-                    ui.a(
-                        'IBKR Market Data Documentation',
-                        href='https://ibkrcampus.com/ibkr-api-page/' +
-                             'twsapi-doc/#live-md'
-                    ),
-                    ui.br(),
-                    ui.a(
-                        'Tick Types',
-                        href='https://ibkrcampus.com/ibkr-api-page/' +
-                             'twsapi-doc/#available-tick-types'
-                    ),
-                    ui.row(
-                        ui.column(
-                            5,
-                            ui.input_text_area(
-                                id="md_contract_definition",
-                                label='Contract Definition',
-                                width='450px',
-                                autoresize=True
+                    ui.accordion(
+                        ui.accordion_panel(
+                            'Market Data',
+                            ui.a(
+                                'IBKR Market Data Documentation',
+                                href='https://ibkrcampus.com/ibkr-api-page/' +
+                                     'twsapi-doc/#live-md'
                             ),
-                            ui.input_select(
-                                id='md_example_contract',
-                                label='Example Contracts',
-                                choices=contract_samples,
-                                width='450px'
+                            ui.br(),
+                            ui.a(
+                                'Tick Types',
+                                href='https://ibkrcampus.com/ibkr-api-page/' +
+                                     'twsapi-doc/#available-tick-types'
                             ),
-                            ui.input_action_button(
-                                id="md_request_market_data_btn",
-                                label="Request Market Data"
-                            )
+                            ui.row(
+                                ui.column(
+                                    5,
+                                    ui.input_text_area(
+                                        id="md_contract_definition",
+                                        label='Contract Definition',
+                                        width='450px',
+                                        autoresize=True
+                                    ),
+                                    ui.input_select(
+                                        id='md_example_contract',
+                                        label='Example Contracts',
+                                        choices=dict(zip(
+                                            [x + "\ngenericTickList=''\n" +
+                                             "snapshot='0'\n" +
+                                             "regulatorySnapshot='0'" for x in
+                                             contract_samples.keys()],
+                                            contract_samples.values()
+                                        )),
+                                        width='450px'
+                                    ),
+                                    ui.input_action_button(
+                                        id="md_request_market_data_btn",
+                                        label="Request Market Data"
+                                    )
+                                ),
+                                ui.column(
+                                    7
+                                )
+                            ),
+                            ui.output_text_verbatim("mkt_data_txt")
                         ),
-                        ui.column(
-                            7
-                        )
-                    ),
-                    ui.output_text_verbatim("mkt_data_txt")
+                        ui.accordion_panel(
+                            'Historical Data',
+                            ui.a(
+                                'IBKR Historical Data Documentation',
+                                href='https://www.interactivebrokers.com/' +
+                                     'campus/ibkr-api-page/twsapi-doc/#hist-md'
+                            ),
+                            ui.br(),
+                            ui.a(
+                                'Requesting Historical Bars',
+                                href='https://www.interactivebrokers.com/' +
+                                     'campus/ibkr-api-page/twsapi-doc/' +
+                                     '#cancelling-earliest-data:~:' +
+                                     'text=(reqId)-,Historical,-Bars'
+                            ),
+                            ui.row(
+                                ui.column(
+                                    5,
+                                    ui.input_text_area(
+                                        id="hd_contract_definition",
+                                        label='Contract Definition',
+                                        width='450px',
+                                        autoresize=True
+                                    ),
+                                    ui.input_select(
+                                        id='hd_example_contract',
+                                        label='Example Contracts',
+                                        choices=dict(zip(
+                                            [x + "\nendDateTime=''\n" +
+                                             "durationStr='1 D'\n" +
+                                             "barSizeSetting='1 hour'\n" +
+                                             "whatToShow='Trades'\n" +
+                                             "useRTH=1\n" +
+                                             "formatDate=1\n" +
+                                             "keepUpToDate=0" for x in
+                                             contract_samples.keys()],
+                                            contract_samples.values()
+                                        )),
+                                        width='450px'
+                                    ),
+                                    ui.input_action_button(
+                                        id="hd_request_market_data_btn",
+                                        label="Request Historical Data"
+                                    )
+                                ),
+                                ui.column(
+                                    7
+                                )
+                            ),
+                            ui.output_text_verbatim("historical_data_txt")
+                        ),
+                        open=False,
+                        multiple=True
+                    )
                 ),
                 ui.nav_panel(
                     ui.div(icon_svg('eye'), " Inspect"),

@@ -55,8 +55,7 @@ def req_mkt_data(
         contract: Contract,
         genericTickList: str,
         snapshot: bool,
-        regulatorySnapshot: bool,
-        mktDataOptions: str
+        regulatorySnapshot: bool
 ):
 
     # send req mkt data msg
@@ -102,7 +101,7 @@ def req_mkt_data(
             pack_element(genericTickList) +
             pack_element(snapshot) +
             pack_element(regulatorySnapshot) +
-            pack_element(mktDataOptions)
+            pack_element('')
     )
 
     return pack_message(msg)
