@@ -121,10 +121,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
-  <li class="nav-item">
-    <a class="nav-link active" href="./query_and_display_market_data.html" aria-current="page"> 
-<span class="menu-text">Query and Display Market Data</span></a>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-get-started" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Get Started</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-get-started">    
+        <li>
+    <a class="dropdown-item" href="./query_and_display_market_data.html">
+ <span class="dropdown-text">Query and Display Market Data</span></a>
   </li>  
+    </ul>
+  </li>
   <li class="nav-item">
     <a class="nav-link" href="./reference/index.html"> 
 <span class="menu-text">Reference</span></a>
@@ -147,8 +154,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#step-1-sb_rvs-and-setup-logic" id="toc-step-1-sb_rvs-and-setup-logic" class="nav-link active" data-scroll-target="#step-1-sb_rvs-and-setup-logic">Step 1: <code>sb_rvs</code> and setup logic</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -172,21 +185,115 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<div id="589722b3" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shinybroker <span class="im">as</span> sb</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create an instance of a ShinyBroker App object using the default ui and server</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>app <span class="op">=</span> sb.sb_app(</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    host<span class="op">=</span><span class="st">'127.0.0.1'</span>,  <span class="co"># localhost TWS is being served on your local machine</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    port<span class="op">=</span><span class="dv">7497</span>,         <span class="co"># make this match the port in your API Settings config</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    client_id<span class="op">=</span><span class="dv">10742</span>    <span class="co"># picked at random, choose another Client ID if preferred</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Run the app</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>app.run()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>So you’ve installed Shinybroker and gotten the hello world example to work. Congrats! Now it’s time to actually build an app that uses some of the features.</p>
+<p>This example will introduce you, in steps, to using ShinyBroker to write an app that will calculate beta between two assets, display that information, and use it to trade. Each step below adds a layer of functionality to the app. You can use this example to learn how to:</p>
+<ul>
+<li>access &amp; use the ShinyBroker reactive variables in <code>sb_rvs</code></li>
+<li>implement some initial setup logic to fetch data from IBKR</li>
+<li>process your data and display it</li>
+</ul>
+<p><strong>Coming Soon</strong>: live updating data, dynamic contract entry, positions, order placement, and finally– <em>a video walkthrough of all this</em> :)</p>
+<section id="step-1-sb_rvs-and-setup-logic" class="level3">
+<h3 class="anchored" data-anchor-id="step-1-sb_rvs-and-setup-logic">Step 1: <code>sb_rvs</code> and setup logic</h3>
+<p>We’re interested in calculating beta between two assets, so first we’re going to need to pull price data from IBKR in order to make the calculation.</p>
+<p>We can accomplish this task with the code below, which operates as follows:</p>
+<ol type="1">
+<li>Defines a Shiny server function</li>
+<li>Sets a reactive variable named <code>run_once</code></li>
+<li>Defines a setup function named <code>make_historical_data_queries</code> that fetches data for Apple &amp; the S&amp;P 500 index. Don’t worry, in later steps we’ll add the ability to dynamically pick what two assets you want, but for now we’ll hard-code the logic for Apple and SPX.</li>
+<li>Creates an <code>app</code> object from the server function that connects to a running instance of TWS (don’t forget run TWS or else it can’t connect!)</li>
+<li>Runs the app.</li>
+</ol>
+<section id="the-design-pattern" class="level4">
+<h4 class="anchored" data-anchor-id="the-design-pattern">The Design Pattern</h4>
+<p>The server function, appropriately named <code>a_server_function</code>, first sets the value of a reactive variable named <code>run_once</code> to <code>True</code>. That design pattern is needed because <code>start_historical_data_subscription</code> can only be called within a reactive context, and also because when the shiny app loads, the reactive variables in <code>a_server_function</code> will be registered, set, and detected by the setup function <code>make_historical_data_queries</code> only <em>after</em> ShinyBroker has connected to TWS. In other words, by the time <code>run_once</code> is set, detected by <code>make_historical_data_queries</code>, and triggers the data fetching logic, you can be sure that the socket connection to IBKR (which takes place in the ShinyBroker backend) is set up and ready for use.</p>
+</section>
+<section id="the-setup-function" class="level4">
+<h4 class="anchored" data-anchor-id="the-setup-function">The setup function</h4>
+<p>Once triggered, <code>make_historical_data_queries</code> makes two calls to <code>start_historical_data_subscription</code>, a function provided by the ShinyBroker library. Even though in this case we’re performing a static, one-time data query, the word “subscription” appears in the function’s name because it can be called by setting the <code>keepUpToDate</code> parameter to <code>True</code>. Doing so results in the historical data being kept up-to-date with live market data as it becomes available, and we’ll do exactly this in a later step.</p>
+<p>For now, you should understand three things about <code>start_historical_data_subscription</code>:</p>
+<ol type="1">
+<li>The data it fetches is written to the reactive variable named ‘historical_data’. Because this is a native ShinyBroker reactive variable, you can always access it with <code>sb_rvs['historical_data']</code></li>
+<li><code>sb_rvs['historical_data']</code> is a dictionary that contains the data retrieved by each query. That dictionary is keyed by the integer-valued <code>subscription_id</code> you pass to it. If you <em>don’t</em> pass a subscription id, as in the code below, then ShinyBroker will just find the maximum subscription id already used in a historical data query for that session, add <code>1</code> to that, and treat the result as the <code>subscription_id</code>, beginning with <code>1</code> if no previous subscriptions are found for the current session.</li>
+<li>You must define the <code>contract</code> for which you want data using the <code>Contract</code> constructor, which is provided by the ShinyBroker package.</li>
+</ol>
+<section id="run-the-code-below" class="level5">
+<h5 class="anchored" data-anchor-id="run-the-code-below">Run the code below</h5>
+<ol type="1">
+<li>View your Shiny app in a browser</li>
+<li>Navigate to the <strong>Market Data</strong> panel</li>
+<li>Open the “Historical Data” accordion panel …and you should see an output of the historical data fetched by your query! Once you’ve successfully accomplished that, you can move on to the next step!</li>
+</ol>
+<div id="28b1e97a" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> select</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shinybroker <span class="im">as</span> sb</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shiny <span class="im">import</span> Inputs, Outputs, Session, reactive</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Declare a server function...</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">#   ...just like you would when making an ordinary Shiny app.</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># remember that your server functions must always include the five inputs that</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">#   appear in the signature below.</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> a_server_function(</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        <span class="bu">input</span>: Inputs, output: Outputs, session: Session, ib_socket, sb_rvs</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>):</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Only set this variable once. Reactive functions that depend upon it will</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">#   run when the app is initialized, after the socket has been connected</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">#   and properly set up by ShinyBroker.</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    run_once <span class="op">=</span> reactive.value(<span class="va">True</span>)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">@reactive.effect</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">@reactive.event</span>(run_once)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> make_historical_data_queries():</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Fetch the hourly trade data for AAPL for the past 3 days.</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>        sb.start_historical_data_subscription(</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>            historical_data<span class="op">=</span>sb_rvs[<span class="st">'historical_data'</span>],</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>            hd_socket<span class="op">=</span>ib_socket,</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>            contract<span class="op">=</span>sb.Contract({</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>                <span class="st">'symbol'</span>: <span class="st">"AAPL"</span>,</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>                <span class="st">'secType'</span>: <span class="st">"STK"</span>,</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>                <span class="st">'exchange'</span>: <span class="st">"SMART"</span>,</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>                <span class="st">'currency'</span>: <span class="st">"USD"</span>,</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>            }),</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>            durationStr<span class="op">=</span><span class="st">"3 D"</span>,</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>            barSizeSetting<span class="op">=</span><span class="st">"1 hour"</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Do the same, but for the S&amp;P 500 Index</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>        sb.start_historical_data_subscription(</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>            historical_data<span class="op">=</span>sb_rvs[<span class="st">'historical_data'</span>],</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>            hd_socket<span class="op">=</span>ib_socket,</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>            contract<span class="op">=</span>sb.Contract({</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>                <span class="st">'symbol'</span>: <span class="st">'SPX'</span>,</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>                <span class="st">'secType'</span>: <span class="st">'IND'</span>,</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>                <span class="st">'currency'</span>: <span class="st">'USD'</span>,</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>                <span class="st">'exchange'</span>: <span class="st">'CBOE'</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>            }),</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>            durationStr<span class="op">=</span><span class="st">"3 D"</span>,</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>            barSizeSetting<span class="op">=</span><span class="st">"1 hour"</span></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a><span class="co"># create an app object using your server function</span></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="co"># Adjust your connection parameters if not using the default TWS paper trader,</span></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a><span class="co">#   or if you want a different client id, etc.</span></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>app <span class="op">=</span> sb.sb_app(</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>    server_fn<span class="op">=</span>a_server_function,</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>    host<span class="op">=</span><span class="st">'127.0.0.1'</span>,</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>    port<span class="op">=</span><span class="dv">7497</span>,</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>    client_id<span class="op">=</span><span class="dv">10742</span>,</span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>    verbose<span class="op">=</span><span class="va">True</span></span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a><span class="co"># run the app.</span></span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>app.run()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 
+</section>
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

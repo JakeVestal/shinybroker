@@ -1,6 +1,6 @@
 import select
 import shinybroker as sb
-from shiny import Inputs, Outputs, Session
+from shiny import Inputs, Outputs, Session, reactive
 
 
 # Declare a server function...
@@ -8,14 +8,19 @@ from shiny import Inputs, Outputs, Session
 def a_server_function(
         input: Inputs, output: Outputs, session: Session, ib_socket, sb_rvs
 ):
+    # Only set this variable once. Reactive functions that depend upon it will
+    #   run when the app is initialized, after the socket has been connected
+    #   and properly set up by ShinyBroker.
+    run_once = reactive.value(True)
 
-    # use select to wait for the socket to be ready for writing
-    (rd, wt, er) = select.select([], [ib_socket], [])
-    # when it's ready, send a request for historical data, hourly, for Apple,
-    #   over the past 3 days
-    wt[0].send(
-        sb.req_historical_data(
-            reqId=1,
+    @reactive.effect
+    @reactive.event(run_once)
+    def make_historical_data_queries():
+
+        # Fetch the hourly trade data for AAPL for the past 3 days.
+        sb.start_historical_data_subscription(
+            historical_data=sb_rvs['historical_data'],
+            hd_socket=ib_socket,
             contract=sb.Contract({
                 'symbol': "AAPL",
                 'secType': "STK",
@@ -25,13 +30,11 @@ def a_server_function(
             durationStr="3 D",
             barSizeSetting="1 hour"
         )
-    )
 
-    # Do the same, but for the S&P 500 Index
-    (rd, wt, er) = select.select([], [ib_socket], [])
-    wt[0].send(
-        sb.req_historical_data(
-            reqId=1,
+        # Do the same, but for the S&P 500 Index
+        sb.start_historical_data_subscription(
+            historical_data=sb_rvs['historical_data'],
+            hd_socket=ib_socket,
             contract=sb.Contract({
                 'symbol': 'SPX',
                 'secType': 'IND',
@@ -41,9 +44,11 @@ def a_server_function(
             durationStr="3 D",
             barSizeSetting="1 hour"
         )
-    )
+
 
 # create an app object using your server function
+# Adjust your connection parameters if not using the default TWS paper trader,
+#   or if you want a different client id, etc.
 app = sb.sb_app(
     server_fn=a_server_function,
     host='127.0.0.1',

@@ -3,17 +3,145 @@ title: Query and Display Market Data
 jupyter: python3
 ---
 
+So you've installed Shinybroker and gotten the hello world example to work.
+Congrats! Now it's time to actually build an app that uses some of the features.
+
+This example will introduce you, in steps, to using ShinyBroker to write an app
+that will calculate beta between two assets, display that information, and use
+it to trade. Each step below adds a layer of functionality to the app. You can
+use this example to learn how to:
+
+* access & use the ShinyBroker reactive variables in `sb_rvs`
+* implement some initial setup logic to fetch data from IBKR
+* process your data and display it
+
+**Coming Soon**: live updating data, dynamic contract entry, positions, order
+placement, and finally-- *a video walkthrough of all this* :)
+
+### Step 1: `sb_rvs` and setup logic
+We're interested in calculating beta between two assets, so first we're going to
+need to pull price data from IBKR in order to make the calculation.
+
+We can accomplish this task with the code below, which operates as follows:
+
+1. Defines a Shiny server function
+2. Sets a reactive variable named `run_once`
+3. Defines a setup function named `make_historical_data_queries` that fetches
+data for Apple & the S&P 500 index. Don't worry, in later steps we'll add the
+ability to dynamically pick what two assets you want, but for now we'll
+hard-code the logic for Apple and SPX.
+4. Creates an `app` object from the server function that connects to a running
+instance of TWS (don't forget run TWS or else it can't connect!)
+5. Runs the app.
+
+#### The Design Pattern
+The server function, appropriately named `a_server_function`, first sets the
+value of a reactive variable named `run_once` to `True`. That design pattern is
+needed because `start_historical_data_subscription` can only be called within a
+reactive context, and also because when the shiny app loads, the reactive
+variables in `a_server_function` will be registered, set, and detected by the
+setup function `make_historical_data_queries` only *after* ShinyBroker has
+connected to TWS. In other words, by the time `run_once` is set, detected by
+`make_historical_data_queries`, and triggers the data fetching logic, you can be
+ sure that the socket connection to IBKR (which takes place in the ShinyBroker
+ backend) is set up and ready for use.
+
+#### The setup function
+Once triggered, `make_historical_data_queries` makes two calls to
+`start_historical_data_subscription`, a function provided by the ShinyBroker
+library. Even though in this case we're performing a static, one-time data
+query, the word "subscription" appears in the function's name because it can
+be called by setting the `keepUpToDate` parameter to `True`. Doing so results in
+ the historical data being kept up-to-date with live market data as it becomes
+ available, and we'll do exactly this in a later step.
+
+For now, you should understand three things about
+`start_historical_data_subscription`:
+
+1. The data it fetches is written to the reactive variable named
+'historical_data'. Because this is a native ShinyBroker reactive variable, you
+can always access it with `sb_rvs['historical_data']`
+2. `sb_rvs['historical_data']` is a dictionary that contains the data retrieved
+by each query. That dictionary is keyed by the integer-valued `subscription_id`
+you pass to it. If you *don't* pass a subscription id, as in the code below,
+then ShinyBroker will just find the maximum subscription id already used in a
+historical data query for that session, add `1` to that, and treat the result as
+ the `subscription_id`, beginning with `1` if no previous subscriptions are
+ found for the current session.
+3. You must define the `contract` for which you want data using the `Contract`
+constructor, which is provided by the ShinyBroker package.
+
+##### Run the code below
+1. View your Shiny app in a browser
+2. Navigate to the **Market Data** panel
+3. Open the "Historical Data" accordion panel
+...and you should see an output of the historical data fetched by your query!
+Once you've successfully accomplished that, you can move on to the next step!
+
+
 ```{python}
 #| eval: false
+import select
 import shinybroker as sb
+from shiny import Inputs, Outputs, Session, reactive
 
-# Create an instance of a ShinyBroker App object using the default ui and server
+
+# Declare a server function...
+#   ...just like you would when making an ordinary Shiny app.
+# remember that your server functions must always include the five inputs that
+#   appear in the signature below.
+def a_server_function(
+        input: Inputs, output: Outputs, session: Session, ib_socket, sb_rvs
+):
+    # Only set this variable once. Reactive functions that depend upon it will
+    #   run when the app is initialized, after the socket has been connected
+    #   and properly set up by ShinyBroker.
+    run_once = reactive.value(True)
+
+    @reactive.effect
+    @reactive.event(run_once)
+    def make_historical_data_queries():
+
+        # Fetch the hourly trade data for AAPL for the past 3 days.
+        sb.start_historical_data_subscription(
+            historical_data=sb_rvs['historical_data'],
+            hd_socket=ib_socket,
+            contract=sb.Contract({
+                'symbol': "AAPL",
+                'secType': "STK",
+                'exchange': "SMART",
+                'currency': "USD",
+            }),
+            durationStr="3 D",
+            barSizeSetting="1 hour"
+        )
+
+        # Do the same, but for the S&P 500 Index
+        sb.start_historical_data_subscription(
+            historical_data=sb_rvs['historical_data'],
+            hd_socket=ib_socket,
+            contract=sb.Contract({
+                'symbol': 'SPX',
+                'secType': 'IND',
+                'currency': 'USD',
+                'exchange': 'CBOE'
+            }),
+            durationStr="3 D",
+            barSizeSetting="1 hour"
+        )
+
+
+# create an app object using your server function
+# Adjust your connection parameters if not using the default TWS paper trader,
+#   or if you want a different client id, etc.
 app = sb.sb_app(
-    host='127.0.0.1',  # localhost TWS is being served on your local machine
-    port=7497,         # make this match the port in your API Settings config
-    client_id=10742    # picked at random, choose another Client ID if preferred
+    server_fn=a_server_function,
+    host='127.0.0.1',
+    port=7497,
+    client_id=10742,
+    verbose=True
 )
 
-# Run the app
+# run the app.
 app.run()
 ```

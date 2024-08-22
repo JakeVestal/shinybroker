@@ -13,8 +13,10 @@ website:
   navbar:
     pinned: true
     left:
-      - text: "Query and Display Market Data"
-        file: query_and_display_market_data.qmd
+      - text: "Get Started"
+        menu:
+        - text: "Query and Display Market Data"
+          file: query_and_display_market_data.qmd
       - text: "Reference"
         file: reference/index.qmd
     right:
