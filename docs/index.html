@@ -122,8 +122,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./get_started.html"> 
-<span class="menu-text">Get started</span></a>
+    <a class="nav-link" href="./query_and_display_market_data.html"> 
+<span class="menu-text">Query and Display Market Data</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./reference/index.html"> 
@@ -178,6 +178,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
+<p><span style="color:#cece7d;background-color:#b2a9248f;">Welcome! The ShinyBroker package and this website are under frequent heavy development, with new features and examples posted almost daily as they are written and tested.</span></p>
 <p>ShinyBroker is based on the realization that in trading, everything is a reactive variable. Your orders, the prices of assets you’re tracking, current positions, Greeks, p/l– <em>everything</em> is time-dynamic, and can trigger trade order events according to algorithms written by the user. In ShinyBroker, those dynamic variables are kept updated over a socket connection to your account – live or paper – at <a href="https://www.interactivebrokers%20.com/en/trading/ib-api.php">Interactive Brokers</a>, and are made accessible within <a href="https://shiny.posit.co/">Posit’s Shiny framework</a> – a brilliant piece of coding that provides a natural sandbox for reactive variables and their live visualization as webpages.</p>
 <p>The ‘hello world’ example below will walk you through a trivial setup case. <strong>You do not need an account at Interactive Brokers</strong> in order to follow the example, but it is suggested that you set up a free paper trader account with them if you’re interested in keeping track of your trades.</p>
 <section id="hello-world-example" class="level2">
@@ -194,7 +195,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p>Install ShinyBroker with <code>pip install shinybroker</code></p></li>
 <li><p>In Python, run the following: (<em>make sure TWS is open and running</em>)</p></li>
 </ol>
-<div id="74932ea2" class="cell" data-execution_count="1">
+<div id="d7d86ac0" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shinybroker <span class="im">as</span> sb</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create an instance of a ShinyBroker App object using the default ui and server</span></span>
@@ -221,7 +222,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ol start="11" type="1">
 <li>Stop the running instance of the ShinyBroker app and modify your code as shown below:</li>
 </ol>
-<div id="8c71246e" class="cell" data-execution_count="2">
+<div id="d7b775ce" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shinybroker <span class="im">as</span> sb</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shiny <span class="im">import</span> Inputs, Outputs, Session, ui, render</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>

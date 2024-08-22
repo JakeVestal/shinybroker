@@ -7,6 +7,12 @@ jupyter:
     name: python3
 ---
 
+[Welcome! The ShinyBroker package and this website are under
+frequent heavy development, with new features and examples posted almost daily
+as they are written and tested.]{
+style="color:#cece7d;background-color:#b2a9248f;"
+}
+
 ShinyBroker is based on the realization that in trading, everything is a
 reactive variable. Your orders, the prices of assets you're tracking, current
 positions, Greeks, p/l-- *everything* is time-dynamic, and can trigger trade

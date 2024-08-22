@@ -36,18 +36,18 @@
     ]
   },
   {
-    "objectID": "get_started.html",
-    "href": "get_started.html",
-    "title": "Get started with pins",
+    "objectID": "query_and_display_market_data.html",
+    "href": "query_and_display_market_data.html",
+    "title": "Query and Display Market Data",
     "section": "",
-    "text": "coming soon\n\nprint('coming soon')\n\ncoming soon"
+    "text": "import shinybroker as sb\n\n# Create an instance of a ShinyBroker App object using the default ui and server\napp = sb.sb_app(\n    host='127.0.0.1',  # localhost TWS is being served on your local machine\n    port=7497,         # make this match the port in your API Settings config\n    client_id=10742    # picked at random, choose another Client ID if preferred\n)\n\n# Run the app\napp.run()"
   },
   {
     "objectID": "index.html",
     "href": "index.html",
     "title": "Overview",
     "section": "",
-    "text": "ShinyBroker is based on the realization that in trading, everything is a reactive variable. Your orders, the prices of assets you’re tracking, current positions, Greeks, p/l– everything is time-dynamic, and can trigger trade order events according to algorithms written by the user. In ShinyBroker, those dynamic variables are kept updated over a socket connection to your account – live or paper – at Interactive Brokers, and are made accessible within Posit’s Shiny framework – a brilliant piece of coding that provides a natural sandbox for reactive variables and their live visualization as webpages.\nThe ‘hello world’ example below will walk you through a trivial setup case. You do not need an account at Interactive Brokers in order to follow the example, but it is suggested that you set up a free paper trader account with them if you’re interested in keeping track of your trades."
+    "text": "Welcome! The ShinyBroker package and this website are under frequent heavy development, with new features and examples posted almost daily as they are written and tested.\nShinyBroker is based on the realization that in trading, everything is a reactive variable. Your orders, the prices of assets you’re tracking, current positions, Greeks, p/l– everything is time-dynamic, and can trigger trade order events according to algorithms written by the user. In ShinyBroker, those dynamic variables are kept updated over a socket connection to your account – live or paper – at Interactive Brokers, and are made accessible within Posit’s Shiny framework – a brilliant piece of coding that provides a natural sandbox for reactive variables and their live visualization as webpages.\nThe ‘hello world’ example below will walk you through a trivial setup case. You do not need an account at Interactive Brokers in order to follow the example, but it is suggested that you set up a free paper trader account with them if you’re interested in keeping track of your trades."
   },
   {
     "objectID": "index.html#hello-world-example",

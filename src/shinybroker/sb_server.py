@@ -235,10 +235,23 @@ def sb_server(
 
         ui.update_switch(id='show_matching_stocks', value=len(stocks) > 0)
 
-        matching_symbols.set({
-            'stocks': pd.concat(stocks, ignore_index=True),
-            'bonds': pd.concat(bonds, ignore_index=True)
-        })
+        if not bonds:
+            if not stocks:
+                ui.notification_show('No matching symbols found')
+            else:
+                matching_symbols.set({
+                    'stocks': pd.concat(stocks, ignore_index=True)
+                })
+        else:
+            if not stocks:
+                matching_symbols.set({
+                    'bonds': pd.concat(bonds, ignore_index=True)
+                })
+            else:
+                matching_symbols.set({
+                    'stocks': pd.concat(stocks, ignore_index=True),
+                    'bonds': pd.concat(bonds, ignore_index=True)
+                })
 
     @render.data_frame
     def matching_stock_symbols_df():
@@ -870,7 +883,7 @@ def sb_server(
         input.hd_request_market_data_btn,
         ignore_init=True
     )
-    def request_market_data():
+    def request_historical_data():
         hd = historical_data()
         exec(input.hd_contract_definition())
         (rd, wt, er) = select.select([], [ib_socket], [])

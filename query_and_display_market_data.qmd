@@ -1,12 +1,10 @@
-# shinybroker
+---
+title: Query and Display Market Data
+jupyter: python3
+---
 
-------------------------------------------------------------------------
-
-title: Query and Display Market Data jupyter: python3
-
-------------------------------------------------------------------------
-
-``` python
+```{python}
+#| eval: false
 import shinybroker as sb
 
 # Create an instance of a ShinyBroker App object using the default ui and server

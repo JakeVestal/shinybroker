@@ -3,4 +3,4 @@ title: shinybroker
 format: gfm
 ---
 
-{{< include get_started.qmd >}}
+{{< include query_and_display_market_data.qmd >}}

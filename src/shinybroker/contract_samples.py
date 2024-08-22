@@ -36,8 +36,13 @@ leg2.exchange = "SMART"
 contract.comboLegs.append(leg1)
 contract.comboLegs.append(leg2)
 """: 'IBKR and MCD Stock Combo (BAG)',
+	"""contract = Contract()
+contract.symbol = 'DAX'
+contract.secType = 'IND'
+contract.currency = 'EUR'
+contract.exchange = 'EUREX'
+""": 'Index',
 	'contract = Contract()\ncontract.symbol = "EUR"\ncontract.secType = "CASH"\ncontract.currency = "GBP"\ncontract.exchange = "IDEALPRO"': 'EurGbpFx',
-	'contract = Contract()\ncontract.symbol = "DAX"\ncontract.secType = "IND"\ncontract.currency = "EUR"\ncontract.exchange = "EUREX"': 'Index',
 	'contract = Contract()\ncontract.symbol = "IBDE30"\ncontract.secType = "CFD"\ncontract.currency = "EUR"\ncontract.exchange = "SMART"': 'CFD',
 	'contract = Contract()\ncontract.symbol = "BMW"\ncontract.secType = "STK"\ncontract.currency = "EUR"\ncontract.exchange = "SMART"\ncontract.primaryExchange = "IBIS"': 'EuropeanStock',
 	'contract = Contract()\ncontract.symbol = "NOKIA"\ncontract.secType = "STK"\ncontract.currency = "EUR"\ncontract.exchange = "SMART"\ncontract.primaryExchange = "HEX"': 'EuropeanStock2',
