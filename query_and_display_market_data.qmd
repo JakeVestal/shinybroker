@@ -77,7 +77,7 @@ constructor, which is provided by the ShinyBroker package.
 3. Open the "Historical Data" accordion panel
 ...and you should see an output of the historical data fetched by your query
 that looks something like the below:
-![Settings Menu](data/step_1)
+![Step 1 Success](data/step_1)
 Once you've successfully accomplished that, you can move on to the next step!
 
 ##### Code:
@@ -251,7 +251,7 @@ Finally, the last two functions place text values in the value boxes for display
 ##### Run & View the App
 When you see something like the below when you run your app, you are successful!
  Move on to the next step when ready :)
-![Settings Menu](data/step_2)
+![Step 2 Success](data/step_2)
 
 ##### Code:
 ```{python}
