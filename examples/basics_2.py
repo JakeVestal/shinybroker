@@ -133,11 +133,6 @@ def a_server_function(
         return str(round(beta(), 3))
 
 
-
-
-
-
-
 # create an app object using your server function
 # Adjust your connection parameters if not using the default TWS paper trader,
 #   or if you want a different client id, etc.

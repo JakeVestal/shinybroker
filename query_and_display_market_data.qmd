@@ -75,10 +75,12 @@ constructor, which is provided by the ShinyBroker package.
 1. View your Shiny app in a browser
 2. Navigate to the **Market Data** panel
 3. Open the "Historical Data" accordion panel
-...and you should see an output of the historical data fetched by your query!
+...and you should see an output of the historical data fetched by your query
+that looks something like the below:
+![Settings Menu](data/step_1)
 Once you've successfully accomplished that, you can move on to the next step!
 
-
+##### Code:
 ```{python}
 #| eval: false
 import select
@@ -147,13 +149,111 @@ app.run()
 ```
 
 ### Step 2: Calculations and ui
-* Calculates Returns
-* Calculates alpha & beta
-* Adds some ui
+In this step we'll add the calculations of alpha and beta, including the
+observed historical returns over the time period, as well as a
+few pieces of UI.
 
--> documentation incoming!
-for now, code below:
+We're using some additional Python libraries like [faicons](https://pypi
+.org/project/faicons/) and [sklearn](https://pypi.org/project/scikit-learn/), so
+ be sure to have those libraries installed and available for use.
 
+#### The UI
+The code below follows the same general design pattern of Step 1, but adds in a
+ui object named `a_ui_obj`. This object contains within it the HTML structure
+that `sb_app()` will place in the **Home** tab of the rendered app. Reference
+documentation for for these and other webpage-generating ui objects available
+within Shiny can be found on Shiny's [documentation page](https://shiny.posit
+.co/py/api/core/).
+
+Examine the definition of `a_ui_obj` in the code below. You will notice that
+it contains the four new ui features that have been added in this step:
+
+1. An HTML level 5 title tag which reads 'Calculated Returns'
+2. A dataframe output that displays the returns calculated for the two assets
+3. An info box for calculated alpha value
+4. An info box for calculated beta value
+
+Any valid Shiny ui object passed to `sb_app()` will be rendered in the Home tab.
+
+#### The Server Function
+In order to populate the new ui objects with data, we need to add logic to the
+server function.
+
+##### The `calculate_log_returns()` Function
+The [reactive calculation](https://shiny.posit.co/py/api/core/reactive.calc
+.html) that operates on the retreived historical data is named
+`calculate_log_returns()`. The function operates as follows.
+
+First, it looks at the data stored in `sb_rvs['historical_data']` and assigns it
+ to a new variable `hd` for the analysis. If `hd` doesn't contain TWO entries --
+  one for AAPL and one for SPX -- then we can't perform the calculation for
+  alpha & beta becaues we need both. Therefore, if `hd['2']['hst_dta'].loc[1:,
+  'close']` causes a **KeyError** exception because the entry doesn't yet exist
+  (because it hasn't yet been received from IBKR and added to
+  `sb_rvs['historical_data']`), the function exits early without a fatal error
+  by calling [`req('')`](https://shiny.posit.co/py/api/core/req.html).
+  Calculation proceeds otherwise.
+
+The period-over-period log returns are calculated for each asset and stored in
+two dataframes named `asset_1` and `asset_2` alongside a column named
+**timestamp** that contains the date & time at which each return was observed.
+Note that in order to make this datetime conversion easier, the calls to
+`start_historical_data_subscription` were made with the `formatDate` argument
+set to `2`. [IBKR's documentation](https://www.interactivebrokers
+.com/campus/ibkr-api-page/twsapi-doc/#hist-format-date) for historical data
+requests tells us that datetimes received with this choice of parameter will be
+in Unix Epoch Date format, which is nice and easy to handle in Python for
+datetime conversions.
+
+Once dataframes for both `asset_1` and `asset_2` are calculated, they are merged
+ together via an inner join on **timestamp**. The reason for doing so is
+ because sometimes, one asset might be updated before the other one, meaning
+ that it has one more measured return. By creating a new df using the merge on
+ datetime, we ensure that our returns match up for an equal number of
+ observations of both assets.
+
+That merged dataframe is the return value of `calculate_log_returns()`.
+Therefore, when `calculate_log_returns()` is called within any other reactive
+function in the app, Shiny will ensure that the value returned always contains
+the most up-to-date calculation, even if the historical data changes.
+
+##### The `log_returns_df()` Function
+This simple function says the following to Shiny: "whenever the value of
+'calculate_log_returns()` changes, render the output as html and insert it into
+the ui object named having the same name as this function (which in this case
+is "log_returns_df")". Therefore, the data in the datatable display in the UI
+will always be kept up to date with the historical data calculation.
+
+##### Declaring `alpha` and `beta` as reactive variables
+Next we define two new reactive variables-- `alpha` and `beta`. You can perform
+whatever calculations you like with these variables; for example, you might
+have some specific trading logic you'd like to trigger if `beta` moves beyond a
+threshold that you set. First, however, we must calculate values for them,
+which we do as follows.
+
+##### The `update_alpha_beta()` Function
+`update_alpha_beta()` is a [reactive effect](https://shiny.posit
+.co/py/api/core/reactive.effect.html) function that uses `sklearn` to fit a
+basic linear regression model to the calculated returns, with the benchmark
+(SPX) on the X axis and the asset (AAPL) on the Y. **Beta** is defined as the
+slope of the regression, and **alpha** is the x-intercept. Each parameter thus
+obtained is [set](https://shiny.posit.co/py/api/core/reactive.Value.html#shiny
+.reactive.value.set) to its respective reactive variable.
+
+##### Rendering the Value Box Text
+Finally, the last two functions place text values in the value boxes for display
+ to the user. They take in alpha and beta, perform some string manipulation, and
+  put the result in the UI text object having the same name as the function
+  definition. Because these UI objects were defined as the `value` parameter
+  within the value box definition in `a_ui_obj`, the value box's contents gets
+  updated for the user.
+
+##### Run & View the App
+When you see something like the below when you run your app, you are successful!
+ Move on to the next step when ready :)
+![Settings Menu](data/step_2)
+
+##### Code:
 ```{python}
 #| eval: false
 import numpy as np
@@ -165,6 +265,7 @@ from faicons import icon_svg
 from sklearn import linear_model
 from shiny import Inputs, Outputs, Session, reactive, ui, req, render
 
+# Definition of the ui that will show up in the Home tab
 a_ui_obj = ui.page_fluid(
     ui.row(
         ui.h5('Calculated Returns'),
