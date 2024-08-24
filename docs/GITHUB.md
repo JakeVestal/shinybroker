@@ -91,7 +91,7 @@ For now, you should understand three things about
 2.  Navigate to the **Market Data** panel
 3.  Open the “Historical Data” accordion panel …and you should see an
     output of the historical data fetched by your query that looks
-    something like the below: ![Settings Menu](data/step_1.png) Once
+    something like the below: ![Step 1 Success](data/step_1.png) Once
     you’ve successfully accomplished that, you can move on to the next
     step!
 
@@ -285,8 +285,8 @@ the value box’s contents gets updated for the user.
 ##### Run & View the App
 
 When you see something like the below when you run your app, you are
-successful! Move on to the next step when ready :) ![Settings
-Menu](data/step_2.png)
+successful! Move on to the next step when ready :) ![Step 2
+Success](data/step_2.png)
 
 ##### Code:
 
