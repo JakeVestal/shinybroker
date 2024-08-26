@@ -1,21 +1,26 @@
 import numpy as np
 import pandas as pd
 import shinybroker as sb
+import plotly.express as px
 
 from datetime import datetime
 from faicons import icon_svg
 from sklearn import linear_model
 from shiny import Inputs, Outputs, Session, reactive, ui, req, render
-from shinywidgets import output_widget, render_widget
+from shinywidgets import output_widget, render_plotly
 
 a_ui_obj = ui.page_fluid(
-    ui.card(
-        ui.card_header(
-            "Benchmark Plot",
-            class_="d-flex justify-content-between align-items-center",
+    ui.row(
+        ui.column(
+            6,
+            ui.h5("Benchmark Plot"),
+            output_widget("alphabeta_scatter")
         ),
-        output_widget("alphabeta_plot"),
-        full_screen=True,
+        ui.column(
+            6,
+            ui.h5("Statsmodels Results"),
+            ui.output_ui("alphabeta_trendline_summary")
+        )
     ),
     ui.row(
         ui.h5('Calculated Returns'),
@@ -141,7 +146,31 @@ def a_server_function(
     def beta_txt():
         return str(round(beta(), 3))
 
+    @reactive.calc
+    def calculate_alphabeta_scatter():
+        fig = px.scatter(
+            calculate_log_returns(),
+            x='spx_returns',
+            y='aapl_returns',
+            trendline='ols'
+        )
+        fig.layout.xaxis.tickformat = ',.2%'
+        fig.layout.yaxis.tickformat = ',.2%'
+        fig.update_layout(
+            plot_bgcolor='white'
+        )
+        return fig
 
+    @render_plotly
+    def alphabeta_scatter():
+        return calculate_alphabeta_scatter()
+
+    @render.ui
+    def alphabeta_trendline_summary():
+        summy = px.get_trendline_results(
+            calculate_alphabeta_scatter()
+        ).px_fit_results.iloc[0].summary().as_html()
+        return ui.HTML(summy)
 
 
 # create an app object using your server function
