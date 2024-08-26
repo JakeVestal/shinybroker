@@ -94,7 +94,8 @@ def a_server_function(
 
         # Make sure that BOTH assets have been added to historical_data
         try:
-            hd['2']['hst_dta'].loc[1:, 'close']
+            aapl_rtns = hd['1']['hst_dta']
+            spx_rtns  = hd['2']['hst_dta']
         except KeyError:
             req('')
 
@@ -104,8 +105,8 @@ def a_server_function(
                 x in hd['1']['hst_dta'].loc[1:, 'timestamp']
             ],
             'aapl_returns': np.log(
-                hd['1']['hst_dta'].loc[1:, 'close'].reset_index(drop=True) /
-                hd['1']['hst_dta'].iloc[:-1]['close'].reset_index(drop=True)
+                aapl_rtns.loc[1:, 'close'].reset_index(drop=True) /
+                aapl_rtns.iloc[:-1]['close'].reset_index(drop=True)
             )
         })
         asset_2 = pd.DataFrame({
@@ -114,8 +115,8 @@ def a_server_function(
                 x in hd['2']['hst_dta'].loc[1:, 'timestamp']
             ],
             'spx_returns': np.log(
-                hd['2']['hst_dta'].loc[1:, 'close'].reset_index(drop=True) /
-                hd['2']['hst_dta'].iloc[:-1]['close'].reset_index(drop=True)
+                spx_rtns.loc[1:, 'close'].reset_index(drop=True) /
+                spx_rtns.iloc[:-1]['close'].reset_index(drop=True)
             )
         })
         return pd.merge(asset_1, asset_2, on='timestamp', how='inner')
@@ -167,10 +168,11 @@ def a_server_function(
 
     @render.ui
     def alphabeta_trendline_summary():
-        summy = px.get_trendline_results(
-            calculate_alphabeta_scatter()
-        ).px_fit_results.iloc[0].summary().as_html()
-        return ui.HTML(summy)
+        return ui.HTML(
+            px.get_trendline_results(
+                calculate_alphabeta_scatter()
+            ).px_fit_results.iloc[0].summary().as_html()
+        )
 
 
 # create an app object using your server function
