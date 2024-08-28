@@ -6,6 +6,7 @@ from datetime import datetime
 from faicons import icon_svg
 from sklearn import linear_model
 from shiny import Inputs, Outputs, Session, reactive, ui, req, render
+from shiny.types import SilentException
 
 a_ui_obj = ui.page_fluid(
     ui.row(
@@ -83,7 +84,7 @@ def a_server_function(
             aapl_rtns = hd['1']['hst_dta']
             spx_rtns  = hd['2']['hst_dta']
         except KeyError:
-            req('')
+            return None
 
         asset_1 = pd.DataFrame({
             'timestamp': [
@@ -109,14 +110,20 @@ def a_server_function(
 
     @render.data_frame
     def log_returns_df():
+        if calculate_log_returns() is None:
+            raise SilentException()
         return render.DataTable(calculate_log_returns())
 
-    alpha = reactive.value()
-    beta = reactive.value()
+    alpha = reactive.value(None)
+    beta = reactive.value(None)
 
     @reactive.effect
     def update_alpha_beta():
         log_rtns = calculate_log_returns()
+
+        if log_rtns is None:
+            raise SilentException()
+
         regr = linear_model.LinearRegression()
         regr.fit(
             log_rtns.spx_returns.values.reshape(log_rtns.shape[0], 1),
@@ -126,12 +133,14 @@ def a_server_function(
         beta.set(regr.coef_[0][0])
 
     @render.text
+    @reactive.event(alpha)
     def alpha_txt():
         return f"{alpha() * 100:.7f} %"
 
-    @render.text
-    def beta_txt():
-        return str(round(beta(), 3))
+    # @render.text
+    # @reactive.event(beta)
+    # def beta_txt():
+    #     return str(round(beta(), 3))
 
 
 # create an app object using your server function
