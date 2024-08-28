@@ -31,6 +31,7 @@ a_ui_obj = ui.page_fluid(
     )
 )
 
+
 # Declare a server function...
 #   ...just like you would when making an ordinary Shiny app.
 def a_server_function(
@@ -114,8 +115,8 @@ def a_server_function(
             raise SilentException()
         return render.DataTable(calculate_log_returns())
 
-    alpha = reactive.value(None)
-    beta = reactive.value(None)
+    alpha = reactive.value(float())
+    beta = reactive.value(float())
 
     @reactive.effect
     def update_alpha_beta():
@@ -133,14 +134,14 @@ def a_server_function(
         beta.set(regr.coef_[0][0])
 
     @render.text
-    @reactive.event(alpha)
     def alpha_txt():
-        return f"{alpha() * 100:.7f} %"
+        a = req(alpha())
+        return f"{a * 100:.7f} %"
 
-    # @render.text
-    # @reactive.event(beta)
-    # def beta_txt():
-    #     return str(round(beta(), 3))
+    @render.text
+    def beta_txt():
+        b = req(beta())
+        return str(round(b, 3))
 
 
 # create an app object using your server function

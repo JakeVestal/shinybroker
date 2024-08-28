@@ -32,6 +32,13 @@ def sb_server(
         "\nclient_id: " + str(client_id)
     )
 
+    connection_info = reactive.value(
+        pd.DataFrame({
+            'connection_time': [CONNECTION_TIME],
+            'api_version': [API_VERSION]
+        })
+    )
+
     # Creates a thread object for the async function that reads incoming
     #   messages from the socket
     # Passes to that function:
@@ -963,6 +970,7 @@ def sb_server(
         )
 
     sb_rvs = dict({
+        'connection_info': connection_info,
         'contract_details': contract_details,
         'current_time': current_time,
         'error_messages': error_messages,
