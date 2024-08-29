@@ -21,10 +21,8 @@ dependencies = [
     "faicons",
     "jinja2",
     "pandas",
-    "plotly",
     "shiny",
-    "shinywidgets",
-    "statsmodels"
+    "shinywidgets"
 ]
 
 [project.optional-dependencies]

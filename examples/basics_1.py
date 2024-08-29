@@ -1,4 +1,3 @@
-import select
 import shinybroker as sb
 from shiny import Inputs, Outputs, Session, reactive
 
@@ -8,13 +7,9 @@ from shiny import Inputs, Outputs, Session, reactive
 def a_server_function(
         input: Inputs, output: Outputs, session: Session, ib_socket, sb_rvs
 ):
-    # Only set this variable once. Reactive functions that depend upon it will
-    #   run when the app is initialized, after the socket has been connected
-    #   and properly set up by ShinyBroker.
-    run_once = reactive.value(True)
 
     @reactive.effect
-    @reactive.event(run_once)
+    @reactive.event(sb_rvs['connection_info'])
     def make_historical_data_queries():
 
         # Fetch the hourly trade data for AAPL for the past 3 days.
