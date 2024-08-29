@@ -34,10 +34,10 @@ them if you're interested in keeping track of your trades.
 *Run the base ShinyBroker app, and inject a simple bit of UI & server code.*
 
 1) Download and install [**TWS Latest**](https://www.interactivebrokers
-.com/en/trading/tws.php#:~:text=TWS%20SOFTWARE) for your OS. TWS (Trader
-Workstation) is what ShinyBroker connects to in order to communicate with IBKR
-and the market exchanges. Whenever you use ShinyBroker, you'll need to have TWS
-open and running.
+.com/en/trading/tws.php#:~:text=Limitations-,TWS%20Software,
+-Click%20a%20version) for your OS. TWS (TraderWorkstation) is what ShinyBroker
+connects to in order to communicate with IBKR and the market exchanges. Whenever
+ you use ShinyBroker, you'll need to have TWS open and running.
 
 2) Open up TWS and sign in to the demo by clicking the link indicated by the
 yellow rectangle below. You'll be asked for an email and whether or not you'd
