@@ -20,33 +20,30 @@ placement, and finally-- *a video walkthrough of all this* :)
 
 ### Step 1: `sb_rvs` and setup logic
 We're interested in calculating beta between two assets, so first we're going to
-need to pull price data from IBKR in order to make the calculation.
-
-We can accomplish this task with the code below, which operates as follows:
-
-1. Defines a Shiny server function
-2. Sets a reactive variable named `run_once`
-3. Defines a setup function named `make_historical_data_queries` that fetches
-data for Apple & the S&P 500 index. Don't worry, in later steps we'll add the
-ability to dynamically pick what two assets you want, but for now we'll
-hard-code the logic for Apple and SPX.
-4. Creates an `app` object from the server function that connects to a running
-instance of TWS (don't forget run TWS or else it can't connect!)
-5. Runs the app.
+need to pull price data from IBKR in order to make the calculation. We can
+accomplish this task by writing a **server function** that sends the data
+request query to the IBKR data farms.
 
 #### The Design Pattern
-The server function, appropriately named `a_server_function`, first sets the
-value of a reactive variable named `run_once` to `True`. That design pattern is
-needed because `start_historical_data_subscription` can only be called within a
-reactive context, and also because when the shiny app loads, the reactive
-variables in `a_server_function` will be registered, set, and detected by the
-setup function `make_historical_data_queries` only *after* ShinyBroker has
-connected to TWS. In other words, by the time `run_once` is set, detected by
-`make_historical_data_queries`, and triggers the data fetching logic, you can be
- sure that the socket connection to IBKR (which takes place in the ShinyBroker
- backend) is set up and ready for use.
+The server function, appropriately named `a_server_function`, contains within it
+ a single function named `make_historical_data_queries()` which is decorated
+ with [reactive effect](https://shiny.posit.co/py/api/core/reactive.effect
+ .html) and [reactive event](https://shiny.posit.co/py/api/core/reactive.event
+ .html).
 
-#### The setup function
+##### Why `sb_rvs['connection_info']` is a good trigger for startup logic
+Because it is a **reactive event** that takes `sb_rvs['connection_info']`,
+as a dependency, the code in `make_historical_data_queries()` will only run when
+the reactive variable `sb_rvs['connection_info']` is updated. However,
+`sb_rvs['connection_info']` is only updated once during the running lifetime of
+a ShinyBroker session. Since the update takes place right after a socket
+connection has been made to the client (e.g., TWS), you, the trader, can be sure
+ that if `sb_rvs['connection_info']` has been successfully set, then the socket
+ conection is connected and ready for use. Therefore, sb_rvs['connection_info']
+makes a good choice for a trigger for logic that you want to run only once at
+the beginning of a user session in your app.
+
+#### `make_historical_data_queries`: The setup function
 Once triggered, `make_historical_data_queries` makes two calls to
 `start_historical_data_subscription`, a function provided by the ShinyBroker
 library. Even though in this case we're performing a static, one-time data
@@ -55,26 +52,37 @@ be called by setting the `keepUpToDate` parameter to `True`. Doing so results in
  the historical data being kept up-to-date with live market data as it becomes
  available, and we'll do exactly this in a later step.
 
-For now, you should understand three things about
+For now, you should understand four things about
 `start_historical_data_subscription`:
 
 1. The data it fetches is written to the reactive variable named
 'historical_data'. Because this is a native ShinyBroker reactive variable, you
-can always access it with `sb_rvs['historical_data']`
-2. `sb_rvs['historical_data']` is a dictionary that contains the data retrieved
-by each query. That dictionary is keyed by the integer-valued `subscription_id`
-you pass to it. If you *don't* pass a subscription id, as in the code below,
-then ShinyBroker will just find the maximum subscription id already used in a
-historical data query for that session, add `1` to that, and treat the result as
- the `subscription_id`, beginning with `1` if no previous subscriptions are
- found for the current session.
+can always access it in your code with `sb_rvs['historical_data']`
+2. `sb_rvs['historical_data']()` is a dictionary that contains the data
+retrieved by each query. That dictionary is keyed by the integer-valued
+`subscription_id` you pass to it. If you *don't* pass a subscription id, as in
+the code below, then ShinyBroker will just find the maximum subscription id
+already used in a historical data query for that session, add `1` to that, and
+treat the result as the `subscription_id`, beginning with `1` if no previous
+subscriptions are found for the current session.
 3. You must define the `contract` for which you want data using the `Contract`
 constructor, which is provided by the ShinyBroker package.
+4. As currently written, you must tell `start_historical_data_subscription`
+which IBKR connection socket you want it to use by defining the `hd_socket`
+parameter. In the code below, the default `ib_socket` provided by the
+ShinyBroker app is used. This choice was made by the ShinyBroker author in order
+ to allow advanced users to work with more than one socket connection within
+ their apps. Most users of ShinyBroker won't need that functionality and can
+ just keep passing `ib_socket` as the socket parameter in their apps without
+ having to think too much about it.
 
-##### Run the code below
-1. View your Shiny app in a browser
-2. Navigate to the **Market Data** panel
-3. Open the "Historical Data" accordion panel
+
+#### Run the code below
+Run the code!
+1. View your Shiny app in a browser by clicking the hyperlink that prints in
+your Python console
+2. Within the app, navigate to the **Market Data** panel
+3. Open the "Historical Data" accordion panel...
 ...and you should see an output of the historical data fetched by your query
 that looks something like the below:
 ![Step 1 Success](data/step_1)
@@ -83,25 +91,18 @@ Once you've successfully accomplished that, you can move on to the next step!
 ##### Code:
 ```{python}
 #| eval: false
-import select
 import shinybroker as sb
 from shiny import Inputs, Outputs, Session, reactive
 
 
 # Declare a server function...
 #   ...just like you would when making an ordinary Shiny app.
-# remember that your server functions must always include the five inputs that
-#   appear in the signature below.
 def a_server_function(
         input: Inputs, output: Outputs, session: Session, ib_socket, sb_rvs
 ):
-    # Only set this variable once. Reactive functions that depend upon it will
-    #   run when the app is initialized, after the socket has been connected
-    #   and properly set up by ShinyBroker.
-    run_once = reactive.value(True)
 
     @reactive.effect
-    @reactive.event(run_once)
+    @reactive.event(sb_rvs['connection_info'])
     def make_historical_data_queries():
 
         # Fetch the hourly trade data for AAPL for the past 3 days.
@@ -193,7 +194,8 @@ First, it looks at the data stored in `sb_rvs['historical_data']` and assigns it
   `sb_rvs['historical_data']`), the function exits early without a fatal error
   by calling [`req('')`](https://shiny.posit.co/py/api/core/req.html).
   Calculation proceeds otherwise.
-
+*******MAC OS*****
+pip install --force-reinstall numpy==2.0.0
 The period-over-period log returns are calculated for each asset and stored in
 two dataframes named `asset_1` and `asset_2` alongside a column named
 **timestamp** that contains the date & time at which each return was observed.
