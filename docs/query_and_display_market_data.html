@@ -197,114 +197,110 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><strong>Coming Soon</strong>: live updating data, dynamic contract entry, positions, order placement, and finally– <em>a video walkthrough of all this</em> :)</p>
 <section id="step-1-sb_rvs-and-setup-logic" class="level3">
 <h3 class="anchored" data-anchor-id="step-1-sb_rvs-and-setup-logic">Step 1: <code>sb_rvs</code> and setup logic</h3>
-<p>We’re interested in calculating beta between two assets, so first we’re going to need to pull price data from IBKR in order to make the calculation.</p>
-<p>We can accomplish this task with the code below, which operates as follows:</p>
-<ol type="1">
-<li>Defines a Shiny server function</li>
-<li>Sets a reactive variable named <code>run_once</code></li>
-<li>Defines a setup function named <code>make_historical_data_queries</code> that fetches data for Apple &amp; the S&amp;P 500 index. Don’t worry, in later steps we’ll add the ability to dynamically pick what two assets you want, but for now we’ll hard-code the logic for Apple and SPX.</li>
-<li>Creates an <code>app</code> object from the server function that connects to a running instance of TWS (don’t forget run TWS or else it can’t connect!)</li>
-<li>Runs the app.</li>
-</ol>
+<p>We’re interested in calculating beta between two assets, so first we’re going to need to pull price data from IBKR in order to make the calculation. We can accomplish this task by writing a <strong>server function</strong> that sends the data request query to the IBKR data farms.</p>
 <section id="the-design-pattern" class="level4">
 <h4 class="anchored" data-anchor-id="the-design-pattern">The Design Pattern</h4>
-<p>The server function, appropriately named <code>a_server_function</code>, first sets the value of a reactive variable named <code>run_once</code> to <code>True</code>. That design pattern is needed because <code>start_historical_data_subscription</code> can only be called within a reactive context, and also because when the shiny app loads, the reactive variables in <code>a_server_function</code> will be registered, set, and detected by the setup function <code>make_historical_data_queries</code> only <em>after</em> ShinyBroker has connected to TWS. In other words, by the time <code>run_once</code> is set, detected by <code>make_historical_data_queries</code>, and triggers the data fetching logic, you can be sure that the socket connection to IBKR (which takes place in the ShinyBroker backend) is set up and ready for use.</p>
+<p>The server function, appropriately named <code>step_1_server</code>, contains within it a single function named <code>make_historical_data_queries()</code>, which is decorated with <a href="https://shiny.posit.co/py/api/core/reactive.effect.html">reactive effect</a> and <a href="https://shiny.posit.co/py/api/core/reactive.event.html">reactive event</a>.</p>
+<section id="why-sb_rvsconnection_info-is-a-good-trigger-for-startup-logic" class="level5">
+<h5 class="anchored" data-anchor-id="why-sb_rvsconnection_info-is-a-good-trigger-for-startup-logic">Why <code>sb_rvs['connection_info']</code> is a good trigger for startup logic</h5>
+<p>Because it is a <strong>reactive event</strong> that takes <code>sb_rvs['connection_info']</code>, as a dependency, the code in <code>make_historical_data_queries()</code> will only run when the reactive variable <code>sb_rvs['connection_info']</code> is updated. However, <code>sb_rvs['connection_info']</code> is only updated once during the running lifetime of a ShinyBroker session. Since the update takes place right after a socket connection has been made to the client (e.g., TWS), you, the trader, can be sure that if <code>sb_rvs['connection_info']</code> has been successfully set, then the socket connection is connected and ready for use. Therefore, sb_rvs[‘connection_info’] makes a good choice for a trigger for logic that you want to run only once at the beginning of a user session in your app.</p>
 </section>
-<section id="the-setup-function" class="level4">
-<h4 class="anchored" data-anchor-id="the-setup-function">The setup function</h4>
+</section>
+<section id="the-setup-function-make_historical_data_queries" class="level4">
+<h4 class="anchored" data-anchor-id="the-setup-function-make_historical_data_queries">The Setup Function: <code>make_historical_data_queries</code></h4>
 <p>Once triggered, <code>make_historical_data_queries</code> makes two calls to <code>start_historical_data_subscription</code>, a function provided by the ShinyBroker library. Even though in this case we’re performing a static, one-time data query, the word “subscription” appears in the function’s name because it can be called by setting the <code>keepUpToDate</code> parameter to <code>True</code>. Doing so results in the historical data being kept up-to-date with live market data as it becomes available, and we’ll do exactly this in a later step.</p>
-<p>For now, you should understand three things about <code>start_historical_data_subscription</code>:</p>
+<p>For now, you should understand four things about <code>start_historical_data_subscription</code>:</p>
 <ol type="1">
-<li>The data it fetches is written to the reactive variable named ‘historical_data’. Because this is a native ShinyBroker reactive variable, you can always access it with <code>sb_rvs['historical_data']</code></li>
-<li><code>sb_rvs['historical_data']</code> is a dictionary that contains the data retrieved by each query. That dictionary is keyed by the integer-valued <code>subscription_id</code> you pass to it. If you <em>don’t</em> pass a subscription id, as in the code below, then ShinyBroker will just find the maximum subscription id already used in a historical data query for that session, add <code>1</code> to that, and treat the result as the <code>subscription_id</code>, beginning with <code>1</code> if no previous subscriptions are found for the current session.</li>
+<li>The data it fetches is written to the reactive variable named ‘historical_data’. Because this is a native ShinyBroker reactive variable, you can always access it in your code with <code>sb_rvs['historical_data']</code></li>
+<li><code>sb_rvs['historical_data']()</code> is a dictionary that contains the data retrieved by each query. That dictionary is keyed by the integer-valued <code>subscription_id</code> you pass to it. If you <em>don’t</em> pass a subscription id, as in the code below, then ShinyBroker will just find the maximum subscription id already used in a historical data query for that session, add <code>1</code> to that, and treat the result as the <code>subscription_id</code>, beginning with <code>1</code> if no previous subscriptions are found for the current session.</li>
 <li>You must define the <code>contract</code> for which you want data using the <code>Contract</code> constructor, which is provided by the ShinyBroker package.</li>
+<li>As currently written, you must tell <code>start_historical_data_subscription</code> which IBKR connection socket you want it to use by defining the <code>hd_socket</code> parameter. In the code below, the default <code>ib_socket</code> provided by the ShinyBroker app is used. This choice was made by the ShinyBroker author in order to allow advanced users to work with more than one socket connection within their apps. Most users of ShinyBroker won’t need that functionality and can just keep passing <code>ib_socket</code> as the socket parameter in their apps without having to think too much about it.</li>
 </ol>
-<section id="run-the-code-below" class="level5">
-<h5 class="anchored" data-anchor-id="run-the-code-below">Run the code below</h5>
+</section>
+<section id="run-the-code-below" class="level4">
+<h4 class="anchored" data-anchor-id="run-the-code-below">Run the code below</h4>
+<p>Run the code!</p>
 <ol type="1">
-<li>View your Shiny app in a browser</li>
-<li>Navigate to the <strong>Market Data</strong> panel</li>
-<li>Open the “Historical Data” accordion panel …and you should see an output of the historical data fetched by your query that looks something like the below: <img src="data/step_1.png" class="img-fluid" alt="Step 1 Success"> Once you’ve successfully accomplished that, you can move on to the next step!</li>
+<li>View your Shiny app in a browser by clicking the hyperlink that prints in your Python console</li>
+<li>Within the app, navigate to the <strong>Market Data</strong> panel</li>
+<li>Open the “Historical Data” accordion panel… …and you should see an output of the historical data fetched by your query that looks something like the below: <img src="data/step_1.png" class="img-fluid" alt="Step 1 Success"> Once you’ve successfully accomplished that, you can move on to the next step!</li>
 </ol>
 </section>
-<section id="code" class="level5">
-<h5 class="anchored" data-anchor-id="code">Code:</h5>
-<div id="5e696ac1" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> select</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shinybroker <span class="im">as</span> sb</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shiny <span class="im">import</span> Inputs, Outputs, Session, reactive</span>
+<section id="code" class="level4">
+<h4 class="anchored" data-anchor-id="code">Code:</h4>
+<div id="d89edf0d" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shinybroker <span class="im">as</span> sb</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shiny <span class="im">import</span> Inputs, Outputs, Session, reactive</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Declare a server function...</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">#   ...just like you would when making an ordinary Shiny app.</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># remember that your server functions must always include the five inputs that</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">#   appear in the signature below.</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> a_server_function(</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        <span class="bu">input</span>: Inputs, output: Outputs, session: Session, ib_socket, sb_rvs</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>):</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Only set this variable once. Reactive functions that depend upon it will</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">#   run when the app is initialized, after the socket has been connected</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">#   and properly set up by ShinyBroker.</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    run_once <span class="op">=</span> reactive.value(<span class="va">True</span>)</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">@reactive.effect</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">@reactive.event</span>(run_once)</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> make_historical_data_queries():</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Fetch the hourly trade data for AAPL for the past 3 days.</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>        sb.start_historical_data_subscription(</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>            historical_data<span class="op">=</span>sb_rvs[<span class="st">'historical_data'</span>],</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>            hd_socket<span class="op">=</span>ib_socket,</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>            contract<span class="op">=</span>sb.Contract({</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>                <span class="st">'symbol'</span>: <span class="st">"AAPL"</span>,</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>                <span class="st">'secType'</span>: <span class="st">"STK"</span>,</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>                <span class="st">'exchange'</span>: <span class="st">"SMART"</span>,</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>                <span class="st">'currency'</span>: <span class="st">"USD"</span>,</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>            }),</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>            durationStr<span class="op">=</span><span class="st">"3 D"</span>,</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>            barSizeSetting<span class="op">=</span><span class="st">"1 hour"</span></span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Do the same, but for the S&amp;P 500 Index</span></span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>        sb.start_historical_data_subscription(</span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>            historical_data<span class="op">=</span>sb_rvs[<span class="st">'historical_data'</span>],</span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>            hd_socket<span class="op">=</span>ib_socket,</span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>            contract<span class="op">=</span>sb.Contract({</span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>                <span class="st">'symbol'</span>: <span class="st">'SPX'</span>,</span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>                <span class="st">'secType'</span>: <span class="st">'IND'</span>,</span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>                <span class="st">'currency'</span>: <span class="st">'USD'</span>,</span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>                <span class="st">'exchange'</span>: <span class="st">'CBOE'</span></span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>            }),</span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>            durationStr<span class="op">=</span><span class="st">"3 D"</span>,</span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>            barSizeSetting<span class="op">=</span><span class="st">"1 hour"</span></span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a><span class="co"># create an app object using your server function</span></span>
-<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="co"># Adjust your connection parameters if not using the default TWS paper trader,</span></span>
-<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a><span class="co">#   or if you want a different client id, etc.</span></span>
-<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>app <span class="op">=</span> sb.sb_app(</span>
-<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>    server_fn<span class="op">=</span>a_server_function,</span>
-<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>    host<span class="op">=</span><span class="st">'127.0.0.1'</span>,</span>
-<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>    port<span class="op">=</span><span class="dv">7497</span>,</span>
-<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>    client_id<span class="op">=</span><span class="dv">10799</span>,</span>
-<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>    verbose<span class="op">=</span><span class="va">True</span></span>
-<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a><span class="co"># run the app.</span></span>
-<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>app.run()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Declare a server function...</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">#   ...just like you would when making an ordinary Shiny app.</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> step_1_server(</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        <span class="bu">input</span>: Inputs, output: Outputs, session: Session, ib_socket, sb_rvs</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>):</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">@reactive.effect</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">@reactive.event</span>(sb_rvs[<span class="st">'connection_info'</span>])</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> make_historical_data_queries():</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Fetch the hourly trade data for AAPL for the past 3 days.</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        sb.start_historical_data_subscription(</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>            historical_data<span class="op">=</span>sb_rvs[<span class="st">'historical_data'</span>],</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>            hd_socket<span class="op">=</span>ib_socket,</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>            contract<span class="op">=</span>sb.Contract({</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>                <span class="st">'symbol'</span>: <span class="st">"AAPL"</span>,</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>                <span class="st">'secType'</span>: <span class="st">"STK"</span>,</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>                <span class="st">'exchange'</span>: <span class="st">"SMART"</span>,</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>                <span class="st">'currency'</span>: <span class="st">"USD"</span>,</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>            }),</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>            durationStr<span class="op">=</span><span class="st">"3 D"</span>,</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>            barSizeSetting<span class="op">=</span><span class="st">"1 hour"</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Do the same, but for the S&amp;P 500 Index</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>        sb.start_historical_data_subscription(</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>            historical_data<span class="op">=</span>sb_rvs[<span class="st">'historical_data'</span>],</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>            hd_socket<span class="op">=</span>ib_socket,</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>            contract<span class="op">=</span>sb.Contract({</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>                <span class="st">'symbol'</span>: <span class="st">'SPX'</span>,</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>                <span class="st">'secType'</span>: <span class="st">'IND'</span>,</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>                <span class="st">'currency'</span>: <span class="st">'USD'</span>,</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>                <span class="st">'exchange'</span>: <span class="st">'CBOE'</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>            }),</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>            durationStr<span class="op">=</span><span class="st">"3 D"</span>,</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>            barSizeSetting<span class="op">=</span><span class="st">"1 hour"</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="co"># create an app object using your server function</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="co"># Adjust your connection parameters if not using the default TWS paper trader,</span></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="co">#   or if you want a different client id, etc.</span></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>app <span class="op">=</span> sb.sb_app(</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>    server_fn<span class="op">=</span>step_1_server,</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>    host<span class="op">=</span><span class="st">'127.0.0.1'</span>,</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>    port<span class="op">=</span><span class="dv">7497</span>,</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>    client_id<span class="op">=</span><span class="dv">10799</span>,</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>    verbose<span class="op">=</span><span class="va">True</span></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a><span class="co"># run the app.</span></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>app.run()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section>
 </section>
 </section>
 <section id="step-2-calculations-and-ui" class="level3">
 <h3 class="anchored" data-anchor-id="step-2-calculations-and-ui">Step 2: Calculations and ui</h3>
-<p>In this step we’ll add the calculations of alpha and beta, including the observed historical returns over the time period, as well as a few pieces of UI.</p>
-<p>We’re using some additional Python libraries like <a href="https://pypi%20.org/project/faicons/">faicons</a> and <a href="https://pypi.org/project/scikit-learn/">sklearn</a>, so be sure to have those libraries installed and available for use.</p>
+<p>In this step we’ll <strong>add the calculations of alpha and beta, including the observed historical returns over the time period, plus the necessary pieces of UI to display the calculated information</strong>. We’ll be using some additional Python libraries to accomplish this task:</p>
+<ul>
+<li><a href="https://pypi.org/project/faicons/">faicons</a></li>
+<li><a href="https://pypi.org/project/plotly/">plotly</a></li>
+<li><strong>sklearn</strong>, which is available after installing <a href="https://pypi.org/project/scikit-learn/">scikit-learn</a></li>
+</ul>
+<p>…so make sure those libraries are installed.</p>
 <section id="the-ui" class="level4">
 <h4 class="anchored" data-anchor-id="the-ui">The UI</h4>
-<p>The code below follows the same general design pattern of Step 1, but adds in a ui object named <code>a_ui_obj</code>. This object contains within it the HTML structure that <code>sb_app()</code> will place in the <strong>Home</strong> tab of the rendered app. Reference documentation for for these and other webpage-generating ui objects available within Shiny can be found on Shiny’s <a href="https://shiny.posit%20.co/py/api/core/">documentation page</a>.</p>
-<p>Examine the definition of <code>a_ui_obj</code> in the code below. You will notice that it contains the four new ui features that have been added in this step:</p>
+<p>The code below follows the same general design pattern of Step 1, but adds in a ui object named <code>step_2_ui</code>. This object contains within it the HTML structure that <code>sb_app()</code> will place in the <strong>Home</strong> tab of the rendered app. Reference documentation for for these and other webpage-generating ui objects available within Shiny can be found on Shiny’s <a href="https://shiny.posit.co/py/api/core/">documentation page</a>.</p>
+<p>Examine the definition of <code>step_2_ui</code> in the code below. You will notice that it contains the four new ui features that have been added in this step:</p>
 <ol type="1">
 <li>An HTML level 5 title tag which reads ‘Calculated Returns’</li>
 <li>A dataframe output that displays the returns calculated for the two assets</li>
@@ -318,27 +314,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>In order to populate the new ui objects with data, we need to add logic to the server function.</p>
 <section id="the-calculate_log_returns-function" class="level5">
 <h5 class="anchored" data-anchor-id="the-calculate_log_returns-function">The <code>calculate_log_returns()</code> Function</h5>
-<p>The <a href="https://shiny.posit.co/py/api/core/reactive.calc%20.html">reactive calculation</a> that operates on the retreived historical data is named <code>calculate_log_returns()</code>. The function operates as follows.</p>
-<p>First, it looks at the data stored in <code>sb_rvs['historical_data']</code> and assigns it to a new variable <code>hd</code> for the analysis. If <code>hd</code> doesn’t contain TWO entries – one for AAPL and one for SPX – then we can’t perform the calculation for alpha &amp; beta becaues we need both. Therefore, if <code>hd['2']['hst_dta'].loc[1:,   'close']</code> causes a <strong>KeyError</strong> exception because the entry doesn’t yet exist (because it hasn’t yet been received from IBKR and added to <code>sb_rvs['historical_data']</code>), the function exits early without a fatal error by calling <a href="https://shiny.posit.co/py/api/core/req.html"><code>req('')</code></a>. Calculation proceeds otherwise.</p>
-<p>The period-over-period log returns are calculated for each asset and stored in two dataframes named <code>asset_1</code> and <code>asset_2</code> alongside a column named <strong>timestamp</strong> that contains the date &amp; time at which each return was observed. Note that in order to make this datetime conversion easier, the calls to <code>start_historical_data_subscription</code> were made with the <code>formatDate</code> argument set to <code>2</code>. <a href="https://www.interactivebrokers%20.com/campus/ibkr-api-page/twsapi-doc/#hist-format-date">IBKR’s documentation</a> for historical data requests tells us that datetimes received with this choice of parameter will be in Unix Epoch Date format, which is nice and easy to handle in Python for datetime conversions.</p>
+<p>The <a href="https://shiny.posit.co/py/api/core/reactive.calc.html">reactive calculation</a> that operates on the retrieved historical data is named <code>calculate_log_returns()</code>. The function operates as follows:</p>
+<p>First, it looks at the data stored in <code>sb_rvs['historical_data']</code> and assigns it to a new variable <code>hd</code> for the analysis. If <code>hd</code> doesn’t contain TWO entries – one for AAPL and one for SPX – then a <strong>KeyError</strong> exception gets raised when attempting to declare <code>aapl_rtns</code> and <code>spx_rtns</code>. In that case, <code>calculate_log_returns()</code> exits early and returns <strong>None</strong> because we need data</p>
+<p>Calculation proceeds otherwise. The period-over-period log returns are calculated for each asset and stored in two dataframes named <code>asset_1</code> and <code>asset_2</code> alongside a column named <strong>timestamp</strong> that contains the date &amp; time at which each return was observed.</p>
+<p>Note that in order to make this datetime conversion easier, the calls to <code>start_historical_data_subscription</code> were made with the <code>formatDate</code> argument set to <code>2</code>. <a href="https://www.interactivebrokers.com/campus/ibkr-api-page/twsapi-doc/#hist-format-date">IBKR’s documentation</a> for historical data requests tells us that datetimes received with this choice of parameter will be in Unix Epoch Date format, which is nice and easy to handle in Python for datetime conversions.</p>
 <p>Once dataframes for both <code>asset_1</code> and <code>asset_2</code> are calculated, they are merged together via an inner join on <strong>timestamp</strong>. The reason for doing so is because sometimes, one asset might be updated before the other one, meaning that it has one more measured return. By creating a new df using the merge on datetime, we ensure that our returns match up for an equal number of observations of both assets.</p>
 <p>That merged dataframe is the return value of <code>calculate_log_returns()</code>. Therefore, when <code>calculate_log_returns()</code> is called within any other reactive function in the app, Shiny will ensure that the value returned always contains the most up-to-date calculation, even if the historical data changes.</p>
 </section>
-<section id="the-log_returns_df-function" class="level5">
-<h5 class="anchored" data-anchor-id="the-log_returns_df-function">The <code>log_returns_df()</code> Function</h5>
-<p>This simple function says the following to Shiny: “whenever the value of ’calculate_log_returns()` changes, render the output as html and insert it into the ui object named having the same name as this function (which in this case is”log_returns_df”)“. Therefore, the data in the datatable display in the UI will always be kept up to date with the historical data calculation.</p>
+<section id="a-render-function-log_returns_df" class="level5">
+<h5 class="anchored" data-anchor-id="a-render-function-log_returns_df">A <code>@render</code> Function: <code>log_returns_df()</code></h5>
+<p>In the Shiny world, to “render” means “to display the contents of variables as UI objects in an app”. Because it has the [dataframe render decorator] (https://shiny.posit.co/py/api/core/render.data_frame.html), Shiny knows to look for a UI object having the same ID as the name of the function and update that ui object with HTML that displays the returns in the dataframe calculated by <code>calculate_log_returns()</code>. If <code>calculate_log_returns()</code> returns <strong>None</strong>, then <code>log_returns_df()</code> exits early with a silent exception that does nothing.</p>
+<p>To summarize: this simple function says the following to Shiny: “whenever the value of ’calculate_log_returns()` changes, render the output as html and insert it into the ui object named having the same name as this function (which in this case is”log_returns_df”)“. Therefore, the data in the datatable display in the UI will always be kept up to date with the historical data calculation.</p>
 </section>
 <section id="declaring-alpha-and-beta-as-reactive-variables" class="level5">
 <h5 class="anchored" data-anchor-id="declaring-alpha-and-beta-as-reactive-variables">Declaring <code>alpha</code> and <code>beta</code> as reactive variables</h5>
-<p>Next we define two new reactive variables– <code>alpha</code> and <code>beta</code>. You can perform whatever calculations you like with these variables; for example, you might have some specific trading logic you’d like to trigger if <code>beta</code> moves beyond a threshold that you set. First, however, we must calculate values for them, which we do as follows.</p>
+<p>Next we define two new reactive variables– <code>alpha</code> and <code>beta</code>. Once they are set, follow-on code can call them to perform whatever calculations you like; for for example, you might have some specific trading logic you’d like to trigger if <code>beta</code> moves beyond a threshold that you set. We can calculate values for them by finding the y-intercept and slope of a linear regression fitted through the returns data with SPX on the x-axis as described below.</p>
 </section>
 <section id="the-update_alpha_beta-function" class="level5">
 <h5 class="anchored" data-anchor-id="the-update_alpha_beta-function">The <code>update_alpha_beta()</code> Function</h5>
-<p><code>update_alpha_beta()</code> is a <a href="https://shiny.posit%20.co/py/api/core/reactive.effect.html">reactive effect</a> function that uses <code>sklearn</code> to fit a basic linear regression model to the calculated returns, with the benchmark (SPX) on the X axis and the asset (AAPL) on the Y. <strong>Beta</strong> is defined as the slope of the regression, and <strong>alpha</strong> is the x-intercept. Each parameter thus obtained is <a href="https://shiny.posit.co/py/api/core/reactive.Value.html#shiny%20.reactive.value.set">set</a> to its respective reactive variable.</p>
+<p><code>update_alpha_beta()</code> is a <a href="https://shiny.posit.co/py/api/core/reactive.effect.html">reactive effect</a> function that uses <code>sklearn</code> to fit a basic linear regression model to the calculated returns, with the benchmark (SPX) on the X axis and the asset (AAPL) on the Y. <strong>Beta</strong> is defined as the slope of the regression, and <strong>alpha</strong> is the x-intercept. Each parameter thus obtained is <a href="https://shiny.posit.co/py/api/core/reactive.Value.html#shiny.reactive.value.set">set</a> to its respective reactive variable.</p>
 </section>
 <section id="rendering-the-value-box-text" class="level5">
 <h5 class="anchored" data-anchor-id="rendering-the-value-box-text">Rendering the Value Box Text</h5>
-<p>Finally, the last two functions place text values in the value boxes for display to the user. They take in alpha and beta, perform some string manipulation, and put the result in the UI text object having the same name as the function definition. Because these UI objects were defined as the <code>value</code> parameter within the value box definition in <code>a_ui_obj</code>, the value box’s contents gets updated for the user.</p>
+<p>Finally, the last two functions place text values in the value boxes for display to the user. They take in alpha and beta, perform some string manipulation, and put the result in the UI text object having the same name as the function definition. Because these UI objects were defined as the <code>value</code> parameter within the value box definition in <code>step_2_ui</code>, the value box’s contents gets updated for the user. The call to <a href="https://shiny.posit.co/py/api/core/req.html">req</a> is performed to require that the incoming variable is something other than an empty float.</p>
 </section>
 <section id="run-view-the-app" class="level5">
 <h5 class="anchored" data-anchor-id="run-view-the-app">Run &amp; View the App</h5>
@@ -346,7 +344,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="code-1" class="level5">
 <h5 class="anchored" data-anchor-id="code-1">Code:</h5>
-<div id="a4e24618" class="cell" data-execution_count="2">
+<div id="df677d0f" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shinybroker <span class="im">as</span> sb</span>
@@ -355,9 +353,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> faicons <span class="im">import</span> icon_svg</span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn <span class="im">import</span> linear_model</span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shiny <span class="im">import</span> Inputs, Outputs, Session, reactive, ui, req, render</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Definition of the ui that will show up in the Home tab</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>a_ui_obj <span class="op">=</span> ui.page_fluid(</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shiny.types <span class="im">import</span> SilentException</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>step_2_ui <span class="op">=</span> ui.page_fluid(</span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    ui.row(</span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        ui.h5(<span class="st">'Calculated Returns'</span>),</span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        ui.column(</span>
@@ -380,124 +378,129 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Declare a server function...</span></span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="co">#   ...just like you would when making an ordinary Shiny app.</span></span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> a_server_function(</span>
-<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>        <span class="bu">input</span>: Inputs, output: Outputs, session: Session, ib_socket, sb_rvs</span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>):</span>
-<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Only set this variable once. Reactive functions that depend upon it will</span></span>
-<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>    <span class="co">#   run when the app is initialized, after the socket has been connected</span></span>
-<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>    <span class="co">#   and properly set up by ShinyBroker.</span></span>
-<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>    run_once <span class="op">=</span> reactive.value(<span class="va">True</span>)</span>
-<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">@reactive.effect</span></span>
-<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">@reactive.event</span>(run_once)</span>
-<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> make_historical_data_queries():</span>
-<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Fetch the hourly trade data for AAPL for the past 3 days.</span></span>
-<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>        sb.start_historical_data_subscription(</span>
-<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>            historical_data<span class="op">=</span>sb_rvs[<span class="st">'historical_data'</span>],</span>
-<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>            hd_socket<span class="op">=</span>ib_socket,</span>
-<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>            contract<span class="op">=</span>sb.Contract({</span>
-<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>                <span class="st">'symbol'</span>: <span class="st">"AAPL"</span>,</span>
-<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>                <span class="st">'secType'</span>: <span class="st">"STK"</span>,</span>
-<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>                <span class="st">'exchange'</span>: <span class="st">"SMART"</span>,</span>
-<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>                <span class="st">'currency'</span>: <span class="st">"USD"</span>,</span>
-<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>            }),</span>
-<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>            durationStr<span class="op">=</span><span class="st">"3 D"</span>,</span>
-<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>            barSizeSetting<span class="op">=</span><span class="st">"1 hour"</span>,</span>
-<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>            formatDate<span class="op">=</span><span class="dv">2</span></span>
-<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Do the same, but for the S&amp;P 500 Index</span></span>
-<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>        sb.start_historical_data_subscription(</span>
-<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>            historical_data<span class="op">=</span>sb_rvs[<span class="st">'historical_data'</span>],</span>
-<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>            hd_socket<span class="op">=</span>ib_socket,</span>
-<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>            contract<span class="op">=</span>sb.Contract({</span>
-<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>                <span class="st">'symbol'</span>: <span class="st">'SPX'</span>,</span>
-<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>                <span class="st">'secType'</span>: <span class="st">'IND'</span>,</span>
-<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>                <span class="st">'currency'</span>: <span class="st">'USD'</span>,</span>
-<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>                <span class="st">'exchange'</span>: <span class="st">'CBOE'</span></span>
-<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>            }),</span>
-<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>            durationStr<span class="op">=</span><span class="st">"3 D"</span>,</span>
-<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a>            barSizeSetting<span class="op">=</span><span class="st">"1 hour"</span>,</span>
-<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a>            formatDate<span class="op">=</span><span class="dv">2</span></span>
-<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a>    <span class="at">@reactive.calc</span></span>
-<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> calculate_log_returns():</span>
-<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a>        hd <span class="op">=</span> sb_rvs[<span class="st">'historical_data'</span>]()</span>
-<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Make sure that BOTH assets have been added to historical_data</span></span>
-<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a>        <span class="cf">try</span>:</span>
-<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a>            aapl_rtns <span class="op">=</span> hd[<span class="st">'1'</span>][<span class="st">'hst_dta'</span>]</span>
-<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a>            spx_rtns  <span class="op">=</span> hd[<span class="st">'2'</span>][<span class="st">'hst_dta'</span>]</span>
-<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a>        <span class="cf">except</span> <span class="pp">KeyError</span>:</span>
-<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a>            req(<span class="st">''</span>)</span>
-<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a>        asset_1 <span class="op">=</span> pd.DataFrame({</span>
-<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a>            <span class="st">'timestamp'</span>: [</span>
-<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>                datetime.fromtimestamp(<span class="bu">int</span>(x)) <span class="cf">for</span></span>
-<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a>                x <span class="kw">in</span> hd[<span class="st">'1'</span>][<span class="st">'hst_dta'</span>].loc[<span class="dv">1</span>:, <span class="st">'timestamp'</span>]</span>
-<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a>            ],</span>
-<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a>            <span class="st">'aapl_returns'</span>: np.log(</span>
-<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a>                aapl_rtns.loc[<span class="dv">1</span>:, <span class="st">'close'</span>].reset_index(drop<span class="op">=</span><span class="va">True</span>) <span class="op">/</span></span>
-<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a>                aapl_rtns.iloc[:<span class="op">-</span><span class="dv">1</span>][<span class="st">'close'</span>].reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a>            )</span>
-<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a>        })</span>
-<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a>        asset_2 <span class="op">=</span> pd.DataFrame({</span>
-<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a>            <span class="st">'timestamp'</span>: [</span>
-<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a>                datetime.fromtimestamp(<span class="bu">int</span>(x)) <span class="cf">for</span></span>
-<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a>                x <span class="kw">in</span> hd[<span class="st">'2'</span>][<span class="st">'hst_dta'</span>].loc[<span class="dv">1</span>:, <span class="st">'timestamp'</span>]</span>
-<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a>            ],</span>
-<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a>            <span class="st">'spx_returns'</span>: np.log(</span>
-<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a>                spx_rtns.loc[<span class="dv">1</span>:, <span class="st">'close'</span>].reset_index(drop<span class="op">=</span><span class="va">True</span>) <span class="op">/</span></span>
-<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a>                spx_rtns.iloc[:<span class="op">-</span><span class="dv">1</span>][<span class="st">'close'</span>].reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a>            )</span>
-<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a>        })</span>
-<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> pd.merge(asset_1, asset_2, on<span class="op">=</span><span class="st">'timestamp'</span>, how<span class="op">=</span><span class="st">'inner'</span>)</span>
-<span id="cb2-110"><a href="#cb2-110" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-111"><a href="#cb2-111" aria-hidden="true" tabindex="-1"></a>    <span class="at">@render.data_frame</span></span>
-<span id="cb2-112"><a href="#cb2-112" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> log_returns_df():</span>
-<span id="cb2-113"><a href="#cb2-113" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> render.DataTable(calculate_log_returns())</span>
-<span id="cb2-114"><a href="#cb2-114" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-115"><a href="#cb2-115" aria-hidden="true" tabindex="-1"></a>    alpha <span class="op">=</span> reactive.value()</span>
-<span id="cb2-116"><a href="#cb2-116" aria-hidden="true" tabindex="-1"></a>    beta <span class="op">=</span> reactive.value()</span>
-<span id="cb2-117"><a href="#cb2-117" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-118"><a href="#cb2-118" aria-hidden="true" tabindex="-1"></a>    <span class="at">@reactive.effect</span></span>
-<span id="cb2-119"><a href="#cb2-119" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> update_alpha_beta():</span>
-<span id="cb2-120"><a href="#cb2-120" aria-hidden="true" tabindex="-1"></a>        log_rtns <span class="op">=</span> calculate_log_returns()</span>
-<span id="cb2-121"><a href="#cb2-121" aria-hidden="true" tabindex="-1"></a>        regr <span class="op">=</span> linear_model.LinearRegression()</span>
-<span id="cb2-122"><a href="#cb2-122" aria-hidden="true" tabindex="-1"></a>        regr.fit(</span>
-<span id="cb2-123"><a href="#cb2-123" aria-hidden="true" tabindex="-1"></a>            log_rtns.spx_returns.values.reshape(log_rtns.shape[<span class="dv">0</span>], <span class="dv">1</span>),</span>
-<span id="cb2-124"><a href="#cb2-124" aria-hidden="true" tabindex="-1"></a>            log_rtns.aapl_returns.values.reshape(log_rtns.shape[<span class="dv">0</span>], <span class="dv">1</span>)</span>
-<span id="cb2-125"><a href="#cb2-125" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb2-126"><a href="#cb2-126" aria-hidden="true" tabindex="-1"></a>        alpha.<span class="bu">set</span>(regr.intercept_[<span class="dv">0</span>])</span>
-<span id="cb2-127"><a href="#cb2-127" aria-hidden="true" tabindex="-1"></a>        beta.<span class="bu">set</span>(regr.coef_[<span class="dv">0</span>][<span class="dv">0</span>])</span>
-<span id="cb2-128"><a href="#cb2-128" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-129"><a href="#cb2-129" aria-hidden="true" tabindex="-1"></a>    <span class="at">@render.text</span></span>
-<span id="cb2-130"><a href="#cb2-130" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> alpha_txt():</span>
-<span id="cb2-131"><a href="#cb2-131" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="ss">f"</span><span class="sc">{</span>alpha() <span class="op">*</span> <span class="dv">100</span><span class="sc">:.7f}</span><span class="ss"> %"</span></span>
-<span id="cb2-132"><a href="#cb2-132" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-133"><a href="#cb2-133" aria-hidden="true" tabindex="-1"></a>    <span class="at">@render.text</span></span>
-<span id="cb2-134"><a href="#cb2-134" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> beta_txt():</span>
-<span id="cb2-135"><a href="#cb2-135" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">str</span>(<span class="bu">round</span>(beta(), <span class="dv">3</span>))</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Declare a server function...</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="co">#   ...just like you would when making an ordinary Shiny app.</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> step_2_server(</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>        <span class="bu">input</span>: Inputs, output: Outputs, session: Session, ib_socket, sb_rvs</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>):</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">@reactive.effect</span></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">@reactive.event</span>(sb_rvs[<span class="st">'connection_info'</span>])</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> make_historical_data_queries():</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Fetch the hourly trade data for AAPL for the past 3 days.</span></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>        sb.start_historical_data_subscription(</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>            historical_data<span class="op">=</span>sb_rvs[<span class="st">'historical_data'</span>],</span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>            hd_socket<span class="op">=</span>ib_socket,</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>            contract<span class="op">=</span>sb.Contract({</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>                <span class="st">'symbol'</span>: <span class="st">"AAPL"</span>,</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>                <span class="st">'secType'</span>: <span class="st">"STK"</span>,</span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>                <span class="st">'exchange'</span>: <span class="st">"SMART"</span>,</span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>                <span class="st">'currency'</span>: <span class="st">"USD"</span>,</span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>            }),</span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>            durationStr<span class="op">=</span><span class="st">"3 D"</span>,</span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>            barSizeSetting<span class="op">=</span><span class="st">"1 hour"</span>,</span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>            formatDate<span class="op">=</span><span class="dv">2</span></span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Do the same, but for the S&amp;P 500 Index</span></span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>        sb.start_historical_data_subscription(</span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>            historical_data<span class="op">=</span>sb_rvs[<span class="st">'historical_data'</span>],</span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>            hd_socket<span class="op">=</span>ib_socket,</span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>            contract<span class="op">=</span>sb.Contract({</span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>                <span class="st">'symbol'</span>: <span class="st">'SPX'</span>,</span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>                <span class="st">'secType'</span>: <span class="st">'IND'</span>,</span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>                <span class="st">'currency'</span>: <span class="st">'USD'</span>,</span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>                <span class="st">'exchange'</span>: <span class="st">'CBOE'</span></span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>            }),</span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>            durationStr<span class="op">=</span><span class="st">"3 D"</span>,</span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>            barSizeSetting<span class="op">=</span><span class="st">"1 hour"</span>,</span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>            formatDate<span class="op">=</span><span class="dv">2</span></span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a>    <span class="at">@reactive.calc</span></span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> calculate_log_returns():</span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>        hd <span class="op">=</span> sb_rvs[<span class="st">'historical_data'</span>]()</span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Make sure that BOTH assets have been added to historical_data</span></span>
+<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a>        <span class="cf">try</span>:</span>
+<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a>            aapl_rtns <span class="op">=</span> hd[<span class="st">'1'</span>][<span class="st">'hst_dta'</span>]</span>
+<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a>            spx_rtns  <span class="op">=</span> hd[<span class="st">'2'</span>][<span class="st">'hst_dta'</span>]</span>
+<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a>        <span class="cf">except</span> <span class="pp">KeyError</span>:</span>
+<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="va">None</span></span>
+<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a>        asset_1 <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a>            <span class="st">'timestamp'</span>: [</span>
+<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a>                datetime.fromtimestamp(<span class="bu">int</span>(x)) <span class="cf">for</span></span>
+<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a>                x <span class="kw">in</span> hd[<span class="st">'1'</span>][<span class="st">'hst_dta'</span>].loc[<span class="dv">1</span>:, <span class="st">'timestamp'</span>]</span>
+<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a>            ],</span>
+<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>            <span class="st">'aapl_returns'</span>: np.log(</span>
+<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a>                aapl_rtns.loc[<span class="dv">1</span>:, <span class="st">'close'</span>].reset_index(drop<span class="op">=</span><span class="va">True</span>) <span class="op">/</span></span>
+<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a>                aapl_rtns.iloc[:<span class="op">-</span><span class="dv">1</span>][<span class="st">'close'</span>].reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a>        })</span>
+<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a>        asset_2 <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a>            <span class="st">'timestamp'</span>: [</span>
+<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a>                datetime.fromtimestamp(<span class="bu">int</span>(x)) <span class="cf">for</span></span>
+<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a>                x <span class="kw">in</span> hd[<span class="st">'2'</span>][<span class="st">'hst_dta'</span>].loc[<span class="dv">1</span>:, <span class="st">'timestamp'</span>]</span>
+<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a>            ],</span>
+<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a>            <span class="st">'spx_returns'</span>: np.log(</span>
+<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a>                spx_rtns.loc[<span class="dv">1</span>:, <span class="st">'close'</span>].reset_index(drop<span class="op">=</span><span class="va">True</span>) <span class="op">/</span></span>
+<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a>                spx_rtns.iloc[:<span class="op">-</span><span class="dv">1</span>][<span class="st">'close'</span>].reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a>        })</span>
+<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> pd.merge(asset_1, asset_2, on<span class="op">=</span><span class="st">'timestamp'</span>, how<span class="op">=</span><span class="st">'inner'</span>)</span>
+<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a>    <span class="at">@render.data_frame</span></span>
+<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> log_returns_df():</span>
+<span id="cb2-110"><a href="#cb2-110" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> calculate_log_returns() <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb2-111"><a href="#cb2-111" aria-hidden="true" tabindex="-1"></a>            <span class="cf">raise</span> SilentException()</span>
+<span id="cb2-112"><a href="#cb2-112" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> render.DataTable(calculate_log_returns())</span>
+<span id="cb2-113"><a href="#cb2-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-114"><a href="#cb2-114" aria-hidden="true" tabindex="-1"></a>    alpha <span class="op">=</span> reactive.value(<span class="bu">float</span>())</span>
+<span id="cb2-115"><a href="#cb2-115" aria-hidden="true" tabindex="-1"></a>    beta <span class="op">=</span> reactive.value(<span class="bu">float</span>())</span>
+<span id="cb2-116"><a href="#cb2-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-117"><a href="#cb2-117" aria-hidden="true" tabindex="-1"></a>    <span class="at">@reactive.effect</span></span>
+<span id="cb2-118"><a href="#cb2-118" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> update_alpha_beta():</span>
+<span id="cb2-119"><a href="#cb2-119" aria-hidden="true" tabindex="-1"></a>        log_rtns <span class="op">=</span> calculate_log_returns()</span>
+<span id="cb2-120"><a href="#cb2-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-121"><a href="#cb2-121" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> log_rtns <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb2-122"><a href="#cb2-122" aria-hidden="true" tabindex="-1"></a>            <span class="cf">raise</span> SilentException()</span>
+<span id="cb2-123"><a href="#cb2-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-124"><a href="#cb2-124" aria-hidden="true" tabindex="-1"></a>        regr <span class="op">=</span> linear_model.LinearRegression()</span>
+<span id="cb2-125"><a href="#cb2-125" aria-hidden="true" tabindex="-1"></a>        regr.fit(</span>
+<span id="cb2-126"><a href="#cb2-126" aria-hidden="true" tabindex="-1"></a>            log_rtns.spx_returns.values.reshape(log_rtns.shape[<span class="dv">0</span>], <span class="dv">1</span>),</span>
+<span id="cb2-127"><a href="#cb2-127" aria-hidden="true" tabindex="-1"></a>            log_rtns.aapl_returns.values.reshape(log_rtns.shape[<span class="dv">0</span>], <span class="dv">1</span>)</span>
+<span id="cb2-128"><a href="#cb2-128" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb2-129"><a href="#cb2-129" aria-hidden="true" tabindex="-1"></a>        alpha.<span class="bu">set</span>(regr.intercept_[<span class="dv">0</span>])</span>
+<span id="cb2-130"><a href="#cb2-130" aria-hidden="true" tabindex="-1"></a>        beta.<span class="bu">set</span>(regr.coef_[<span class="dv">0</span>][<span class="dv">0</span>])</span>
+<span id="cb2-131"><a href="#cb2-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-132"><a href="#cb2-132" aria-hidden="true" tabindex="-1"></a>    <span class="at">@render.text</span></span>
+<span id="cb2-133"><a href="#cb2-133" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> alpha_txt():</span>
+<span id="cb2-134"><a href="#cb2-134" aria-hidden="true" tabindex="-1"></a>        a <span class="op">=</span> req(alpha())</span>
+<span id="cb2-135"><a href="#cb2-135" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="ss">f"</span><span class="sc">{</span>a <span class="op">*</span> <span class="dv">100</span><span class="sc">:.7f}</span><span class="ss"> %"</span></span>
 <span id="cb2-136"><a href="#cb2-136" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-137"><a href="#cb2-137" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-138"><a href="#cb2-138" aria-hidden="true" tabindex="-1"></a><span class="co"># create an app object using your server function and ui</span></span>
-<span id="cb2-139"><a href="#cb2-139" aria-hidden="true" tabindex="-1"></a><span class="co"># Adjust your connection parameters if not using the default TWS paper trader,</span></span>
-<span id="cb2-140"><a href="#cb2-140" aria-hidden="true" tabindex="-1"></a><span class="co">#   or if you want a different client id, etc.</span></span>
-<span id="cb2-141"><a href="#cb2-141" aria-hidden="true" tabindex="-1"></a>app <span class="op">=</span> sb.sb_app(</span>
-<span id="cb2-142"><a href="#cb2-142" aria-hidden="true" tabindex="-1"></a>    home_ui<span class="op">=</span>a_ui_obj,</span>
-<span id="cb2-143"><a href="#cb2-143" aria-hidden="true" tabindex="-1"></a>    server_fn<span class="op">=</span>a_server_function,</span>
-<span id="cb2-144"><a href="#cb2-144" aria-hidden="true" tabindex="-1"></a>    host<span class="op">=</span><span class="st">'127.0.0.1'</span>,</span>
-<span id="cb2-145"><a href="#cb2-145" aria-hidden="true" tabindex="-1"></a>    port<span class="op">=</span><span class="dv">7497</span>,</span>
-<span id="cb2-146"><a href="#cb2-146" aria-hidden="true" tabindex="-1"></a>    client_id<span class="op">=</span><span class="dv">10799</span>,</span>
-<span id="cb2-147"><a href="#cb2-147" aria-hidden="true" tabindex="-1"></a>    verbose<span class="op">=</span><span class="va">True</span></span>
-<span id="cb2-148"><a href="#cb2-148" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-149"><a href="#cb2-149" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-150"><a href="#cb2-150" aria-hidden="true" tabindex="-1"></a><span class="co"># run the app.</span></span>
-<span id="cb2-151"><a href="#cb2-151" aria-hidden="true" tabindex="-1"></a>app.run()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-137"><a href="#cb2-137" aria-hidden="true" tabindex="-1"></a>    <span class="at">@render.text</span></span>
+<span id="cb2-138"><a href="#cb2-138" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> beta_txt():</span>
+<span id="cb2-139"><a href="#cb2-139" aria-hidden="true" tabindex="-1"></a>        b <span class="op">=</span> req(beta())</span>
+<span id="cb2-140"><a href="#cb2-140" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">str</span>(<span class="bu">round</span>(b, <span class="dv">3</span>))</span>
+<span id="cb2-141"><a href="#cb2-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-142"><a href="#cb2-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-143"><a href="#cb2-143" aria-hidden="true" tabindex="-1"></a><span class="co"># create an app object using your server function</span></span>
+<span id="cb2-144"><a href="#cb2-144" aria-hidden="true" tabindex="-1"></a><span class="co"># Adjust your connection parameters if not using the default TWS paper trader,</span></span>
+<span id="cb2-145"><a href="#cb2-145" aria-hidden="true" tabindex="-1"></a><span class="co">#   or if you want a different client id, etc.</span></span>
+<span id="cb2-146"><a href="#cb2-146" aria-hidden="true" tabindex="-1"></a>app <span class="op">=</span> sb.sb_app(</span>
+<span id="cb2-147"><a href="#cb2-147" aria-hidden="true" tabindex="-1"></a>    home_ui<span class="op">=</span>step_2_ui,</span>
+<span id="cb2-148"><a href="#cb2-148" aria-hidden="true" tabindex="-1"></a>    server_fn<span class="op">=</span>step_2_server,</span>
+<span id="cb2-149"><a href="#cb2-149" aria-hidden="true" tabindex="-1"></a>    host<span class="op">=</span><span class="st">'127.0.0.1'</span>,</span>
+<span id="cb2-150"><a href="#cb2-150" aria-hidden="true" tabindex="-1"></a>    port<span class="op">=</span><span class="dv">7497</span>,</span>
+<span id="cb2-151"><a href="#cb2-151" aria-hidden="true" tabindex="-1"></a>    client_id<span class="op">=</span><span class="dv">10799</span>,</span>
+<span id="cb2-152"><a href="#cb2-152" aria-hidden="true" tabindex="-1"></a>    verbose<span class="op">=</span><span class="va">True</span></span>
+<span id="cb2-153"><a href="#cb2-153" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-154"><a href="#cb2-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-155"><a href="#cb2-155" aria-hidden="true" tabindex="-1"></a><span class="co"># run the app.</span></span>
+<span id="cb2-156"><a href="#cb2-156" aria-hidden="true" tabindex="-1"></a>app.run()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -506,10 +509,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="step-3-add-a-plot">Step 3: Add a plot!</h3>
 <p>Every good app needs a plot. In the code below, we add a reactive calc for a plotly scatterplot object named <code>fig</code> within the server code. We also add two render functions. The first one renders the plot object display graphic. Since plotly includes a trendline feature using <code>statsmodels</code>, we make use of that feature by adding an ‘ols’ trendline. We also add a render function that selects and returns the summary property of the ols trendline and renders it as html next to the benchmark plot.</p>
 <p>And of course, we add output elements for these new features in to the ui definition where the plot and table output for our alpha &amp; beta calcs will be displayed in the top row of the *Home** section.</p>
+<p><span style="color:#cece7d;background-color:#b2a9248f;">NOTE FOR MAC USERS</span> and anyone else experiencing an <strong>ImportError</strong> saying something like “symbol not found in flat namespace ’_npy_cabs’“: There is a <a href="https://github.com/scipy/scipy/issues/21434">known bug</a> between <code>statsmodels</code> and <code>SciPy</code> that causes a problem when you try to add trendlines to a Plotly chart in Python running in OSX. Until the bug is fixed, the workaround is to simply revert to <strong>numpy version 2</strong>. You can do that in one step with the shell command <code>pip install --force-reinstall numpy==2.0.0</code>.</p>
 <p><strong>Success</strong> means you can get your app to look like this: <img src="data/step_3.png" class="img-fluid" alt="Step 3 Success"></p>
 <section id="code-2" class="level5">
 <h5 class="anchored" data-anchor-id="code-2">Code:</h5>
-<div id="ca5ad56e" class="cell" data-execution_count="3">
+<div id="eb7ac0bd" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shinybroker <span class="im">as</span> sb</span>
@@ -519,188 +523,196 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> faicons <span class="im">import</span> icon_svg</span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn <span class="im">import</span> linear_model</span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shiny <span class="im">import</span> Inputs, Outputs, Session, reactive, ui, req, render</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shinywidgets <span class="im">import</span> output_widget, render_plotly</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>a_ui_obj <span class="op">=</span> ui.page_fluid(</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    ui.row(</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>        ui.column(</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>            <span class="dv">6</span>,</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>            ui.h5(<span class="st">"Benchmark Plot"</span>),</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>            output_widget(<span class="st">"alphabeta_scatter"</span>)</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>        ),</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>        ui.column(</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>            <span class="dv">6</span>,</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>            ui.h5(<span class="st">"Statsmodels Results"</span>),</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>            ui.output_ui(<span class="st">"alphabeta_trendline_summary"</span>)</span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    ui.row(</span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>        ui.h5(<span class="st">'Calculated Returns'</span>),</span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>        ui.column(</span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>            <span class="dv">7</span>,</span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>            ui.output_data_frame(<span class="st">'log_returns_df'</span>)</span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>        ),</span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>        ui.column(</span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>            <span class="dv">5</span>,</span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>            ui.value_box(</span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>                title<span class="op">=</span><span class="st">"Alpha"</span>,</span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>                value<span class="op">=</span>ui.output_ui(<span class="st">'alpha_txt'</span>),</span>
-<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>                showcase<span class="op">=</span>icon_svg(<span class="st">'chart-line'</span>)</span>
-<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>            ),</span>
-<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>            ui.value_box(</span>
-<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>                title<span class="op">=</span><span class="st">"Beta"</span>,</span>
-<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>                value<span class="op">=</span>ui.output_ui(<span class="st">'beta_txt'</span>),</span>
-<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>                showcase<span class="op">=</span>icon_svg(<span class="st">'chart-line'</span>)</span>
-<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>            )</span>
-<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a><span class="co"># Declare a server function...</span></span>
-<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a><span class="co">#   ...just like you would when making an ordinary Shiny app.</span></span>
-<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> a_server_function(</span>
-<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>        <span class="bu">input</span>: Inputs, output: Outputs, session: Session, ib_socket, sb_rvs</span>
-<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>):</span>
-<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Only set this variable once. Reactive functions that depend upon it will</span></span>
-<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>    <span class="co">#   run when the app is initialized, after the socket has been connected</span></span>
-<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>    <span class="co">#   and properly set up by ShinyBroker.</span></span>
-<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>    run_once <span class="op">=</span> reactive.value(<span class="va">True</span>)</span>
-<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>    <span class="at">@reactive.effect</span></span>
-<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>    <span class="at">@reactive.event</span>(run_once)</span>
-<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> make_historical_data_queries():</span>
-<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Fetch the hourly trade data for AAPL for the past 3 days.</span></span>
-<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>        sb.start_historical_data_subscription(</span>
-<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>            historical_data<span class="op">=</span>sb_rvs[<span class="st">'historical_data'</span>],</span>
-<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>            hd_socket<span class="op">=</span>ib_socket,</span>
-<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>            contract<span class="op">=</span>sb.Contract({</span>
-<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>                <span class="st">'symbol'</span>: <span class="st">"AAPL"</span>,</span>
-<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>                <span class="st">'secType'</span>: <span class="st">"STK"</span>,</span>
-<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>                <span class="st">'exchange'</span>: <span class="st">"SMART"</span>,</span>
-<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>                <span class="st">'currency'</span>: <span class="st">"USD"</span>,</span>
-<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>            }),</span>
-<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>            durationStr<span class="op">=</span><span class="st">"3 D"</span>,</span>
-<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>            barSizeSetting<span class="op">=</span><span class="st">"1 hour"</span>,</span>
-<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>            formatDate<span class="op">=</span><span class="dv">2</span></span>
-<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Do the same, but for the S&amp;P 500 Index</span></span>
-<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>        sb.start_historical_data_subscription(</span>
-<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>            historical_data<span class="op">=</span>sb_rvs[<span class="st">'historical_data'</span>],</span>
-<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a>            hd_socket<span class="op">=</span>ib_socket,</span>
-<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a>            contract<span class="op">=</span>sb.Contract({</span>
-<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a>                <span class="st">'symbol'</span>: <span class="st">'SPX'</span>,</span>
-<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a>                <span class="st">'secType'</span>: <span class="st">'IND'</span>,</span>
-<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a>                <span class="st">'currency'</span>: <span class="st">'USD'</span>,</span>
-<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a>                <span class="st">'exchange'</span>: <span class="st">'CBOE'</span></span>
-<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a>            }),</span>
-<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a>            durationStr<span class="op">=</span><span class="st">"3 D"</span>,</span>
-<span id="cb3-87"><a href="#cb3-87" aria-hidden="true" tabindex="-1"></a>            barSizeSetting<span class="op">=</span><span class="st">"1 hour"</span>,</span>
-<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a>            formatDate<span class="op">=</span><span class="dv">2</span></span>
-<span id="cb3-89"><a href="#cb3-89" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb3-90"><a href="#cb3-90" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a>    <span class="at">@reactive.calc</span></span>
-<span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> calculate_log_returns():</span>
-<span id="cb3-93"><a href="#cb3-93" aria-hidden="true" tabindex="-1"></a>        hd <span class="op">=</span> sb_rvs[<span class="st">'historical_data'</span>]()</span>
-<span id="cb3-94"><a href="#cb3-94" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-95"><a href="#cb3-95" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Make sure that BOTH assets have been added to historical_data</span></span>
-<span id="cb3-96"><a href="#cb3-96" aria-hidden="true" tabindex="-1"></a>        <span class="cf">try</span>:</span>
-<span id="cb3-97"><a href="#cb3-97" aria-hidden="true" tabindex="-1"></a>            aapl_rtns <span class="op">=</span> hd[<span class="st">'1'</span>][<span class="st">'hst_dta'</span>]</span>
-<span id="cb3-98"><a href="#cb3-98" aria-hidden="true" tabindex="-1"></a>            spx_rtns  <span class="op">=</span> hd[<span class="st">'2'</span>][<span class="st">'hst_dta'</span>]</span>
-<span id="cb3-99"><a href="#cb3-99" aria-hidden="true" tabindex="-1"></a>        <span class="cf">except</span> <span class="pp">KeyError</span>:</span>
-<span id="cb3-100"><a href="#cb3-100" aria-hidden="true" tabindex="-1"></a>            req(<span class="st">''</span>)</span>
-<span id="cb3-101"><a href="#cb3-101" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-102"><a href="#cb3-102" aria-hidden="true" tabindex="-1"></a>        asset_1 <span class="op">=</span> pd.DataFrame({</span>
-<span id="cb3-103"><a href="#cb3-103" aria-hidden="true" tabindex="-1"></a>            <span class="st">'timestamp'</span>: [</span>
-<span id="cb3-104"><a href="#cb3-104" aria-hidden="true" tabindex="-1"></a>                datetime.fromtimestamp(<span class="bu">int</span>(x)) <span class="cf">for</span></span>
-<span id="cb3-105"><a href="#cb3-105" aria-hidden="true" tabindex="-1"></a>                x <span class="kw">in</span> hd[<span class="st">'1'</span>][<span class="st">'hst_dta'</span>].loc[<span class="dv">1</span>:, <span class="st">'timestamp'</span>]</span>
-<span id="cb3-106"><a href="#cb3-106" aria-hidden="true" tabindex="-1"></a>            ],</span>
-<span id="cb3-107"><a href="#cb3-107" aria-hidden="true" tabindex="-1"></a>            <span class="st">'aapl_returns'</span>: np.log(</span>
-<span id="cb3-108"><a href="#cb3-108" aria-hidden="true" tabindex="-1"></a>                aapl_rtns.loc[<span class="dv">1</span>:, <span class="st">'close'</span>].reset_index(drop<span class="op">=</span><span class="va">True</span>) <span class="op">/</span></span>
-<span id="cb3-109"><a href="#cb3-109" aria-hidden="true" tabindex="-1"></a>                aapl_rtns.iloc[:<span class="op">-</span><span class="dv">1</span>][<span class="st">'close'</span>].reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb3-110"><a href="#cb3-110" aria-hidden="true" tabindex="-1"></a>            )</span>
-<span id="cb3-111"><a href="#cb3-111" aria-hidden="true" tabindex="-1"></a>        })</span>
-<span id="cb3-112"><a href="#cb3-112" aria-hidden="true" tabindex="-1"></a>        asset_2 <span class="op">=</span> pd.DataFrame({</span>
-<span id="cb3-113"><a href="#cb3-113" aria-hidden="true" tabindex="-1"></a>            <span class="st">'timestamp'</span>: [</span>
-<span id="cb3-114"><a href="#cb3-114" aria-hidden="true" tabindex="-1"></a>                datetime.fromtimestamp(<span class="bu">int</span>(x)) <span class="cf">for</span></span>
-<span id="cb3-115"><a href="#cb3-115" aria-hidden="true" tabindex="-1"></a>                x <span class="kw">in</span> hd[<span class="st">'2'</span>][<span class="st">'hst_dta'</span>].loc[<span class="dv">1</span>:, <span class="st">'timestamp'</span>]</span>
-<span id="cb3-116"><a href="#cb3-116" aria-hidden="true" tabindex="-1"></a>            ],</span>
-<span id="cb3-117"><a href="#cb3-117" aria-hidden="true" tabindex="-1"></a>            <span class="st">'spx_returns'</span>: np.log(</span>
-<span id="cb3-118"><a href="#cb3-118" aria-hidden="true" tabindex="-1"></a>                spx_rtns.loc[<span class="dv">1</span>:, <span class="st">'close'</span>].reset_index(drop<span class="op">=</span><span class="va">True</span>) <span class="op">/</span></span>
-<span id="cb3-119"><a href="#cb3-119" aria-hidden="true" tabindex="-1"></a>                spx_rtns.iloc[:<span class="op">-</span><span class="dv">1</span>][<span class="st">'close'</span>].reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb3-120"><a href="#cb3-120" aria-hidden="true" tabindex="-1"></a>            )</span>
-<span id="cb3-121"><a href="#cb3-121" aria-hidden="true" tabindex="-1"></a>        })</span>
-<span id="cb3-122"><a href="#cb3-122" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> pd.merge(asset_1, asset_2, on<span class="op">=</span><span class="st">'timestamp'</span>, how<span class="op">=</span><span class="st">'inner'</span>)</span>
-<span id="cb3-123"><a href="#cb3-123" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-124"><a href="#cb3-124" aria-hidden="true" tabindex="-1"></a>    <span class="at">@render.data_frame</span></span>
-<span id="cb3-125"><a href="#cb3-125" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> log_returns_df():</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shiny.types <span class="im">import</span> SilentException</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shinywidgets <span class="im">import</span> output_widget, render_plotly</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>step_3_ui <span class="op">=</span> ui.page_fluid(</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    ui.row(</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>        ui.column(</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>            <span class="dv">6</span>,</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>            ui.h5(<span class="st">"Benchmark Plot"</span>),</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>            output_widget(<span class="st">"alphabeta_scatter"</span>)</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>        ui.column(</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>            <span class="dv">6</span>,</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>            ui.h5(<span class="st">"Statsmodels Results"</span>),</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>            ui.output_ui(<span class="st">"alphabeta_trendline_summary"</span>)</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    ui.row(</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>        ui.h5(<span class="st">'Calculated Returns'</span>),</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>        ui.column(</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>            <span class="dv">7</span>,</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>            ui.output_data_frame(<span class="st">'log_returns_df'</span>)</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>        ui.column(</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>            <span class="dv">5</span>,</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>            ui.value_box(</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>                title<span class="op">=</span><span class="st">"Alpha"</span>,</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>                value<span class="op">=</span>ui.output_ui(<span class="st">'alpha_txt'</span>),</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>                showcase<span class="op">=</span>icon_svg(<span class="st">'chart-line'</span>)</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>            ),</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>            ui.value_box(</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>                title<span class="op">=</span><span class="st">"Beta"</span>,</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>                value<span class="op">=</span>ui.output_ui(<span class="st">'beta_txt'</span>),</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>                showcase<span class="op">=</span>icon_svg(<span class="st">'chart-line'</span>)</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a><span class="co"># Declare a server function...</span></span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a><span class="co">#   ...just like you would when making an ordinary Shiny app.</span></span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> step_3_server(</span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>        <span class="bu">input</span>: Inputs, output: Outputs, session: Session, ib_socket, sb_rvs</span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>):</span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>    <span class="at">@reactive.effect</span></span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>    <span class="at">@reactive.event</span>(sb_rvs[<span class="st">'connection_info'</span>])</span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> make_historical_data_queries():</span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Fetch the hourly trade data for AAPL for the past 3 days.</span></span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>        sb.start_historical_data_subscription(</span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>            historical_data<span class="op">=</span>sb_rvs[<span class="st">'historical_data'</span>],</span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>            hd_socket<span class="op">=</span>ib_socket,</span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>            contract<span class="op">=</span>sb.Contract({</span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>                <span class="st">'symbol'</span>: <span class="st">"AAPL"</span>,</span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>                <span class="st">'secType'</span>: <span class="st">"STK"</span>,</span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>                <span class="st">'exchange'</span>: <span class="st">"SMART"</span>,</span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>                <span class="st">'currency'</span>: <span class="st">"USD"</span>,</span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>            }),</span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>            durationStr<span class="op">=</span><span class="st">"3 D"</span>,</span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>            barSizeSetting<span class="op">=</span><span class="st">"1 hour"</span>,</span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>            formatDate<span class="op">=</span><span class="dv">2</span></span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Do the same, but for the S&amp;P 500 Index</span></span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>        sb.start_historical_data_subscription(</span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>            historical_data<span class="op">=</span>sb_rvs[<span class="st">'historical_data'</span>],</span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>            hd_socket<span class="op">=</span>ib_socket,</span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>            contract<span class="op">=</span>sb.Contract({</span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>                <span class="st">'symbol'</span>: <span class="st">'SPX'</span>,</span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a>                <span class="st">'secType'</span>: <span class="st">'IND'</span>,</span>
+<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a>                <span class="st">'currency'</span>: <span class="st">'USD'</span>,</span>
+<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a>                <span class="st">'exchange'</span>: <span class="st">'CBOE'</span></span>
+<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a>            }),</span>
+<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a>            durationStr<span class="op">=</span><span class="st">"3 D"</span>,</span>
+<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a>            barSizeSetting<span class="op">=</span><span class="st">"1 hour"</span>,</span>
+<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a>            formatDate<span class="op">=</span><span class="dv">2</span></span>
+<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb3-87"><a href="#cb3-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a>    <span class="at">@reactive.calc</span></span>
+<span id="cb3-89"><a href="#cb3-89" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> calculate_log_returns():</span>
+<span id="cb3-90"><a href="#cb3-90" aria-hidden="true" tabindex="-1"></a>        hd <span class="op">=</span> sb_rvs[<span class="st">'historical_data'</span>]()</span>
+<span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Make sure that BOTH assets have been added to historical_data</span></span>
+<span id="cb3-93"><a href="#cb3-93" aria-hidden="true" tabindex="-1"></a>        <span class="cf">try</span>:</span>
+<span id="cb3-94"><a href="#cb3-94" aria-hidden="true" tabindex="-1"></a>            aapl_rtns <span class="op">=</span> hd[<span class="st">'1'</span>][<span class="st">'hst_dta'</span>]</span>
+<span id="cb3-95"><a href="#cb3-95" aria-hidden="true" tabindex="-1"></a>            spx_rtns <span class="op">=</span> hd[<span class="st">'2'</span>][<span class="st">'hst_dta'</span>]</span>
+<span id="cb3-96"><a href="#cb3-96" aria-hidden="true" tabindex="-1"></a>        <span class="cf">except</span> <span class="pp">KeyError</span>:</span>
+<span id="cb3-97"><a href="#cb3-97" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="va">None</span></span>
+<span id="cb3-98"><a href="#cb3-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-99"><a href="#cb3-99" aria-hidden="true" tabindex="-1"></a>        asset_1 <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb3-100"><a href="#cb3-100" aria-hidden="true" tabindex="-1"></a>            <span class="st">'timestamp'</span>: [</span>
+<span id="cb3-101"><a href="#cb3-101" aria-hidden="true" tabindex="-1"></a>                datetime.fromtimestamp(<span class="bu">int</span>(x)) <span class="cf">for</span></span>
+<span id="cb3-102"><a href="#cb3-102" aria-hidden="true" tabindex="-1"></a>                x <span class="kw">in</span> hd[<span class="st">'1'</span>][<span class="st">'hst_dta'</span>].loc[<span class="dv">1</span>:, <span class="st">'timestamp'</span>]</span>
+<span id="cb3-103"><a href="#cb3-103" aria-hidden="true" tabindex="-1"></a>            ],</span>
+<span id="cb3-104"><a href="#cb3-104" aria-hidden="true" tabindex="-1"></a>            <span class="st">'aapl_returns'</span>: np.log(</span>
+<span id="cb3-105"><a href="#cb3-105" aria-hidden="true" tabindex="-1"></a>                aapl_rtns.loc[<span class="dv">1</span>:, <span class="st">'close'</span>].reset_index(drop<span class="op">=</span><span class="va">True</span>) <span class="op">/</span></span>
+<span id="cb3-106"><a href="#cb3-106" aria-hidden="true" tabindex="-1"></a>                aapl_rtns.iloc[:<span class="op">-</span><span class="dv">1</span>][<span class="st">'close'</span>].reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb3-107"><a href="#cb3-107" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb3-108"><a href="#cb3-108" aria-hidden="true" tabindex="-1"></a>        })</span>
+<span id="cb3-109"><a href="#cb3-109" aria-hidden="true" tabindex="-1"></a>        asset_2 <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb3-110"><a href="#cb3-110" aria-hidden="true" tabindex="-1"></a>            <span class="st">'timestamp'</span>: [</span>
+<span id="cb3-111"><a href="#cb3-111" aria-hidden="true" tabindex="-1"></a>                datetime.fromtimestamp(<span class="bu">int</span>(x)) <span class="cf">for</span></span>
+<span id="cb3-112"><a href="#cb3-112" aria-hidden="true" tabindex="-1"></a>                x <span class="kw">in</span> hd[<span class="st">'2'</span>][<span class="st">'hst_dta'</span>].loc[<span class="dv">1</span>:, <span class="st">'timestamp'</span>]</span>
+<span id="cb3-113"><a href="#cb3-113" aria-hidden="true" tabindex="-1"></a>            ],</span>
+<span id="cb3-114"><a href="#cb3-114" aria-hidden="true" tabindex="-1"></a>            <span class="st">'spx_returns'</span>: np.log(</span>
+<span id="cb3-115"><a href="#cb3-115" aria-hidden="true" tabindex="-1"></a>                spx_rtns.loc[<span class="dv">1</span>:, <span class="st">'close'</span>].reset_index(drop<span class="op">=</span><span class="va">True</span>) <span class="op">/</span></span>
+<span id="cb3-116"><a href="#cb3-116" aria-hidden="true" tabindex="-1"></a>                spx_rtns.iloc[:<span class="op">-</span><span class="dv">1</span>][<span class="st">'close'</span>].reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb3-117"><a href="#cb3-117" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb3-118"><a href="#cb3-118" aria-hidden="true" tabindex="-1"></a>        })</span>
+<span id="cb3-119"><a href="#cb3-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-120"><a href="#cb3-120" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> pd.merge(asset_1, asset_2, on<span class="op">=</span><span class="st">'timestamp'</span>, how<span class="op">=</span><span class="st">'inner'</span>)</span>
+<span id="cb3-121"><a href="#cb3-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-122"><a href="#cb3-122" aria-hidden="true" tabindex="-1"></a>    <span class="at">@render.data_frame</span></span>
+<span id="cb3-123"><a href="#cb3-123" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> log_returns_df():</span>
+<span id="cb3-124"><a href="#cb3-124" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> calculate_log_returns() <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb3-125"><a href="#cb3-125" aria-hidden="true" tabindex="-1"></a>            <span class="cf">raise</span> SilentException()</span>
 <span id="cb3-126"><a href="#cb3-126" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> render.DataTable(calculate_log_returns())</span>
 <span id="cb3-127"><a href="#cb3-127" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-128"><a href="#cb3-128" aria-hidden="true" tabindex="-1"></a>    alpha <span class="op">=</span> reactive.value()</span>
-<span id="cb3-129"><a href="#cb3-129" aria-hidden="true" tabindex="-1"></a>    beta <span class="op">=</span> reactive.value()</span>
+<span id="cb3-128"><a href="#cb3-128" aria-hidden="true" tabindex="-1"></a>    alpha <span class="op">=</span> reactive.value(<span class="bu">float</span>())</span>
+<span id="cb3-129"><a href="#cb3-129" aria-hidden="true" tabindex="-1"></a>    beta <span class="op">=</span> reactive.value(<span class="bu">float</span>())</span>
 <span id="cb3-130"><a href="#cb3-130" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-131"><a href="#cb3-131" aria-hidden="true" tabindex="-1"></a>    <span class="at">@reactive.effect</span></span>
 <span id="cb3-132"><a href="#cb3-132" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> update_alpha_beta():</span>
 <span id="cb3-133"><a href="#cb3-133" aria-hidden="true" tabindex="-1"></a>        log_rtns <span class="op">=</span> calculate_log_returns()</span>
-<span id="cb3-134"><a href="#cb3-134" aria-hidden="true" tabindex="-1"></a>        regr <span class="op">=</span> linear_model.LinearRegression()</span>
-<span id="cb3-135"><a href="#cb3-135" aria-hidden="true" tabindex="-1"></a>        regr.fit(</span>
-<span id="cb3-136"><a href="#cb3-136" aria-hidden="true" tabindex="-1"></a>            log_rtns.spx_returns.values.reshape(log_rtns.shape[<span class="dv">0</span>], <span class="dv">1</span>),</span>
-<span id="cb3-137"><a href="#cb3-137" aria-hidden="true" tabindex="-1"></a>            log_rtns.aapl_returns.values.reshape(log_rtns.shape[<span class="dv">0</span>], <span class="dv">1</span>)</span>
-<span id="cb3-138"><a href="#cb3-138" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb3-139"><a href="#cb3-139" aria-hidden="true" tabindex="-1"></a>        alpha.<span class="bu">set</span>(regr.intercept_[<span class="dv">0</span>])</span>
-<span id="cb3-140"><a href="#cb3-140" aria-hidden="true" tabindex="-1"></a>        beta.<span class="bu">set</span>(regr.coef_[<span class="dv">0</span>][<span class="dv">0</span>])</span>
-<span id="cb3-141"><a href="#cb3-141" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-142"><a href="#cb3-142" aria-hidden="true" tabindex="-1"></a>    <span class="at">@render.text</span></span>
-<span id="cb3-143"><a href="#cb3-143" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> alpha_txt():</span>
-<span id="cb3-144"><a href="#cb3-144" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="ss">f"</span><span class="sc">{</span>alpha() <span class="op">*</span> <span class="dv">100</span><span class="sc">:.7f}</span><span class="ss"> %"</span></span>
+<span id="cb3-134"><a href="#cb3-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-135"><a href="#cb3-135" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> log_rtns <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb3-136"><a href="#cb3-136" aria-hidden="true" tabindex="-1"></a>            <span class="cf">raise</span> SilentException()</span>
+<span id="cb3-137"><a href="#cb3-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-138"><a href="#cb3-138" aria-hidden="true" tabindex="-1"></a>        regr <span class="op">=</span> linear_model.LinearRegression()</span>
+<span id="cb3-139"><a href="#cb3-139" aria-hidden="true" tabindex="-1"></a>        regr.fit(</span>
+<span id="cb3-140"><a href="#cb3-140" aria-hidden="true" tabindex="-1"></a>            log_rtns.spx_returns.values.reshape(log_rtns.shape[<span class="dv">0</span>], <span class="dv">1</span>),</span>
+<span id="cb3-141"><a href="#cb3-141" aria-hidden="true" tabindex="-1"></a>            log_rtns.aapl_returns.values.reshape(log_rtns.shape[<span class="dv">0</span>], <span class="dv">1</span>)</span>
+<span id="cb3-142"><a href="#cb3-142" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb3-143"><a href="#cb3-143" aria-hidden="true" tabindex="-1"></a>        alpha.<span class="bu">set</span>(regr.intercept_[<span class="dv">0</span>])</span>
+<span id="cb3-144"><a href="#cb3-144" aria-hidden="true" tabindex="-1"></a>        beta.<span class="bu">set</span>(regr.coef_[<span class="dv">0</span>][<span class="dv">0</span>])</span>
 <span id="cb3-145"><a href="#cb3-145" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-146"><a href="#cb3-146" aria-hidden="true" tabindex="-1"></a>    <span class="at">@render.text</span></span>
-<span id="cb3-147"><a href="#cb3-147" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> beta_txt():</span>
-<span id="cb3-148"><a href="#cb3-148" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">str</span>(<span class="bu">round</span>(beta(), <span class="dv">3</span>))</span>
-<span id="cb3-149"><a href="#cb3-149" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-150"><a href="#cb3-150" aria-hidden="true" tabindex="-1"></a>    <span class="at">@reactive.calc</span></span>
-<span id="cb3-151"><a href="#cb3-151" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> calculate_alphabeta_scatter():</span>
-<span id="cb3-152"><a href="#cb3-152" aria-hidden="true" tabindex="-1"></a>        fig <span class="op">=</span> px.scatter(</span>
-<span id="cb3-153"><a href="#cb3-153" aria-hidden="true" tabindex="-1"></a>            calculate_log_returns(),</span>
-<span id="cb3-154"><a href="#cb3-154" aria-hidden="true" tabindex="-1"></a>            x<span class="op">=</span><span class="st">'spx_returns'</span>,</span>
-<span id="cb3-155"><a href="#cb3-155" aria-hidden="true" tabindex="-1"></a>            y<span class="op">=</span><span class="st">'aapl_returns'</span>,</span>
-<span id="cb3-156"><a href="#cb3-156" aria-hidden="true" tabindex="-1"></a>            trendline<span class="op">=</span><span class="st">'ols'</span></span>
-<span id="cb3-157"><a href="#cb3-157" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb3-158"><a href="#cb3-158" aria-hidden="true" tabindex="-1"></a>        fig.layout.xaxis.tickformat <span class="op">=</span> <span class="st">',.2%'</span></span>
-<span id="cb3-159"><a href="#cb3-159" aria-hidden="true" tabindex="-1"></a>        fig.layout.yaxis.tickformat <span class="op">=</span> <span class="st">',.2%'</span></span>
-<span id="cb3-160"><a href="#cb3-160" aria-hidden="true" tabindex="-1"></a>        fig.update_layout(</span>
-<span id="cb3-161"><a href="#cb3-161" aria-hidden="true" tabindex="-1"></a>            plot_bgcolor<span class="op">=</span><span class="st">'white'</span></span>
-<span id="cb3-162"><a href="#cb3-162" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb3-163"><a href="#cb3-163" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> fig</span>
-<span id="cb3-164"><a href="#cb3-164" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-165"><a href="#cb3-165" aria-hidden="true" tabindex="-1"></a>    <span class="at">@render_plotly</span></span>
-<span id="cb3-166"><a href="#cb3-166" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> alphabeta_scatter():</span>
-<span id="cb3-167"><a href="#cb3-167" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> calculate_alphabeta_scatter()</span>
-<span id="cb3-168"><a href="#cb3-168" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-169"><a href="#cb3-169" aria-hidden="true" tabindex="-1"></a>    <span class="at">@render.ui</span></span>
-<span id="cb3-170"><a href="#cb3-170" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> alphabeta_trendline_summary():</span>
-<span id="cb3-171"><a href="#cb3-171" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> ui.HTML(</span>
-<span id="cb3-172"><a href="#cb3-172" aria-hidden="true" tabindex="-1"></a>            px.get_trendline_results(</span>
-<span id="cb3-173"><a href="#cb3-173" aria-hidden="true" tabindex="-1"></a>                calculate_alphabeta_scatter()</span>
-<span id="cb3-174"><a href="#cb3-174" aria-hidden="true" tabindex="-1"></a>            ).px_fit_results.iloc[<span class="dv">0</span>].summary().as_html()</span>
-<span id="cb3-175"><a href="#cb3-175" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb3-176"><a href="#cb3-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-147"><a href="#cb3-147" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> alpha_txt():</span>
+<span id="cb3-148"><a href="#cb3-148" aria-hidden="true" tabindex="-1"></a>        a <span class="op">=</span> req(alpha())</span>
+<span id="cb3-149"><a href="#cb3-149" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="ss">f"</span><span class="sc">{</span>a <span class="op">*</span> <span class="dv">100</span><span class="sc">:.7f}</span><span class="ss"> %"</span></span>
+<span id="cb3-150"><a href="#cb3-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-151"><a href="#cb3-151" aria-hidden="true" tabindex="-1"></a>    <span class="at">@render.text</span></span>
+<span id="cb3-152"><a href="#cb3-152" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> beta_txt():</span>
+<span id="cb3-153"><a href="#cb3-153" aria-hidden="true" tabindex="-1"></a>        b <span class="op">=</span> req(beta())</span>
+<span id="cb3-154"><a href="#cb3-154" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">str</span>(<span class="bu">round</span>(b, <span class="dv">3</span>))</span>
+<span id="cb3-155"><a href="#cb3-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-156"><a href="#cb3-156" aria-hidden="true" tabindex="-1"></a>    <span class="at">@reactive.calc</span></span>
+<span id="cb3-157"><a href="#cb3-157" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> calculate_alphabeta_scatter():</span>
+<span id="cb3-158"><a href="#cb3-158" aria-hidden="true" tabindex="-1"></a>        log_rtns <span class="op">=</span> calculate_log_returns()</span>
+<span id="cb3-159"><a href="#cb3-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-160"><a href="#cb3-160" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> log_rtns <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb3-161"><a href="#cb3-161" aria-hidden="true" tabindex="-1"></a>            <span class="cf">raise</span> SilentException()</span>
+<span id="cb3-162"><a href="#cb3-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-163"><a href="#cb3-163" aria-hidden="true" tabindex="-1"></a>        fig <span class="op">=</span> px.scatter(</span>
+<span id="cb3-164"><a href="#cb3-164" aria-hidden="true" tabindex="-1"></a>            log_rtns,</span>
+<span id="cb3-165"><a href="#cb3-165" aria-hidden="true" tabindex="-1"></a>            x<span class="op">=</span><span class="st">'spx_returns'</span>,</span>
+<span id="cb3-166"><a href="#cb3-166" aria-hidden="true" tabindex="-1"></a>            y<span class="op">=</span><span class="st">'aapl_returns'</span>,</span>
+<span id="cb3-167"><a href="#cb3-167" aria-hidden="true" tabindex="-1"></a>            trendline<span class="op">=</span><span class="st">'ols'</span></span>
+<span id="cb3-168"><a href="#cb3-168" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb3-169"><a href="#cb3-169" aria-hidden="true" tabindex="-1"></a>        fig.layout.xaxis.tickformat <span class="op">=</span> <span class="st">',.2%'</span></span>
+<span id="cb3-170"><a href="#cb3-170" aria-hidden="true" tabindex="-1"></a>        fig.layout.yaxis.tickformat <span class="op">=</span> <span class="st">',.2%'</span></span>
+<span id="cb3-171"><a href="#cb3-171" aria-hidden="true" tabindex="-1"></a>        fig.update_layout(plot_bgcolor<span class="op">=</span><span class="st">'white'</span>)</span>
+<span id="cb3-172"><a href="#cb3-172" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> fig</span>
+<span id="cb3-173"><a href="#cb3-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-174"><a href="#cb3-174" aria-hidden="true" tabindex="-1"></a>    <span class="at">@render_plotly</span></span>
+<span id="cb3-175"><a href="#cb3-175" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> alphabeta_scatter():</span>
+<span id="cb3-176"><a href="#cb3-176" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> calculate_alphabeta_scatter()</span>
 <span id="cb3-177"><a href="#cb3-177" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-178"><a href="#cb3-178" aria-hidden="true" tabindex="-1"></a><span class="co"># create an app object using your server function</span></span>
-<span id="cb3-179"><a href="#cb3-179" aria-hidden="true" tabindex="-1"></a><span class="co"># Adjust your connection parameters if not using the default TWS paper trader,</span></span>
-<span id="cb3-180"><a href="#cb3-180" aria-hidden="true" tabindex="-1"></a><span class="co">#   or if you want a different client id, etc.</span></span>
-<span id="cb3-181"><a href="#cb3-181" aria-hidden="true" tabindex="-1"></a>app <span class="op">=</span> sb.sb_app(</span>
-<span id="cb3-182"><a href="#cb3-182" aria-hidden="true" tabindex="-1"></a>    home_ui<span class="op">=</span>a_ui_obj,</span>
-<span id="cb3-183"><a href="#cb3-183" aria-hidden="true" tabindex="-1"></a>    server_fn<span class="op">=</span>a_server_function,</span>
-<span id="cb3-184"><a href="#cb3-184" aria-hidden="true" tabindex="-1"></a>    host<span class="op">=</span><span class="st">'127.0.0.1'</span>,</span>
-<span id="cb3-185"><a href="#cb3-185" aria-hidden="true" tabindex="-1"></a>    port<span class="op">=</span><span class="dv">7497</span>,</span>
-<span id="cb3-186"><a href="#cb3-186" aria-hidden="true" tabindex="-1"></a>    client_id<span class="op">=</span><span class="dv">10799</span>,</span>
-<span id="cb3-187"><a href="#cb3-187" aria-hidden="true" tabindex="-1"></a>    verbose<span class="op">=</span><span class="va">True</span></span>
-<span id="cb3-188"><a href="#cb3-188" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-189"><a href="#cb3-189" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-190"><a href="#cb3-190" aria-hidden="true" tabindex="-1"></a><span class="co"># run the app.</span></span>
-<span id="cb3-191"><a href="#cb3-191" aria-hidden="true" tabindex="-1"></a>app.run()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-178"><a href="#cb3-178" aria-hidden="true" tabindex="-1"></a>    <span class="at">@render.ui</span></span>
+<span id="cb3-179"><a href="#cb3-179" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> alphabeta_trendline_summary():</span>
+<span id="cb3-180"><a href="#cb3-180" aria-hidden="true" tabindex="-1"></a>        summy <span class="op">=</span> px.get_trendline_results(</span>
+<span id="cb3-181"><a href="#cb3-181" aria-hidden="true" tabindex="-1"></a>            calculate_alphabeta_scatter()</span>
+<span id="cb3-182"><a href="#cb3-182" aria-hidden="true" tabindex="-1"></a>        ).px_fit_results.iloc[<span class="dv">0</span>].summary().as_html()</span>
+<span id="cb3-183"><a href="#cb3-183" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> ui.HTML(summy)</span>
+<span id="cb3-184"><a href="#cb3-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-185"><a href="#cb3-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-186"><a href="#cb3-186" aria-hidden="true" tabindex="-1"></a><span class="co"># create an app object using your server function</span></span>
+<span id="cb3-187"><a href="#cb3-187" aria-hidden="true" tabindex="-1"></a><span class="co"># Adjust your connection parameters if not using the default TWS paper trader,</span></span>
+<span id="cb3-188"><a href="#cb3-188" aria-hidden="true" tabindex="-1"></a><span class="co">#   or if you want a different client id, etc.</span></span>
+<span id="cb3-189"><a href="#cb3-189" aria-hidden="true" tabindex="-1"></a>app <span class="op">=</span> sb.sb_app(</span>
+<span id="cb3-190"><a href="#cb3-190" aria-hidden="true" tabindex="-1"></a>    home_ui<span class="op">=</span>step_3_ui,</span>
+<span id="cb3-191"><a href="#cb3-191" aria-hidden="true" tabindex="-1"></a>    server_fn<span class="op">=</span>step_3_server,</span>
+<span id="cb3-192"><a href="#cb3-192" aria-hidden="true" tabindex="-1"></a>    host<span class="op">=</span><span class="st">'127.0.0.1'</span>,</span>
+<span id="cb3-193"><a href="#cb3-193" aria-hidden="true" tabindex="-1"></a>    port<span class="op">=</span><span class="dv">7497</span>,</span>
+<span id="cb3-194"><a href="#cb3-194" aria-hidden="true" tabindex="-1"></a>    client_id<span class="op">=</span><span class="dv">10799</span>,</span>
+<span id="cb3-195"><a href="#cb3-195" aria-hidden="true" tabindex="-1"></a>    verbose<span class="op">=</span><span class="va">True</span></span>
+<span id="cb3-196"><a href="#cb3-196" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-197"><a href="#cb3-197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-198"><a href="#cb3-198" aria-hidden="true" tabindex="-1"></a><span class="co"># run the app.</span></span>
+<span id="cb3-199"><a href="#cb3-199" aria-hidden="true" tabindex="-1"></a>app.run()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 

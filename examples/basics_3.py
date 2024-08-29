@@ -7,9 +7,10 @@ from datetime import datetime
 from faicons import icon_svg
 from sklearn import linear_model
 from shiny import Inputs, Outputs, Session, reactive, ui, req, render
+from shiny.types import SilentException
 from shinywidgets import output_widget, render_plotly
 
-a_ui_obj = ui.page_fluid(
+step_3_ui = ui.page_fluid(
     ui.row(
         ui.column(
             6,
@@ -46,16 +47,12 @@ a_ui_obj = ui.page_fluid(
 
 # Declare a server function...
 #   ...just like you would when making an ordinary Shiny app.
-def a_server_function(
+def step_3_server(
         input: Inputs, output: Outputs, session: Session, ib_socket, sb_rvs
 ):
-    # Only set this variable once. Reactive functions that depend upon it will
-    #   run when the app is initialized, after the socket has been connected
-    #   and properly set up by ShinyBroker.
-    run_once = reactive.value(True)
 
     @reactive.effect
-    @reactive.event(run_once)
+    @reactive.event(sb_rvs['connection_info'])
     def make_historical_data_queries():
 
         # Fetch the hourly trade data for AAPL for the past 3 days.
@@ -95,9 +92,9 @@ def a_server_function(
         # Make sure that BOTH assets have been added to historical_data
         try:
             aapl_rtns = hd['1']['hst_dta']
-            spx_rtns  = hd['2']['hst_dta']
+            spx_rtns = hd['2']['hst_dta']
         except KeyError:
-            req('')
+            return None
 
         asset_1 = pd.DataFrame({
             'timestamp': [
@@ -119,18 +116,25 @@ def a_server_function(
                 spx_rtns.iloc[:-1]['close'].reset_index(drop=True)
             )
         })
+
         return pd.merge(asset_1, asset_2, on='timestamp', how='inner')
 
     @render.data_frame
     def log_returns_df():
+        if calculate_log_returns() is None:
+            raise SilentException()
         return render.DataTable(calculate_log_returns())
 
-    alpha = reactive.value()
-    beta = reactive.value()
+    alpha = reactive.value(float())
+    beta = reactive.value(float())
 
     @reactive.effect
     def update_alpha_beta():
         log_rtns = calculate_log_returns()
+
+        if log_rtns is None:
+            raise SilentException()
+
         regr = linear_model.LinearRegression()
         regr.fit(
             log_rtns.spx_returns.values.reshape(log_rtns.shape[0], 1),
@@ -141,25 +145,30 @@ def a_server_function(
 
     @render.text
     def alpha_txt():
-        return f"{alpha() * 100:.7f} %"
+        a = req(alpha())
+        return f"{a * 100:.7f} %"
 
     @render.text
     def beta_txt():
-        return str(round(beta(), 3))
+        b = req(beta())
+        return str(round(b, 3))
 
     @reactive.calc
     def calculate_alphabeta_scatter():
+        log_rtns = calculate_log_returns()
+
+        if log_rtns is None:
+            raise SilentException()
+
         fig = px.scatter(
-            calculate_log_returns(),
+            log_rtns,
             x='spx_returns',
             y='aapl_returns',
             trendline='ols'
         )
         fig.layout.xaxis.tickformat = ',.2%'
         fig.layout.yaxis.tickformat = ',.2%'
-        fig.update_layout(
-            plot_bgcolor='white'
-        )
+        fig.update_layout(plot_bgcolor='white')
         return fig
 
     @render_plotly
@@ -168,19 +177,18 @@ def a_server_function(
 
     @render.ui
     def alphabeta_trendline_summary():
-        return ui.HTML(
-            px.get_trendline_results(
-                calculate_alphabeta_scatter()
-            ).px_fit_results.iloc[0].summary().as_html()
-        )
+        summy = px.get_trendline_results(
+            calculate_alphabeta_scatter()
+        ).px_fit_results.iloc[0].summary().as_html()
+        return ui.HTML(summy)
 
 
 # create an app object using your server function
 # Adjust your connection parameters if not using the default TWS paper trader,
 #   or if you want a different client id, etc.
 app = sb.sb_app(
-    home_ui=a_ui_obj,
-    server_fn=a_server_function,
+    home_ui=step_3_ui,
+    server_fn=step_3_server,
     host='127.0.0.1',
     port=7497,
     client_id=10799,

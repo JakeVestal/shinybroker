@@ -8,7 +8,7 @@ from sklearn import linear_model
 from shiny import Inputs, Outputs, Session, reactive, ui, req, render
 from shiny.types import SilentException
 
-a_ui_obj = ui.page_fluid(
+step_2_ui = ui.page_fluid(
     ui.row(
         ui.h5('Calculated Returns'),
         ui.column(
@@ -34,16 +34,12 @@ a_ui_obj = ui.page_fluid(
 
 # Declare a server function...
 #   ...just like you would when making an ordinary Shiny app.
-def a_server_function(
+def step_2_server(
         input: Inputs, output: Outputs, session: Session, ib_socket, sb_rvs
 ):
-    # Only set this variable once. Reactive functions that depend upon it will
-    #   run when the app is initialized, after the socket has been connected
-    #   and properly set up by ShinyBroker.
-    run_once = reactive.value(True)
 
     @reactive.effect
-    @reactive.event(run_once)
+    @reactive.event(sb_rvs['connection_info'])
     def make_historical_data_queries():
 
         # Fetch the hourly trade data for AAPL for the past 3 days.
@@ -148,8 +144,8 @@ def a_server_function(
 # Adjust your connection parameters if not using the default TWS paper trader,
 #   or if you want a different client id, etc.
 app = sb.sb_app(
-    home_ui=a_ui_obj,
-    server_fn=a_server_function,
+    home_ui=step_2_ui,
+    server_fn=step_2_server,
     host='127.0.0.1',
     port=7497,
     client_id=10799,

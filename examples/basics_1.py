@@ -4,7 +4,7 @@ from shiny import Inputs, Outputs, Session, reactive
 
 # Declare a server function...
 #   ...just like you would when making an ordinary Shiny app.
-def a_server_function(
+def step_1_server(
         input: Inputs, output: Outputs, session: Session, ib_socket, sb_rvs
 ):
 
@@ -45,7 +45,7 @@ def a_server_function(
 # Adjust your connection parameters if not using the default TWS paper trader,
 #   or if you want a different client id, etc.
 app = sb.sb_app(
-    server_fn=a_server_function,
+    server_fn=step_1_server,
     host='127.0.0.1',
     port=7497,
     client_id=10799,
