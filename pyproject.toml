@@ -30,8 +30,12 @@ dev = [
     "quarto",
     "hatch",
     "twine",
-    "pytest",
     "build"
+]
+examples = [
+    "plotly",
+    "scikit-learn",
+    "statsmodels"
 ]
 
 [project.urls]
