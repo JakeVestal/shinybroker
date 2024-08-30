@@ -159,7 +159,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#hello-world-example" id="toc-hello-world-example" class="nav-link active" data-scroll-target="#hello-world-example">Hello World Example</a></li>
+  <li><a href="#welcome" id="toc-welcome" class="nav-link active" data-scroll-target="#welcome">Welcome!</a></li>
+  <li><a href="#about" id="toc-about" class="nav-link" data-scroll-target="#about">About</a></li>
+  <li><a href="#hello-world-example" id="toc-hello-world-example" class="nav-link" data-scroll-target="#hello-world-example">Hello World Example</a></li>
   </ul>
 </nav>
     </div>
@@ -185,9 +187,31 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p><span style="color:#cece7d;background-color:#b2a9248f;">Welcome! The ShinyBroker package and this website are under frequent heavy development, with new features and examples posted almost daily as they are written and tested.</span></p>
+<section id="welcome" class="level2">
+<h2 class="anchored" data-anchor-id="welcome">Welcome!</h2>
+<div id="950668ae" class="cell" data-execution_count="1">
+<div class="cell-output cell-output-stdout">
+<pre><code>ShinyBroker current version:   0.6.13</code></pre>
+</div>
+</div>
+<p>This package is under frequent heavy development, so in order to stay current with the examples and tutorials, you should make sure that your local install of ShinyBroker is up-to-date with the most current version. You can easily check what version of ShinyBroker you have installed via the command:</p>
+<div id="af42e63b" class="cell" data-execution_count="2">
+<div class="cell-output cell-output-stdout">
+<pre><code>pip show shinybroker</code></pre>
+</div>
+</div>
+<p>…and you can update to the latest version with:</p>
+<div id="06b48a4d" class="cell" data-execution_count="3">
+<div class="cell-output cell-output-stdout">
+<pre><code>pip install shinybroker --upgrade</code></pre>
+</div>
+</div>
+</section>
+<section id="about" class="level2">
+<h2 class="anchored" data-anchor-id="about">About</h2>
 <p>ShinyBroker is based on the realization that in trading, everything is a reactive variable. Your orders, the prices of assets you’re tracking, current positions, Greeks, p/l– <em>everything</em> is time-dynamic, and can trigger trade order events according to algorithms written by the user. In ShinyBroker, those dynamic variables are kept updated over a socket connection to your account – live or paper – at <a href="https://www.interactivebrokers.com/en/trading/ib-api.php">Interactive Brokers</a>, and are made accessible within <a href="https://shiny.posit.co/">Posit’s Shiny framework</a> – a brilliant piece of coding that provides a natural sandbox for reactive variables and their live visualization as webpages.</p>
 <p>The ‘hello world’ example below will walk you through a trivial setup case. <strong>You do not need an account at Interactive Brokers</strong> in order to follow the example, but it is suggested that you set up a free paper trader account with them if you’re interested in keeping track of your trades.</p>
+</section>
 <section id="hello-world-example" class="level2">
 <h2 class="anchored" data-anchor-id="hello-world-example">Hello World Example</h2>
 <p><em>Run the base ShinyBroker app, and inject a simple bit of UI &amp; server code.</em></p>
@@ -202,18 +226,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p>Install ShinyBroker with <code>pip install shinybroker</code></p></li>
 <li><p>In Python, run the following: (<em>make sure TWS is open and running</em>)</p></li>
 </ol>
-<div id="f828e62b" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shinybroker <span class="im">as</span> sb</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create an instance of a ShinyBroker App object using the default ui and server</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>app <span class="op">=</span> sb.sb_app(</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    host<span class="op">=</span><span class="st">'127.0.0.1'</span>,  <span class="co"># localhost TWS is being served on your local machine</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    port<span class="op">=</span><span class="dv">7497</span>,         <span class="co"># make this match the port in your API Settings config</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    client_id<span class="op">=</span><span class="dv">10742</span>    <span class="co"># picked at random, choose another Client ID if preferred</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Run the app</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>app.run()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="code" class="level5">
+<h5 class="anchored" data-anchor-id="code">Code:</h5>
+<div id="4b8cf4c2" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shinybroker <span class="im">as</span> sb</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create an instance of a ShinyBroker App object using the default ui and server</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>app <span class="op">=</span> sb.sb_app(</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    host<span class="op">=</span><span class="st">'127.0.0.1'</span>,  <span class="co"># localhost TWS is being served on your local machine</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    port<span class="op">=</span><span class="dv">7497</span>,         <span class="co"># make this match the port in your API Settings config</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    client_id<span class="op">=</span><span class="dv">10742</span>    <span class="co"># picked at random, choose another Client ID if preferred</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Run the app</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>app.run()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>This code performs three main operations:</p>
 <ul>
@@ -229,42 +255,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ol start="11" type="1">
 <li>Stop the running instance of the ShinyBroker app and modify your code as shown below:</li>
 </ol>
-<div id="8336722d" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shinybroker <span class="im">as</span> sb</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shiny <span class="im">import</span> Inputs, Outputs, Session, ui, render</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Some UI to add to the app</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>a_piece_of_new_ui <span class="op">=</span> ui.div(</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    ui.input_text(</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        <span class="bu">id</span><span class="op">=</span><span class="st">'sb_example_text_in'</span>,</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        label<span class="op">=</span><span class="st">'Example Input. Type something!'</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    ui.output_code(<span class="st">'sb_example_text_out'</span>)</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Server to support the new UI</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Signature must always contain the following five parameters:</span></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co">#   input, output, session, ib_socket, and sb_rvs</span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> a_server_function(</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>        <span class="bu">input</span>: Inputs, output: Outputs, session: Session, ib_socket, sb_rvs</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>):</span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">@render.code</span></span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> sb_example_text_out():</span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="ss">f"You entered '</span><span class="sc">{</span><span class="bu">input</span><span class="sc">.</span>sb_example_text_in()<span class="sc">}</span><span class="ss">'."</span></span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a ShinyBroker app with the new ui and server</span></span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>app <span class="op">=</span> sb.sb_app(</span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    a_piece_of_new_ui,</span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>    a_server_function,</span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>    host<span class="op">=</span><span class="st">'127.0.0.1'</span>,</span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    port<span class="op">=</span><span class="dv">7497</span>,</span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>    client_id<span class="op">=</span><span class="dv">10742</span></span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>app.run()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="code-1" class="level5">
+<h5 class="anchored" data-anchor-id="code-1">Code:</h5>
+<div id="8f43df35" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shinybroker <span class="im">as</span> sb</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create an instance of a ShinyBroker App object using the default ui and server</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>app <span class="op">=</span> sb.sb_app(</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    host<span class="op">=</span><span class="st">'127.0.0.1'</span>,  <span class="co"># localhost TWS is being served on your local machine</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    port<span class="op">=</span><span class="dv">7497</span>,         <span class="co"># make this match the port in your API Settings config</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    client_id<span class="op">=</span><span class="dv">10742</span>    <span class="co"># picked at random, choose another Client ID if preferred</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Run the app</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>app.run()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Here, we have added two additional elements: a <code>ui</code> and a <code>server()</code>, just like we normally would when building a Shiny app with the <strong>Core</strong> syntax.</p>
 <ul>
@@ -277,6 +282,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>If you can get that far, <strong>success</strong>! From this simple starting point you can build a trading algorithm that does just about anything. More usage examples that cover market data, orders, positions, and other topics will be treated in other tutorials and videos accessible on this site.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
