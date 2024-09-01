@@ -203,9 +203,48 @@ def cancel_historical_data(reqId: int):
         pack_element(reqId)
     )
 
+def req_real_time_bars(
+        reqId: int,
+        contract: Contract,
+        whatToShow="TRADES",
+        useRTH=0
+):
+    return pack_message(
+        functionary['outgoing_msg_codes']['REQ_REAL_TIME_BARS'] + "\0" +
+        "3\0" +  # VERSION
+        pack_element(reqId) +
+        pack_element(contract.conId) +
+        pack_element(contract.symbol) +
+        pack_element(contract.secType) +
+        pack_element(contract.lastTradeDateOrContractMonth) +
+        pack_element(contract.strike) +
+        pack_element(contract.right) +
+        pack_element(contract.multiplier) +
+        pack_element(contract.exchange) +
+        pack_element(contract.primaryExchange) +
+        pack_element(contract.currency) +
+        pack_element(contract.localSymbol) +
+        pack_element(contract.tradingClass) +
+        pack_element(5) +  # barSize, not yet implemented by IBKR
+        pack_element(whatToShow) +
+        pack_element(useRTH) +
+        pack_element("")  # realTimeBarOptions, not yet implemented by IBKR
+    )
+
+def cancel_real_time_bars(reqId: int):
+    return pack_message(
+        functionary['outgoing_msg_codes']['CANCEL_REAL_TIME_BARS'] + "\0" +
+        "1\0" +  # VERSION
+        pack_element(reqId)
+    )
+
+
+
 
 def req_scanner_parameters():
     return pack_message(
         functionary['outgoing_msg_codes']['REQ_SCANNER_PARAMS'] + "\0" +
         "1\0"  # VERSION
     )
+
+

@@ -74,9 +74,9 @@ class Contract:
     ```
     from shinybroker import Contract
     aapl_contract = Contract({
-        'symbol': "AAPL"
-        'secType': "STK"
-        'exchange': "SMART"
+        'symbol': "AAPL",
+        'secType': "STK",
+        'exchange': "SMART",
         'currency': "USD"
     })
     ```
