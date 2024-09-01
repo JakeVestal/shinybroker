@@ -4,6 +4,31 @@ from shinybroker.obj_defs import Contract
 
 
 def req_contract_details(reqId: int, contract: Contract):
+    """Create a contract details request string
+
+    Parameters
+    -----------
+    reqId: int
+        Numeric identifier of the request
+    contract: Contract
+        A [Contract](`shinybroker.Contract`) object
+
+    Examples
+    -----------
+    ```
+    import shinybroker as sb
+    req_contract_details_msg = sb.req_contract_details(
+        reqId=1,
+        contract=Contract({
+            'symbol': "AAPL",
+            'secType': "STK",
+            'exchange': "SMART",
+            'currency': "USD"
+        })
+    )
+    print(req_contract_details_msg)
+    ```
+    """
     return pack_message(
         functionary['outgoing_msg_codes']['REQ_CONTRACT_DATA'] + "\0" +
         "8\0" +  # VERSION
@@ -28,6 +53,16 @@ def req_contract_details(reqId: int, contract: Contract):
 
 
 def req_current_time():
+    """Create a request string for the current broker time
+
+    Examples
+    -----------
+    ```
+    import shinybroker as sb
+    req_current_time_msg = sb.req_current_time()
+    print(req_current_time_msg)
+    ```
+    """
     return pack_message(
         functionary['outgoing_msg_codes']['REQ_CURRENT_TIME'] + "\0" +
         "1\0"  # VERSION
@@ -35,6 +70,24 @@ def req_current_time():
 
 
 def req_market_data_type(marketDataType: int):
+    """Create a string for setting your session's market data type
+
+    Parameters
+    -------------
+    marketDataType: int
+        Integer identifier for the [market data type](
+        https://www.interactivebrokers.com/campus/ibkr-api-page/twsapi-doc/#md-type-behavior
+        ) that you want
+
+    Examples
+    -----------
+    ```
+    import shinybroker as sb
+    # create a request string for setting the market data type to "DELAYED"
+    req_market_data_type_msg = sb.req_market_data_type(3)
+    print(req_market_data_type_msg)
+    ```
+    """
     return pack_message(
         functionary['outgoing_msg_codes']['REQ_MARKET_DATA_TYPE'] + "\0" +
         "1\0" +  # VERSION
@@ -43,6 +96,24 @@ def req_market_data_type(marketDataType: int):
 
 
 def req_matching_symbols(reqId: int, pattern: str):
+    """Create a request string for symbols that loosely match a pattern
+
+    Parameters
+    -------------
+    reqId: int
+        Numeric identifier of the request
+    pattern: str
+        A string, like "AAPL", "S&P 500" or "Vanguard" that you'd like to
+        search for
+
+    Examples
+    ---------------
+    ```
+    import shinybroker as sb
+    req_matching_symbols_msg = sb.req_market_data_type(3)
+    print(req_matching_symbols_msg)
+    ```
+    """
     return pack_message(
         functionary['outgoing_msg_codes']['REQ_MATCHING_SYMBOLS'] + "\0" +
         pack_element(reqId) +
@@ -57,8 +128,39 @@ def req_mkt_data(
         snapshot: bool,
         regulatorySnapshot: bool
 ):
+    """Create a market data request string
 
-    # send req mkt data msg
+    Parameters
+    ---------------
+    reqId: int
+        Numeric identifier of the request
+    contract: Contract
+        A [Contract](`shinybroker.Contract`) object
+    genericTickList: ""
+        Comma-separated string of the numerical [Generic Ticks](https://www.interactivebrokers.com/campus/ibkr-api-page/twsapi-doc/#available-tick-types)
+        for which you'd like data
+    snapshot: False
+        Set to `True` if you want a [snapshot](https://www.interactivebrokers.com/campus/ibkr-api-page/twsapi-doc/#streaming-data-snapshot)
+    regulatorySnapshot: False
+        Set to `True` if you want a [regulatory snapshot](https://www.interactivebrokers.com/campus/ibkr-api-page/twsapi-doc/#regulatory-snapshot)
+
+    Examples
+    -----------
+    ```
+    import shinybroker as sb
+    mkt_data_req_msg = sb.req_mkt_data(
+        reqId=1,
+        contract=sb.Contract({
+            'symbol': 'AAPL',
+            'secType': 'STK',
+            'exchange': 'SMART',
+            'currency': 'USD'
+        }),
+        genericTickList="233,236"  # request for "RT Volume" & "Shortable"
+    )
+    print(mkt_data_req_msg)
+    ```
+    """
     msg = (
             functionary['outgoing_msg_codes']['REQ_MKT_DATA'] + "\0" +
             "11\0" +  # VERSION
@@ -108,6 +210,22 @@ def req_mkt_data(
 
 
 def cancel_mkt_data(reqId: int):
+    """Create a message to cancel an existing market data subscription by ID
+
+    Parameters
+    ------------
+    reqId: int
+        Numeric identifier of the market data request you want to cancel
+
+    Examples
+    ------------
+    ```
+    import shinybroker as sb
+    # create message to cancel the market data subscription whose id is 1
+    cancel_mkt_data_msg = sb.cancel_mkt_data(1)
+    print(cancel_mkt_data_msg)
+    ```
+    """
     return pack_message(
         functionary['outgoing_msg_codes']['CANCEL_MKT_DATA'] + "\0" +
         "2\0" +  # VERSION
@@ -120,8 +238,44 @@ def req_sec_def_opt_params(
         underlyingSymbol: str,
         futFopExchange: str,
         underlyingSecType: str,
-        underlyingConId: int
+        underlyingConId: int,
+        futFopExchange=""
 ):
+    """Create a request for the security-defined option parameters of a security
+
+    Parameters
+    ------------
+    reqId: int
+        Numeric identifier of the request
+    underlyingSymbol: str
+        Symbol of the underlying security for which you want option parameters
+    underlyingSecType:
+        Type of the underlying security; e.g., "`STK`"
+    underlyingConId: int
+        `conId` of the underlying security
+    futFopExchange: str
+        Only set this parameter if the underlying is a futures contract; in
+        other words, don't change it from the default `""` if your underlying is
+         a stock. If your underlying **is** a futures contract, then use
+         `futFopExchange` to specify the exchange for which you want option
+         parameters. You may still pass in `""` if you want the results to
+         include **all** of the exchanges available at IBKR that trade
+         options on your specified underlying.
+
+    Examples
+    --------
+    ```
+    import shinybroker as sb
+    req_sec_def_opt_params_msg = sb.req_sec_def_opt_params(
+        reqId=1,
+        underlyingSymbol="AAPL",
+        futFopExchange="",
+        underlyingSecType="STK",
+        underlyingConId=265598
+    )
+    print(req_sec_def_opt_params_msg)
+    ```
+    """
     return pack_message(
         functionary['outgoing_msg_codes'][
             'REQ_SEC_DEF_OPT_PARAMS'
@@ -130,11 +284,29 @@ def req_sec_def_opt_params(
         pack_element(underlyingSymbol) +
         pack_element(futFopExchange) +
         pack_element(underlyingSecType) +
-        pack_element(underlyingConId)
+        pack_element(underlyingConId) +
+        pack_element(futFopExchange)
     )
 
 
 def req_ids(numIds:int):
+    """Create a request for the next valid numeric ID that can be used to
+    create a trade order
+
+    Parameter
+    ------------
+    numIds: int
+        Specifies how many valid IDs you want in the result
+
+    Examples
+    ---------
+    ```
+    import shinybroker as sb
+    # create a message that asks for 10 valid IDs
+    req_ids_msg = sb.req_ids(10)
+    print(req_ids_msg)
+    ```
+    """
     return pack_message(
         functionary['outgoing_msg_codes']['REQ_IDS'] + "\0" +
         "1\0" +  # VERSION
@@ -153,6 +325,63 @@ def req_historical_data(
         formatDate=1,
         keepUpToDate=0
 ):
+    """Create a request for the historical data of a financial instrument
+
+    Parameters
+    ----------
+    reqId: int
+        Numeric identifier of the request
+    contract: Contract
+        The [Contract](`shinybroker.Contract`) object for which you want data
+    endDateTime: ""
+        Ending datetime string formatted as “YYYYMMDD HH:mm:ss TMZ”
+        specifying the end of the time period for which you want historical
+        data. Leave it as the default "" to get historical data up to the
+        current present moment.
+    durationStr: "1 D"
+        A [Duration String](https://www.interactivebrokers.com/campus/ibkr-api-page/twsapi-doc/#hist-duration)
+        that specifies how far back in time you want to fetch data.
+    barSizeSetting: "1 hour"
+        A [Bar Size](https://www.interactivebrokers.com/campus/ibkr-api-page/twsapi-doc/#hist-bar-size)
+        that specifies how fine-grained you want your historical data to be
+        (daily, weekly, every 30 seconds, etc).
+    whatToShow: "Trades"
+        You may select from any of the [Historical Data Types](https://www.interactivebrokers.com/campus/ibkr-api-page/twsapi-doc/#historical-whattoshow)
+        but for most cases you'll probably be happy with one of "BID_ASK",
+        "MIDPOINT", or "TRADES".
+    useRTH: True
+        "Use Regular Trading Hours". Set to `False` if you want the historical
+        data to include after-hours/pre-market trading
+    formatDate: 1
+        Numeric code from the [Format Date Received](https://www.interactivebrokers.com/campus/ibkr-api-page/twsapi-doc/#hist-format-date)
+        table that specifies how you want your dates formatted in the data.
+    keepUpToDate: False
+        Set to `True` if you want to keep receiving new bar data as it
+        becomes available. For a `barSizeSetting` of `5 min`, that would mean
+        you receive new data every 5 minutes.
+
+    Examples
+    ------------
+    ```
+    import shinybroker as sb
+    # create a request for historical TRADES of AAPL for the last 30 days,
+    #   starting today. Report the data on a daily basis, regular trading
+    #   hours only, and format it as "string time zone date". Make it a one-time
+    #   query; don't keep it up-to-date.
+    req_historical_data_msg = sb.req_historical_data(
+        reqId=1,
+        contract = Contract({
+            'symbol': "AAPL",
+            'secType': "STK",
+            'exchange': "SMART",
+            'currency': "USD"
+        }),
+        durationStr='30 D',
+        barSizeSetting='1 day'
+    )
+    print(req_historical_data_msg)
+    ```
+    """
     msg = (
             functionary['outgoing_msg_codes']['REQ_HISTORICAL_DATA'] + "\0" +
             pack_element(reqId) +
@@ -197,6 +426,22 @@ def req_historical_data(
 
 
 def cancel_historical_data(reqId: int):
+    """Create a message that will cancel an existing historical data request.
+
+    Parameters
+    ----------
+    reqId: int
+        The numerical ID of the historical data request you want to cancel.
+
+    Examples
+    ----------
+    ```
+    import shinybroker as sb
+    # Message that will cancel historical data request having ID of 1
+    cancel_historical_data_msg = sb.cancel_historical_data(1)
+    print(cancel_historical_data_msg)
+    ```
+    """
     return pack_message(
         functionary['outgoing_msg_codes']['CANCEL_HISTORICAL_DATA'] + "\0" +
         "1\0" +  # VERSION
