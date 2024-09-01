@@ -6,4 +6,4 @@ These objects are the building blocks that your application uses to work with im
 
 | | |
 | --- | --- |
-| [Contract](Contract.qmd#shinybroker.Contract) | Create a contract |
+| [Contract](Contract.qmd#shinybroker.Contract) | All tradable assets -- even stocks and currencies -- are considered |

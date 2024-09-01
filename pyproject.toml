@@ -28,6 +28,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "quarto",
+    "quartodoc",
     "hatch",
     "twine",
     "build"

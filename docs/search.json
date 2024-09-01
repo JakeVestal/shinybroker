@@ -4,7 +4,7 @@
     "href": "reference/Contract.html",
     "title": "Contract",
     "section": "",
-    "text": "Contract(self, contract_params=None)\nCreate a contract\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ncontract_params\ndict\nFirst number to add.\nNone\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nContract\nA Contract object",
+    "text": "Contract(self, contract_params=None)\nAll tradable assets – even stocks and currencies – are considered ‘contracts’ from Interactive Brokers’ perspective. Whether you’re placing a trade order, requesting market data, or searching for details about a particular financial instrument, the Contract object is how you specify to Interactive Brokers exactly which asset you’re referring to.\n\n\nTo see why we use a Contract object system instead of just referring to an asset by its symbol, pick a common ticker like “AAPL” and search for it using the “Matching Symbols” tool in ShinyBroker. You will quickly note that there are many contracts matching that description available for trading. The Contract object system lets you specify which asset you’re interested in by allowing you to pass in additional parameters like secType, currency, exchange.\n\n\n\nAs a general rule of thumb, a well-defined Contract object uses the minimum number of specified parameters needed to uniquely define one single tradable asset. If you’re unsure whether a Contract object you’ve created works, or whether it defines only one unique asset, you can copy-paste your code into the “Contract Details” tool in ShinyBroker. If it returns only one asset, and it’s the asset that you had in mind, then you can be sure your definition is good.\n\n\n\nEvery tradable asset at IBKR is given its own unique conId, which is the minimum information you need in order to specify that instrument. If you pass a single int or str object to the Contract constructor, then it will be treated as the conId.\n\n\n\nWay 1: Instantiate a contract object and then assign parameters to the attributes as you require:\naapl_contract = Contract()\naapl_contract.symbol = \"AAPL\"\naapl_contract.secType = \"STK\"\naapl_contract.exchange = \"SMART\"\naapl_contract.currency = \"USD\"\nWay 2: Pass everything in as a dictionary all at once:\naapl_contract = Contract({\n    'symbol': \"AAPL\"\n    'secType': \"STK\"\n    'exchange': \"SMART\"\n    'currency': \"USD\"\n})\nWay 3: Pass in just the conId as a string or integer:\naapl_contract = Contract(265598)\naapl_contract = Contract(\"265598\")\n\n\n\nBy default, all instances of the Contract() class possess all attributes, but not all attributes are set to something meaningful. To understand this point, run:\naapl_us_stock = sb.Contract()\naapl_us_stock.symbol = \"AAPL\"\naapl_us_stock.secType = \"STK\"\naapl_us_stock.exchange = \"SMART\"\naapl_us_stock.currency = \"USD\"\nprint(aapl_us_stock)\n…and you will see that all parameters are represented in aapl_us_stock, but not all the parameters have meaningful, non-empty values (e.g, `strike’, because stocks don’t have a strike price).\nTo get a clean dictionary containing only the non-empty values, run:\nprint(aapl_us_stock.compact())\n\n\n\nSay you want to create contracts for the put and the call options for a particular strike, expiry, and underlying, so you write a code like this:\nimport shinybroker as sb\ngoog_call = sb.Contract({\n    'symbol': 'GOOG',\n    'secType': 'OPT',\n    'exchange': 'SMART',\n    'currency': 'USD',\n    'lastTradeDateOrContractMonth': \"20261218\",\n    'strike': 160,\n    'right': 'C',\n    'multiplier': '100'\n})\ngoog_put = goog_call\ngoog_put.right = \"P\"\nprint(goog_call)\nprint(goog_put)\nIf you’re used to Python, you know what’s coming because… mutability. goog_put isn’t a true copy of goog_call, it’s just a pointer that points to the same value as goog_call. Therefore, when you ran goog_put.right = \"P\" you actually set the original value to “P” for “put” for both goog_put and goog_call.\nThis inelegant solecism is a feature of Python that one must simply endure. You may, however, accomplish what you’re after by using the compact() method on goog_call to instantiate a new object as in the modified code below, which correctly declares a put and a call contract as expected:\nimport shinybroker as sb\ngoog_call = sb.Contract({\n    'symbol': 'GOOG',\n    'secType': 'OPT',\n    'exchange': 'SMART',\n    'currency': 'USD',\n    'lastTradeDateOrContractMonth': \"20261218\",\n    'strike': 160,\n    'right': 'C',\n    'multiplier': '100'\n})\ngoog_put = sb.Contract(goog_call.compact())\ngoog_put.right = \"P\"\nprint(goog_call)\nprint(goog_put)\n\n\n\nYou can. Go right ahead. However, sometimes it might be handy for you to NOT have to look up all the conIds and instead, just loop through contract parameters like this:\nfor strike in list_of_strikes:\n    for expiry in list_of_expiries:\n        goog_call = sb.Contract({\n            'symbol': 'GOOG',\n            'secType': 'OPT',\n            'exchange': 'SMART',\n            'currency': 'USD',\n            'lastTradeDateOrContractMonth': expiry,\n            'strike': strike,\n            'right': 'C',\n            'multiplier': '100'\n        })\n        goog_put = goog_call\n        goog_put.right = \"P\"\n        your_super_clever_trading_logic(goog_call, goog_put)\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ncontract_params\ndict\nDictionary for which each named element defines a contract property. See IBKR’s Contract Management documentation for more examples.\nNone\n\n\ncontract_params\nstr or int\nIf you pass a single string or an integer, it will be interpreted as conId in the resultant Contract object.\nNone\n\n\ncontract_params\nNone\nPassing None (the default) to Contract() will return an empty instance of the Contract object class that you can manipulate by setting attributes directly.\nNone\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nContract\nA Contract object that can be used in API queries",
     "crumbs": [
       "Reference",
       "ShinyBroker Objects",
@@ -16,7 +16,7 @@
     "href": "reference/Contract.html#parameters",
     "title": "Contract",
     "section": "",
-    "text": "Name\nType\nDescription\nDefault\n\n\n\n\ncontract_params\ndict\nFirst number to add.\nNone",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\ncontract_params\ndict\nDictionary for which each named element defines a contract property. See IBKR’s Contract Management documentation for more examples.\nNone\n\n\ncontract_params\nstr or int\nIf you pass a single string or an integer, it will be interpreted as conId in the resultant Contract object.\nNone\n\n\ncontract_params\nNone\nPassing None (the default) to Contract() will return an empty instance of the Contract object class that you can manipulate by setting attributes directly.\nNone",
     "crumbs": [
       "Reference",
       "ShinyBroker Objects",
@@ -28,7 +28,7 @@
     "href": "reference/Contract.html#returns",
     "title": "Contract",
     "section": "",
-    "text": "Type\nDescription\n\n\n\n\nContract\nA Contract object",
+    "text": "Type\nDescription\n\n\n\n\nContract\nA Contract object that can be used in API queries",
     "crumbs": [
       "Reference",
       "ShinyBroker Objects",
@@ -75,7 +75,7 @@
     "href": "reference/index.html",
     "title": "Reference",
     "section": "",
-    "text": "These objects are the building blocks that your application uses to work with important tasks like fetching market data or submitting a trade order.\n\n\n\nContract\nCreate a contract",
+    "text": "These objects are the building blocks that your application uses to work with important tasks like fetching market data or submitting a trade order.\n\n\n\nContract\nThe Contract Object",
     "crumbs": [
       "Reference"
     ]
@@ -85,9 +85,153 @@
     "href": "reference/index.html#shinybroker-objects",
     "title": "Reference",
     "section": "",
-    "text": "These objects are the building blocks that your application uses to work with important tasks like fetching market data or submitting a trade order.\n\n\n\nContract\nCreate a contract",
+    "text": "These objects are the building blocks that your application uses to work with important tasks like fetching market data or submitting a trade order.\n\n\n\nContract\nThe Contract Object",
     "crumbs": [
       "Reference"
+    ]
+  },
+  {
+    "objectID": "reference/Contract.html#why-not-just-use-ticker",
+    "href": "reference/Contract.html#why-not-just-use-ticker",
+    "title": "Contract",
+    "section": "",
+    "text": "To see why we use a Contract object system instead of just referring to an asset by its symbol, pick a common ticker like “AAPL” and search for it using the “Matching Symbols” tool in ShinyBroker. You will quickly note that there are many contracts matching that description available for trading. The Contract object system lets you specify which asset you’re interested in by allowing you to pass in additional parameters like secType, currency, exchange.",
+    "crumbs": [
+      "Reference",
+      "ShinyBroker Objects",
+      "Contract"
+    ]
+  },
+  {
+    "objectID": "reference/Contract.html#writing-checking-contract-definitions",
+    "href": "reference/Contract.html#writing-checking-contract-definitions",
+    "title": "Contract",
+    "section": "",
+    "text": "As a general rule of thumb, a well-defined Contract object uses the minimum number of specified parameters needed to uniquely define one single tradable asset. If you’re unsure whether a Contract object you’ve created works, or whether it defines only one unique asset, you can copy-paste your code into the “Contract Details” tool in ShinyBroker. If it returns only one asset, and it’s the asset that you had in mind, then you can be sure your definition is good.",
+    "crumbs": [
+      "Reference",
+      "ShinyBroker Objects",
+      "Contract"
+    ]
+  },
+  {
+    "objectID": "reference/Contract.html#using-ibkrs-conid-parameter",
+    "href": "reference/Contract.html#using-ibkrs-conid-parameter",
+    "title": "Contract",
+    "section": "",
+    "text": "Every tradable asset at IBKR is given its own unique conId, which is the minimum information you need in order to specify that instrument. If you pass a single int or str object to the Contract constructor, then it will be treated as the conId.",
+    "crumbs": [
+      "Reference",
+      "ShinyBroker Objects",
+      "Contract"
+    ]
+  },
+  {
+    "objectID": "reference/Contract.html#so-why-not-always-specify-contracts-using-conid-and-leave-it-at-that",
+    "href": "reference/Contract.html#so-why-not-always-specify-contracts-using-conid-and-leave-it-at-that",
+    "title": "Contract",
+    "section": "",
+    "text": "You can. Go right ahead. However, sometimes it might be handy for you to loop through many contracts like this:\n\n\n\nasdf",
+    "crumbs": [
+      "Reference",
+      "ShinyBroker Objects",
+      "Contract"
+    ]
+  },
+  {
+    "objectID": "reference/Contract.html#using-ibkrconid-parameter",
+    "href": "reference/Contract.html#using-ibkrconid-parameter",
+    "title": "Contract",
+    "section": "",
+    "text": "Every tradable asset at IBKR is given its own unique conId, which is the minimum information you need in order to specify that instrument. If you pass a single int or str object to the Contract constructor, then it will be treated as the conId.",
+    "crumbs": [
+      "Reference",
+      "ShinyBroker Objects",
+      "Contract"
+    ]
+  },
+  {
+    "objectID": "reference/Contract.html#using-the-contract-id-parameter",
+    "href": "reference/Contract.html#using-the-contract-id-parameter",
+    "title": "Contract",
+    "section": "",
+    "text": "Every tradable asset at IBKR is given its own unique conId, which is the minimum information you need in order to specify that instrument. If you pass a single int or str object to the Contract constructor, then it will be treated as the conId.",
+    "crumbs": [
+      "Reference",
+      "ShinyBroker Objects",
+      "Contract"
+    ]
+  },
+  {
+    "objectID": "reference/Contract.html#so-why-not-always-specify-contracts-using-contract-id-only",
+    "href": "reference/Contract.html#so-why-not-always-specify-contracts-using-contract-id-only",
+    "title": "Contract",
+    "section": "",
+    "text": "You can. Go right ahead. However, sometimes it might be handy for you to NOT have to look up all the conIds and instead, just loop through contract parameters like this:\nfor strike in list_of_strikes:\n    for expiry in list_of_expiries:\n        goog_call = sb.Contract({\n            'symbol': 'GOOG',\n            'secType': 'OPT',\n            'exchange': 'SMART',\n            'currency': 'USD',\n            'lastTradeDateOrContractMonth': expiry,\n            'strike': strike,\n            'right': 'C',\n            'multiplier': '100'\n        })\n        goog_put = goog_call\n        goog_put.right = \"P\"\n        your_super_clever_trading_logic(goog_call, goog_put)",
+    "crumbs": [
+      "Reference",
+      "ShinyBroker Objects",
+      "Contract"
+    ]
+  },
+  {
+    "objectID": "reference/Contract.html#two-ways-of-creating-updating-contracts",
+    "href": "reference/Contract.html#two-ways-of-creating-updating-contracts",
+    "title": "Contract",
+    "section": "",
+    "text": "You can instantiate a contract object and then assign parameters to the attributes as you require:\n    aapl_contract = Contract()\n    aap_symbol = \"AAPL\"\n    contract.secType = \"STK\"\n    contract.exchange = \"SMART\"\n    contract.currency = \"USD\"",
+    "crumbs": [
+      "Reference",
+      "ShinyBroker Objects",
+      "Contract"
+    ]
+  },
+  {
+    "objectID": "reference/Contract.html#compact-printing",
+    "href": "reference/Contract.html#compact-printing",
+    "title": "Contract",
+    "section": "",
+    "text": "By default, all instances of the Contract() class possess all attributes, but not all attributes are set to something meaningful. To understand this point, run:\naapl_us_stock = sb.Contract()\naapl_us_stock.symbol = \"AAPL\"\naapl_us_stock.secType = \"STK\"\naapl_us_stock.exchange = \"SMART\"\naapl_us_stock.currency = \"USD\"\nprint(aapl_us_stock)\n…and you will see that all parameters are represented in aapl_us_stock, but not all the parameters have meaningful, non-empty values (e.g, `strike’, because stocks don’t have a strike price).\nTo get a clean dictionary containing only the non-empty values, run:\nprint(aapl_us_stock.compact())",
+    "crumbs": [
+      "Reference",
+      "ShinyBroker Objects",
+      "Contract"
+    ]
+  },
+  {
+    "objectID": "reference/Contract.html#the-contract-id-parameter-is-sufficient-on-its-own",
+    "href": "reference/Contract.html#the-contract-id-parameter-is-sufficient-on-its-own",
+    "title": "Contract",
+    "section": "",
+    "text": "Every tradable asset at IBKR is given its own unique conId, which is the minimum information you need in order to specify that instrument. If you pass a single int or str object to the Contract constructor, then it will be treated as the conId.",
+    "crumbs": [
+      "Reference",
+      "ShinyBroker Objects",
+      "Contract"
+    ]
+  },
+  {
+    "objectID": "reference/Contract.html#three-ways-of-creating-updating-contracts",
+    "href": "reference/Contract.html#three-ways-of-creating-updating-contracts",
+    "title": "Contract",
+    "section": "",
+    "text": "Way 1: Instantiate a contract object and then assign parameters to the attributes as you require:\naapl_contract = Contract()\naapl_contract.symbol = \"AAPL\"\naapl_contract.secType = \"STK\"\naapl_contract.exchange = \"SMART\"\naapl_contract.currency = \"USD\"\nWay 2: Pass everything in as a dictionary all at once:\naapl_contract = Contract({\n    'symbol': \"AAPL\"\n    'secType': \"STK\"\n    'exchange': \"SMART\"\n    'currency': \"USD\"\n})\nWay 3: Pass in just the conId as a string or integer:\naapl_contract = Contract(265598)\naapl_contract = Contract(\"265598\")",
+    "crumbs": [
+      "Reference",
+      "ShinyBroker Objects",
+      "Contract"
+    ]
+  },
+  {
+    "objectID": "reference/Contract.html#use-compact-to-copy-contract-objects",
+    "href": "reference/Contract.html#use-compact-to-copy-contract-objects",
+    "title": "Contract",
+    "section": "",
+    "text": "Say you want to create contracts for the put and the call options for a particular strike, expiry, and underlying, so you write a code like this:\nimport shinybroker as sb\ngoog_call = sb.Contract({\n    'symbol': 'GOOG',\n    'secType': 'OPT',\n    'exchange': 'SMART',\n    'currency': 'USD',\n    'lastTradeDateOrContractMonth': \"20261218\",\n    'strike': 160,\n    'right': 'C',\n    'multiplier': '100'\n})\ngoog_put = goog_call\ngoog_put.right = \"P\"\nprint(goog_call)\nprint(goog_put)\nIf you’re used to Python, you know what’s coming because… mutability. goog_put isn’t a true copy of goog_call, it’s just a pointer that points to the same value as goog_call. Therefore, when you ran goog_put.right = \"P\" you actually set the original value to “P” for “put” for both goog_put and goog_call.\nThis inelegant solecism is a feature of Python that one must simply endure. You may, however, accomplish what you’re after by using the compact() method on goog_call to instantiate a new object as in the modified code below, which correctly declares a put and a call contract as expected:\nimport shinybroker as sb\ngoog_call = sb.Contract({\n    'symbol': 'GOOG',\n    'secType': 'OPT',\n    'exchange': 'SMART',\n    'currency': 'USD',\n    'lastTradeDateOrContractMonth': \"20261218\",\n    'strike': 160,\n    'right': 'C',\n    'multiplier': '100'\n})\ngoog_put = sb.Contract(goog_call.compact())\ngoog_put.right = \"P\"\nprint(goog_call)\nprint(goog_put)",
+    "crumbs": [
+      "Reference",
+      "ShinyBroker Objects",
+      "Contract"
     ]
   }
 ]

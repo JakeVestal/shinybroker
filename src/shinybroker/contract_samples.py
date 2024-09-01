@@ -42,6 +42,12 @@ contract.secType = 'IND'
 contract.currency = 'EUR'
 contract.exchange = 'EUREX'
 """: 'Index',
+"""contract = Contract()
+contract.secIdType = 'ISIN'
+contract.secId = 'US45841N1072'
+contract.exchange = 'SMART'
+contract.currency = 'USD'
+contract.secType = 'STK'""": 'ByISIN',
 	'contract = Contract()\ncontract.symbol = "EUR"\ncontract.secType = "CASH"\ncontract.currency = "GBP"\ncontract.exchange = "IDEALPRO"': 'EurGbpFx',
 	'contract = Contract()\ncontract.symbol = "IBDE30"\ncontract.secType = "CFD"\ncontract.currency = "EUR"\ncontract.exchange = "SMART"': 'CFD',
 	'contract = Contract()\ncontract.symbol = "BMW"\ncontract.secType = "STK"\ncontract.currency = "EUR"\ncontract.exchange = "SMART"\ncontract.primaryExchange = "IBIS"': 'EuropeanStock',
@@ -65,7 +71,6 @@ contract.exchange = 'EUREX'
 	'contract = Contract()\ncontract.symbol = " IJR "\ncontract.conId = 9579976\ncontract.secType = "STK"\ncontract.exchange = "SMART"\ncontract.currency = "USD"': 'WrongContract',
 	'contract = Contract()\ncontract.symbol = "GBL"\ncontract.secType = "FOP"\ncontract.exchange = "EUREX"\ncontract.currency = "EUR"\ncontract.lastTradeDateOrContractMonth = "20230224"\ncontract.strike = 138\ncontract.right = "C"\ncontract.multiplier = "1000"': 'FuturesOnOptions',
 	'contract = Contract()\ncontract.symbol = "GOOG"\ncontract.secType = "WAR"\ncontract.exchange = "FWB"\ncontract.currency = "EUR"\ncontract.lastTradeDateOrContractMonth = "20201117"\ncontract.strike = 1500.0\ncontract.right = "C"\ncontract.multiplier = "0.01"': 'Warrants',
-	'contract = Contract()\ncontract.secIdType = "ISIN"\ncontract.secId = "US45841N1072"\ncontract.exchange = "SMART"\ncontract.currency = "USD"\ncontract.secType = "STK"': 'ByISIN',
 	'contract = Contract()\ncontract.secType = "CASH"\ncontract.conId = 12087792\ncontract.exchange = "IDEALPRO"': 'ByConId',
 	'contract = Contract()\ncontract.symbol = "FISV"\ncontract.secType = "OPT"\ncontract.exchange = "SMART"\ncontract.currency = "USD"': 'OptionForQuery',
 	'contract = Contract()\ncontract.symbol = "DBK"\ncontract.secType = "BAG"\ncontract.currency = "EUR"\ncontract.exchange = "EUREX"\nleg1 = ComboLeg()\nleg1.conId = 577164786\nleg1.ratio = 1\nleg1.action = "BUY"\nleg1.exchange = "EUREX"\nleg2 = ComboLeg()\nleg2.conId = 577164767\nleg2.ratio = 1\nleg2.action = "SELL"\nleg2.exchange = "EUREX"\ncontract.comboLegs = []\ncontract.comboLegs.append(leg1)\ncontract.comboLegs.append(leg2)': 'OptionComboContract',
