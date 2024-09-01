@@ -1,19 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://shinybroker.com/reference/req_ids.html</loc>
+    <lastmod>2024-09-01T22:31:33.203Z</lastmod>
+  </url>
+  <url>
+    <loc>https://shinybroker.com/reference/cancel_historical_data.html</loc>
+    <lastmod>2024-09-01T22:31:33.207Z</lastmod>
+  </url>
+  <url>
     <loc>https://shinybroker.com/reference/Contract.html</loc>
     <lastmod>2024-09-01T14:30:01.814Z</lastmod>
+  </url>
+  <url>
+    <loc>https://shinybroker.com/reference/index.html</loc>
+    <lastmod>2024-09-01T22:31:33.187Z</lastmod>
+  </url>
+  <url>
+    <loc>https://shinybroker.com/reference/req_current_time.html</loc>
+    <lastmod>2024-09-01T22:31:33.195Z</lastmod>
+  </url>
+  <url>
+    <loc>https://shinybroker.com/reference/req_historical_data.html</loc>
+    <lastmod>2024-09-01T22:31:33.206Z</lastmod>
   </url>
   <url>
     <loc>https://shinybroker.com/query_and_display_market_data.html</loc>
     <lastmod>2024-08-29T14:54:20.958Z</lastmod>
   </url>
   <url>
+    <loc>https://shinybroker.com/headless_mode_demo.html</loc>
+    <lastmod>2024-09-01T22:31:04.452Z</lastmod>
+  </url>
+  <url>
     <loc>https://shinybroker.com/index.html</loc>
     <lastmod>2024-08-30T15:48:12.034Z</lastmod>
   </url>
   <url>
-    <loc>https://shinybroker.com/reference/index.html</loc>
-    <lastmod>2024-09-01T14:30:01.805Z</lastmod>
+    <loc>https://shinybroker.com/reference/req_matching_symbols.html</loc>
+    <lastmod>2024-09-01T22:31:33.197Z</lastmod>
+  </url>
+  <url>
+    <loc>https://shinybroker.com/reference/req_market_data_type.html</loc>
+    <lastmod>2024-09-01T22:31:33.196Z</lastmod>
+  </url>
+  <url>
+    <loc>https://shinybroker.com/reference/req_contract_details.html</loc>
+    <lastmod>2024-09-01T22:31:33.194Z</lastmod>
+  </url>
+  <url>
+    <loc>https://shinybroker.com/reference/req_mkt_data.html</loc>
+    <lastmod>2024-09-01T22:31:33.199Z</lastmod>
+  </url>
+  <url>
+    <loc>https://shinybroker.com/reference/req_sec_def_opt_params.html</loc>
+    <lastmod>2024-09-01T22:31:33.202Z</lastmod>
+  </url>
+  <url>
+    <loc>https://shinybroker.com/reference/cancel_mkt_data.html</loc>
+    <lastmod>2024-09-01T22:31:33.200Z</lastmod>
   </url>
 </urlset>

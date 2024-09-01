@@ -5,5 +5,17 @@ website:
     - contents:
       - reference/Contract.qmd
       section: ShinyBroker Objects
+    - contents:
+      - reference/req_contract_details.qmd
+      - reference/req_current_time.qmd
+      - reference/req_market_data_type.qmd
+      - reference/req_matching_symbols.qmd
+      - reference/req_mkt_data.qmd
+      - reference/cancel_mkt_data.qmd
+      - reference/req_sec_def_opt_params.qmd
+      - reference/req_ids.qmd
+      - reference/req_historical_data.qmd
+      - reference/cancel_historical_data.qmd
+      section: Low-Level Request Messages
     id: reference
   - id: dummy-sidebar

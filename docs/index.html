@@ -132,6 +132,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
     </ul>
   </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-tips-and-tricks" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Tips and Tricks</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-tips-and-tricks">    
+        <li>
+    <a class="dropdown-item" href="./headless_mode_demo.html">
+ <span class="dropdown-text">"Headless Mode" for In-App Scripting and Development</span></a>
+  </li>  
+    </ul>
+  </li>
   <li class="nav-item">
     <a class="nav-link" href="./reference/index.html"> 
 <span class="menu-text">Reference</span></a>
@@ -189,19 +200,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="welcome" class="level2">
 <h2 class="anchored" data-anchor-id="welcome">Welcome!</h2>
-<div id="3af5462b" class="cell" data-execution_count="1">
+<div id="21b1fbd0" class="cell" data-execution_count="1">
 <div class="cell-output cell-output-stdout">
-<pre><code>ShinyBroker current version:   0.6.16</code></pre>
+<pre><code>ShinyBroker current version:   0.6.17</code></pre>
 </div>
 </div>
 <p>This package is under frequent heavy development, so in order to stay current with the examples and tutorials, you should make sure that your local install of ShinyBroker is up-to-date with the most current version. You can easily check what version of ShinyBroker you have installed via the command:</p>
-<div id="caeb1e0a" class="cell" data-execution_count="2">
+<div id="2be28543" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-stdout">
 <pre><code>pip show shinybroker</code></pre>
 </div>
 </div>
 <p>…and you can update to the latest version with:</p>
-<div id="67b0bb66" class="cell" data-execution_count="3">
+<div id="105aee75" class="cell" data-execution_count="3">
 <div class="cell-output cell-output-stdout">
 <pre><code>pip install shinybroker --upgrade</code></pre>
 </div>
@@ -228,7 +239,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ol>
 <section id="code" class="level5">
 <h5 class="anchored" data-anchor-id="code">Code:</h5>
-<div id="0c20e18e" class="cell" data-execution_count="4">
+<div id="d478e8bd" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shinybroker <span class="im">as</span> sb</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create an instance of a ShinyBroker App object using the default ui and server</span></span>
@@ -258,7 +269,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="code-1" class="level5">
 <h5 class="anchored" data-anchor-id="code-1">Code:</h5>
-<div id="69498298" class="cell" data-execution_count="5">
+<div id="cd5499df" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shinybroker <span class="im">as</span> sb</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shiny <span class="im">import</span> Inputs, Outputs, Session, ui, render</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>

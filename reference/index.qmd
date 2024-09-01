@@ -7,3 +7,20 @@ These objects are the building blocks that your application uses to work with im
 | | |
 | --- | --- |
 | [Contract](Contract.qmd#shinybroker.Contract) | All tradable assets -- even stocks and currencies -- are considered |
+
+## Low-Level Request Messages
+
+These functions process their inputs into packed binary data messages that you can send to a connected IBKR socket to instruct it to do something you're interested in such as place an order, start or cancel a market data subscription, or simply request the current time.
+
+| | |
+| --- | --- |
+| [req_contract_details](req_contract_details.qmd#shinybroker.req_contract_details) | Create a contract details request string |
+| [req_current_time](req_current_time.qmd#shinybroker.req_current_time) | Create a request string for the current broker time |
+| [req_market_data_type](req_market_data_type.qmd#shinybroker.req_market_data_type) | Create a string for setting your session's market data type |
+| [req_matching_symbols](req_matching_symbols.qmd#shinybroker.req_matching_symbols) | Create a request string for symbols that loosely match a pattern |
+| [req_mkt_data](req_mkt_data.qmd#shinybroker.req_mkt_data) | Create a market data request string |
+| [cancel_mkt_data](cancel_mkt_data.qmd#shinybroker.cancel_mkt_data) | Create a message to cancel an existing market data subscription by ID |
+| [req_sec_def_opt_params](req_sec_def_opt_params.qmd#shinybroker.req_sec_def_opt_params) | Create a request for the security-defined option parameters of a security |
+| [req_ids](req_ids.qmd#shinybroker.req_ids) | Create a request for the next valid numeric ID that can be used to |
+| [req_historical_data](req_historical_data.qmd#shinybroker.req_historical_data) | Create a request for the historical data of a financial instrument |
+| [cancel_historical_data](cancel_historical_data.qmd#shinybroker.cancel_historical_data) | Create a message that will cancel an existing historical data request. |
