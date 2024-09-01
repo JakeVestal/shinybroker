@@ -17,6 +17,10 @@ website:
         menu:
         - text: "Query and Display Market Data"
           file: query_and_display_market_data.qmd
+      - text: "Tips and Tricks"
+        menu:
+          - text: "\"Headless Mode\" for In-App Scripting and Development"
+            file: headless_mode_demo.qmd
       - text: "Reference"
         file: reference/index.qmd
     right:
@@ -50,3 +54,19 @@ quartodoc:
         a trade order.
       contents:
         - Contract
+    - title: Low-Level Request Messages
+      desc: These functions process their inputs into packed binary data 
+        messages that you can send to a connected IBKR socket to instruct it 
+        to do something you're interested in such as place an order, start or
+        cancel a market data subscription, or simply request the current time.
+      contents:
+        - req_contract_details
+        - req_current_time
+        - req_market_data_type
+        - req_matching_symbols
+        - req_mkt_data
+        - cancel_mkt_data
+        - req_sec_def_opt_params
+        - req_ids
+        - req_historical_data
+        - cancel_historical_data
