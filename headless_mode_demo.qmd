@@ -1,0 +1,38 @@
+---
+title: \"Headless Mode\" for In-App Scripting and Development
+jupyter: python3
+---
+
+## "Somewhat Interactive" Development Mode
+
+As you're developing apps, it's sometimes useful to just create a scratch file
+containing a bit of code that grabs some input. You can watch the information
+get printed by the async reader loop as it becomes available off the socket, and
+ maybe copy-paste it from the terminal printout do perform some of your
+exploratory development work.
+
+#### Simple exploratory example:
+```{python}
+#| eval: false
+{{< include examples/headless_mode_1.py >}}
+```
+
+## In-App Scripting
+In your apps, you might want to make a short query, immediately gather the
+results, and use it. One example use case might be -- you'd like to loop through
+ the options chains for a particular stock, but to do that you need an idea of
+the stock's current price (to determine moneyness). In addition, you need to
+know what expiries and strikes are available for options on that stock.
+
+You can accomplish this in ShinyBroker by using a **sync mode** design pattern
+that creates a clean socket, makes the query, waits for the data to be returned
+in a blocking call ([explaination of blocking & non-blocking](
+https://nodejs.org/en/learn/asynchronous-work/overview-of-blocking-vs-non-blocking
+)), formats the results, and returns it to you for use.
+
+#### Getting Synchronous Results with a Blocking Call
+```{python}
+#| eval: false
+{{< include examples/headless_mode_2.py >}}
+```
+
