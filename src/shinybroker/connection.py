@@ -45,8 +45,8 @@ def create_ibkr_socket_conn(host='127.0.0.1', port=7497, client_id=0):
     # If connection is successful, then the api will respond with a message
     #   that contains the API version you're connected under and the
     #   starting date-timestamp of the connection, so read this once.
-    select.select([ib_socket], [], [])
-    handshake_msg_size = struct.unpack("!I", ib_socket.recv(4))[0]
+    (rd, wt, er) = select.select([ib_socket], [], [])
+    handshake_msg_size = struct.unpack("!I", rd[0].recv(4))[0]
     handshake_msg = list(
         filter(
             None,
@@ -91,4 +91,19 @@ async def ib_msg_reader(sock, sesh, verb):
 
 def ib_msg_reader_run_loop(ib_sock, shiny_sesh=None, verbose=False):
     asyncio.run(ib_msg_reader(sock=ib_sock, sesh=shiny_sesh, verb=verbose))
+
+
+def ib_msg_reader_sync(sock):
+    (rd, wt, er) = select.select([sock], [], [])
+    msg_prefix = rd[0].recv(4)
+    msg_size = struct.unpack("!I", msg_prefix)[0]
+    msg = list(
+        filter(
+            None,
+            [x.decode('ascii') for x in sock.recv(
+                msg_size
+            ).split(b"\x00")]
+        )
+    )
+    return msg
 
