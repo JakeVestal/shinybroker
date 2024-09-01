@@ -1,5 +1,6 @@
 import os
 
+from htmltools import head_content
 from faicons import icon_svg
 from shiny import ui
 from shinybroker.contract_samples import contract_samples
@@ -29,9 +30,13 @@ def sb_ui(home_ui = ui.p('no ui passed to sb_ui().')):
             ui.input_dark_mode(mode="dark"),
         ),
         ui.page_fluid(
+            ui.include_css(
+                os.path.join(os.path.dirname(__file__), 'www', "custom.css")
+            ),
             ui.include_js(
                 os.path.join(
-                    os.path.dirname(__file__), 'www', 'ib_message_handler.js'
+                    os.path.dirname(__file__), 'www',
+                    'ib_message_handler.js'
                 )
             ),
             ui.navset_pill(

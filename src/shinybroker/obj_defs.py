@@ -62,6 +62,7 @@ class Contract:
     **Way 1**: Instantiate a contract object and then assign parameters to the
     attributes as you require:
     ```
+    from shinybroker import Contract
     aapl_contract = Contract()
     aapl_contract.symbol = "AAPL"
     aapl_contract.secType = "STK"
@@ -71,6 +72,7 @@ class Contract:
 
     **Way 2**: Pass everything in as a dictionary all at once:
     ```
+    from shinybroker import Contract
     aapl_contract = Contract({
         'symbol': "AAPL"
         'secType': "STK"
@@ -81,6 +83,7 @@ class Contract:
 
     **Way 3**: Pass in just the `conId` as a string or integer:
     ```
+    from shinybroker import Contract
     aapl_contract = Contract(265598)
     aapl_contract = Contract("265598")
     ```
@@ -91,6 +94,7 @@ class Contract:
     attributes, but not all attributes are set to something meaningful. To
     understand this point, run:
     ```
+    import shinybroker as sb
     aapl_us_stock = sb.Contract()
     aapl_us_stock.symbol = "AAPL"
     aapl_us_stock.secType = "STK"
@@ -99,7 +103,7 @@ class Contract:
     print(aapl_us_stock)
     ```
     ...and you will see that all parameters are represented in `aapl_us_stock`,
-    but not all the parameters have meaningful, non-empty values (e.g, `strike',
+    but not all the parameters have meaningful, non-empty values (e.g, `strike`,
     because stocks don't have a strike price).
 
     To get a clean dictionary containing only the non-empty values, run:
@@ -118,7 +122,7 @@ class Contract:
         'secType': 'OPT',
         'exchange': 'SMART',
         'currency': 'USD',
-        'lastTradeDateOrContractMonth': "20261218",
+        'lastTradeDateOrContractMonth': '20261218',
         'strike': 160,
         'right': 'C',
         'multiplier': '100'

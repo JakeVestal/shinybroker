@@ -168,16 +168,15 @@ ul.task-list li input[type="checkbox"] {
   <ul>
   <li><a href="#shinybroker.Contract" id="toc-shinybroker.Contract" class="nav-link active" data-scroll-target="#shinybroker.Contract">Contract</a>
   <ul class="collapse">
+  <li><a href="#parameters" id="toc-parameters" class="nav-link" data-scroll-target="#parameters">Parameters</a></li>
+  <li><a href="#returns" id="toc-returns" class="nav-link" data-scroll-target="#returns">Returns</a></li>
   <li><a href="#why-not-just-use-ticker" id="toc-why-not-just-use-ticker" class="nav-link" data-scroll-target="#why-not-just-use-ticker">“Why Not Just Use Ticker”?</a></li>
   <li><a href="#writing-checking-contract-definitions" id="toc-writing-checking-contract-definitions" class="nav-link" data-scroll-target="#writing-checking-contract-definitions">Writing &amp; Checking Contract Definitions</a></li>
-  <li><a href="#the-contract-id-parameter-is-sufficient-on-its-own" id="toc-the-contract-id-parameter-is-sufficient-on-its-own" class="nav-link" data-scroll-target="#the-contract-id-parameter-is-sufficient-on-its-own">The Contract Id Parameter Is Sufficient On Its Own</a></li>
+  <li><a href="#contract-id-is-sufficient-on-its-own" id="toc-contract-id-is-sufficient-on-its-own" class="nav-link" data-scroll-target="#contract-id-is-sufficient-on-its-own">Contract Id Is Sufficient On Its Own</a></li>
   <li><a href="#three-ways-of-creating-updating-contracts" id="toc-three-ways-of-creating-updating-contracts" class="nav-link" data-scroll-target="#three-ways-of-creating-updating-contracts">Three Ways Of Creating / Updating Contracts</a></li>
   <li><a href="#compact-printing" id="toc-compact-printing" class="nav-link" data-scroll-target="#compact-printing">Compact Printing</a></li>
   <li><a href="#use-compact-to-copy-contract-objects" id="toc-use-compact-to-copy-contract-objects" class="nav-link" data-scroll-target="#use-compact-to-copy-contract-objects">Use Compact To Copy Contract Objects</a></li>
   <li><a href="#so-why-not-always-specify-contracts-using-contract-id-only" id="toc-so-why-not-always-specify-contracts-using-contract-id-only" class="nav-link" data-scroll-target="#so-why-not-always-specify-contracts-using-contract-id-only">“So Why Not Always Specify Contracts Using Contract Id Only”?</a></li>
-  <li><a href="#parameters" id="toc-parameters" class="nav-link" data-scroll-target="#parameters">Parameters</a></li>
-  <li><a href="#returns" id="toc-returns" class="nav-link" data-scroll-target="#returns">Returns</a></li>
-  <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -192,105 +191,6 @@ ul.task-list li input[type="checkbox"] {
 <h1>Contract</h1>
 <p><code>Contract(self, contract_params=None)</code></p>
 <p>All tradable assets – even stocks and currencies – are considered ‘contracts’ from Interactive Brokers’ perspective. Whether you’re placing a trade order, requesting market data, or searching for details about a particular financial instrument, the <code>Contract</code> object is how you specify to Interactive Brokers exactly <em>which</em> asset you’re referring to.</p>
-<section id="why-not-just-use-ticker" class="level2">
-<h2 class="anchored" data-anchor-id="why-not-just-use-ticker">“Why Not Just Use Ticker”?</h2>
-<p>To see why we use a <code>Contract</code> object system instead of just referring to an asset by its symbol, pick a common ticker like “AAPL” and search for it using the “Matching Symbols” tool in ShinyBroker. You will quickly note that there are many contracts matching that description available for trading. The <code>Contract</code> object system lets you specify which asset you’re interested in by allowing you to pass in additional parameters like <em>secType</em>, <em>currency</em>, <em>exchange</em>.</p>
-</section>
-<section id="writing-checking-contract-definitions" class="level2">
-<h2 class="anchored" data-anchor-id="writing-checking-contract-definitions">Writing &amp; Checking Contract Definitions</h2>
-<p>As a general rule of thumb, a well-defined <code>Contract</code> object uses the minimum number of specified parameters needed to uniquely define one single tradable asset. If you’re unsure whether a <code>Contract</code> object you’ve created works, or whether it defines only one unique asset, you can copy-paste your code into the “Contract Details” tool in ShinyBroker. If it returns only one asset, and it’s the asset that you had in mind, then you can be sure your definition is good.</p>
-</section>
-<section id="the-contract-id-parameter-is-sufficient-on-its-own" class="level2">
-<h2 class="anchored" data-anchor-id="the-contract-id-parameter-is-sufficient-on-its-own">The Contract Id Parameter Is Sufficient On Its Own</h2>
-<p>Every tradable asset at IBKR is given its own unique <code>conId</code>, which is the minimum information you need in order to specify that instrument. If you pass a single <code>int</code> or <code>str</code> object to the <code>Contract</code> constructor, then it will be treated as the <code>conId</code>.</p>
-</section>
-<section id="three-ways-of-creating-updating-contracts" class="level2">
-<h2 class="anchored" data-anchor-id="three-ways-of-creating-updating-contracts">Three Ways Of Creating / Updating Contracts</h2>
-<p><strong>Way 1</strong>: Instantiate a contract object and then assign parameters to the attributes as you require:</p>
-<pre><code>aapl_contract = Contract()
-aapl_contract.symbol = "AAPL"
-aapl_contract.secType = "STK"
-aapl_contract.exchange = "SMART"
-aapl_contract.currency = "USD"</code></pre>
-<p><strong>Way 2</strong>: Pass everything in as a dictionary all at once:</p>
-<pre><code>aapl_contract = Contract({
-    'symbol': "AAPL"
-    'secType': "STK"
-    'exchange': "SMART"
-    'currency': "USD"
-})</code></pre>
-<p><strong>Way 3</strong>: Pass in just the <code>conId</code> as a string or integer:</p>
-<pre><code>aapl_contract = Contract(265598)
-aapl_contract = Contract("265598")</code></pre>
-</section>
-<section id="compact-printing" class="level2">
-<h2 class="anchored" data-anchor-id="compact-printing">Compact Printing</h2>
-<p>By default, all instances of the <code>Contract()</code> class possess all attributes, but not all attributes are set to something meaningful. To understand this point, run:</p>
-<pre><code>aapl_us_stock = sb.Contract()
-aapl_us_stock.symbol = "AAPL"
-aapl_us_stock.secType = "STK"
-aapl_us_stock.exchange = "SMART"
-aapl_us_stock.currency = "USD"
-print(aapl_us_stock)</code></pre>
-<p>…and you will see that all parameters are represented in <code>aapl_us_stock</code>, but not all the parameters have meaningful, non-empty values (e.g, `strike’, because stocks don’t have a strike price).</p>
-<p>To get a clean dictionary containing only the non-empty values, run:</p>
-<pre><code>print(aapl_us_stock.compact())</code></pre>
-</section>
-<section id="use-compact-to-copy-contract-objects" class="level2">
-<h2 class="anchored" data-anchor-id="use-compact-to-copy-contract-objects">Use Compact To Copy Contract Objects</h2>
-<p>Say you want to create contracts for the put and the call options for a particular strike, expiry, and underlying, so you write a code like this:</p>
-<pre><code>import shinybroker as sb
-goog_call = sb.Contract({
-    'symbol': 'GOOG',
-    'secType': 'OPT',
-    'exchange': 'SMART',
-    'currency': 'USD',
-    'lastTradeDateOrContractMonth': "20261218",
-    'strike': 160,
-    'right': 'C',
-    'multiplier': '100'
-})
-goog_put = goog_call
-goog_put.right = "P"
-print(goog_call)
-print(goog_put)</code></pre>
-<p>If you’re used to Python, you know what’s coming because… <a href="https://shiny.posit.co/py/docs/reactive-mutable.html">mutability</a>. <code>goog_put</code> isn’t a true copy of <code>goog_call</code>, it’s just a pointer that points to the same value as <code>goog_call</code>. Therefore, when you ran <code>goog_put.right = "P"</code> you actually set the original value to “P” for “put” for both <code>goog_put</code> and <code>goog_call</code>.</p>
-<p>This inelegant solecism is a feature of Python that one must simply endure. You may, however, accomplish what you’re after by using the <code>compact()</code> method on <code>goog_call</code> to instantiate a new object as in the modified code below, which correctly declares a put and a call contract as expected:</p>
-<pre><code>import shinybroker as sb
-goog_call = sb.Contract({
-    'symbol': 'GOOG',
-    'secType': 'OPT',
-    'exchange': 'SMART',
-    'currency': 'USD',
-    'lastTradeDateOrContractMonth': "20261218",
-    'strike': 160,
-    'right': 'C',
-    'multiplier': '100'
-})
-goog_put = sb.Contract(goog_call.compact())
-goog_put.right = "P"
-print(goog_call)
-print(goog_put)</code></pre>
-</section>
-<section id="so-why-not-always-specify-contracts-using-contract-id-only" class="level2">
-<h2 class="anchored" data-anchor-id="so-why-not-always-specify-contracts-using-contract-id-only">“So Why Not Always Specify Contracts Using Contract Id Only”?</h2>
-<p>You can. Go right ahead. However, sometimes it might be handy for you to NOT have to look up all the <code>conId</code>s and instead, just loop through contract parameters like this:</p>
-<pre><code>for strike in list_of_strikes:
-    for expiry in list_of_expiries:
-        goog_call = sb.Contract({
-            'symbol': 'GOOG',
-            'secType': 'OPT',
-            'exchange': 'SMART',
-            'currency': 'USD',
-            'lastTradeDateOrContractMonth': expiry,
-            'strike': strike,
-            'right': 'C',
-            'multiplier': '100'
-        })
-        goog_put = goog_call
-        goog_put.right = "P"
-        your_super_clever_trading_logic(goog_call, goog_put)</code></pre>
-</section>
 <section id="parameters" class="level2">
 <h2 class="anchored" data-anchor-id="parameters">Parameters</h2>
 <table class="caption-top table">
@@ -327,6 +227,10 @@ print(goog_put)</code></pre>
 <section id="returns" class="level2">
 <h2 class="anchored" data-anchor-id="returns">Returns</h2>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 90%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Type</th>
@@ -336,13 +240,113 @@ print(goog_put)</code></pre>
 <tbody>
 <tr class="odd">
 <td>Contract</td>
-<td>A Contract object that can be used in API queries</td>
+<td>A Contract object that IBKR will understand to mean the tradable asset you are referring to.</td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="examples" class="level2">
-<h2 class="anchored" data-anchor-id="examples">Examples</h2>
+<section id="why-not-just-use-ticker" class="level2">
+<h2 class="anchored" data-anchor-id="why-not-just-use-ticker">“Why Not Just Use Ticker”?</h2>
+<p>To see why we use a <code>Contract</code> object system instead of just referring to an asset by its symbol, pick a common ticker like “AAPL” and search for it using the “Matching Symbols” tool in ShinyBroker. You will quickly note that there are many contracts matching that description available for trading. The <code>Contract</code> object system lets you specify which asset you’re interested in by allowing you to pass in additional parameters like <em>secType</em>, <em>currency</em>, <em>exchange</em>.</p>
+</section>
+<section id="writing-checking-contract-definitions" class="level2">
+<h2 class="anchored" data-anchor-id="writing-checking-contract-definitions">Writing &amp; Checking Contract Definitions</h2>
+<p>As a general rule of thumb, a well-defined <code>Contract</code> object uses the minimum number of specified parameters needed to uniquely define one single tradable asset. If you’re unsure whether a <code>Contract</code> object you’ve created works, or whether it defines only one unique asset, you can copy-paste your code into the “Contract Details” tool in ShinyBroker. If it returns only one asset, and it’s the asset that you had in mind, then you can be sure your definition is good.</p>
+</section>
+<section id="contract-id-is-sufficient-on-its-own" class="level2">
+<h2 class="anchored" data-anchor-id="contract-id-is-sufficient-on-its-own">Contract Id Is Sufficient On Its Own</h2>
+<p>Every tradable asset at IBKR is given its own unique <code>conId</code>, which is the minimum information you need in order to specify that instrument. If you pass a single <code>int</code> or <code>str</code> object to the <code>Contract</code> constructor, then it will be treated as the <code>conId</code>.</p>
+</section>
+<section id="three-ways-of-creating-updating-contracts" class="level2">
+<h2 class="anchored" data-anchor-id="three-ways-of-creating-updating-contracts">Three Ways Of Creating / Updating Contracts</h2>
+<p><strong>Way 1</strong>: Instantiate a contract object and then assign parameters to the attributes as you require:</p>
+<pre><code>from shinybroker import Contract
+aapl_contract = Contract()
+aapl_contract.symbol = "AAPL"
+aapl_contract.secType = "STK"
+aapl_contract.exchange = "SMART"
+aapl_contract.currency = "USD"</code></pre>
+<p><strong>Way 2</strong>: Pass everything in as a dictionary all at once:</p>
+<pre><code>from shinybroker import Contract
+aapl_contract = Contract({
+    'symbol': "AAPL"
+    'secType': "STK"
+    'exchange': "SMART"
+    'currency': "USD"
+})</code></pre>
+<p><strong>Way 3</strong>: Pass in just the <code>conId</code> as a string or integer:</p>
+<pre><code>from shinybroker import Contract
+aapl_contract = Contract(265598)
+aapl_contract = Contract("265598")</code></pre>
+</section>
+<section id="compact-printing" class="level2">
+<h2 class="anchored" data-anchor-id="compact-printing">Compact Printing</h2>
+<p>By default, all instances of the <code>Contract()</code> class possess all attributes, but not all attributes are set to something meaningful. To understand this point, run:</p>
+<pre><code>import shinybroker as sb
+aapl_us_stock = sb.Contract()
+aapl_us_stock.symbol = "AAPL"
+aapl_us_stock.secType = "STK"
+aapl_us_stock.exchange = "SMART"
+aapl_us_stock.currency = "USD"
+print(aapl_us_stock)</code></pre>
+<p>…and you will see that all parameters are represented in <code>aapl_us_stock</code>, but not all the parameters have meaningful, non-empty values (e.g, <code>strike</code>, because stocks don’t have a strike price).</p>
+<p>To get a clean dictionary containing only the non-empty values, run:</p>
+<pre><code>print(aapl_us_stock.compact())</code></pre>
+</section>
+<section id="use-compact-to-copy-contract-objects" class="level2">
+<h2 class="anchored" data-anchor-id="use-compact-to-copy-contract-objects">Use Compact To Copy Contract Objects</h2>
+<p>Say you want to create contracts for the put and the call options for a particular strike, expiry, and underlying, so you write a code like this:</p>
+<pre><code>import shinybroker as sb
+goog_call = sb.Contract({
+    'symbol': 'GOOG',
+    'secType': 'OPT',
+    'exchange': 'SMART',
+    'currency': 'USD',
+    'lastTradeDateOrContractMonth': '20261218',
+    'strike': 160,
+    'right': 'C',
+    'multiplier': '100'
+})
+goog_put = goog_call
+goog_put.right = "P"
+print(goog_call)
+print(goog_put)</code></pre>
+<p>If you’re used to Python, you know what’s coming because… <a href="https://shiny.posit.co/py/docs/reactive-mutable.html">mutability</a>. <code>goog_put</code> isn’t a true copy of <code>goog_call</code>, it’s just a pointer that points to the same value as <code>goog_call</code>. Therefore, when you ran <code>goog_put.right = "P"</code> you actually set the original value to “P” for “put” for <strong>both</strong> <code>goog_put</code> and <code>goog_call</code>.</p>
+<p>This inelegant solecism is a feature of Python that one must simply endure. You may, however, accomplish what you’re after by using the <code>compact()</code> method on <code>goog_call</code> to instantiate a new object as in the modified code below, which correctly declares a put and a call contract as expected:</p>
+<pre><code>import shinybroker as sb
+goog_call = sb.Contract({
+    'symbol': 'GOOG',
+    'secType': 'OPT',
+    'exchange': 'SMART',
+    'currency': 'USD',
+    'lastTradeDateOrContractMonth': "20261218",
+    'strike': 160,
+    'right': 'C',
+    'multiplier': '100'
+})
+goog_put = sb.Contract(goog_call.compact())
+goog_put.right = "P"
+print(goog_call)
+print(goog_put)</code></pre>
+</section>
+<section id="so-why-not-always-specify-contracts-using-contract-id-only" class="level2">
+<h2 class="anchored" data-anchor-id="so-why-not-always-specify-contracts-using-contract-id-only">“So Why Not Always Specify Contracts Using Contract Id Only”?</h2>
+<p>You can. Go right ahead – you can probably adopt that practice and build apps for quite a while without a problem. However, in some use cases it might be handy for you to NOT have to look up all the <code>conId</code>s and, instead, just loop through contract parameters like this:</p>
+<pre><code>for strike in list_of_strikes:
+    for expiry in list_of_expiries:
+        goog_call = sb.Contract({
+            'symbol': 'GOOG',
+            'secType': 'OPT',
+            'exchange': 'SMART',
+            'currency': 'USD',
+            'lastTradeDateOrContractMonth': expiry,
+            'strike': strike,
+            'right': 'C',
+            'multiplier': '100'
+        })
+        goog_put = sb.Contract(goog_call.compact())
+        goog_put.right = "P"
+        your_super_clever_trading_logic(goog_call, goog_put)</code></pre>
 
 
 </section>
