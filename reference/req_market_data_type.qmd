@@ -1,0 +1,20 @@
+# req_market_data_type { #shinybroker.req_market_data_type }
+
+`req_market_data_type(marketDataType)`
+
+Create a string for setting your session's market data type
+
+## Parameters
+
+| Name             | Type   | Description                                                                                                                                         | Default    |
+|------------------|--------|-----------------------------------------------------------------------------------------------------------------------------------------------------|------------|
+| `marketDataType` | int    | Integer identifier for the [market data type]( https://www.interactivebrokers.com/campus/ibkr-api-page/twsapi-doc/#md-type-behavior ) that you want | _required_ |
+
+## Examples
+
+```
+import shinybroker as sb
+# create a request string for setting the market data type to "DELAYED"
+req_market_data_type_msg = sb.req_market_data_type(3)
+print(req_market_data_type_msg)
+```

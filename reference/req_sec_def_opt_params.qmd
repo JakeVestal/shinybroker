@@ -1,0 +1,29 @@
+# req_sec_def_opt_params { #shinybroker.req_sec_def_opt_params }
+
+`req_sec_def_opt_params(reqId, underlyingSymbol, underlyingSecType, underlyingConId, futFopExchange='')`
+
+Create a request for the security-defined option parameters of a security
+
+## Parameters
+
+| Name                | Type   | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                | Default    |
+|---------------------|--------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------|
+| `reqId`             | int    | Numeric identifier of the request                                                                                                                                                                                                                                                                                                                                                                                                                          | _required_ |
+| `underlyingSymbol`  | str    | Symbol of the underlying security for which you want option parameters                                                                                                                                                                                                                                                                                                                                                                                     | _required_ |
+| `underlyingSecType` | str    | Type of the underlying security; e.g., "`STK`"                                                                                                                                                                                                                                                                                                                                                                                                             | _required_ |
+| `underlyingConId`   | int    | `conId` of the underlying security                                                                                                                                                                                                                                                                                                                                                                                                                         | _required_ |
+| `futFopExchange`    |        | Only set this parameter if the underlying is a futures contract; in other words, don't change it from the default `""` if your underlying is  a stock. If your underlying **is** a futures contract, then use  `futFopExchange` to specify the exchange for which you want option  parameters. You may still pass in `""` if you want the results to  include **all** of the exchanges available at IBKR that trade  options on your specified underlying. | `''`       |
+
+## Examples
+
+```
+import shinybroker as sb
+req_sec_def_opt_params_msg = sb.req_sec_def_opt_params(
+    reqId=1,
+    underlyingSymbol="AAPL",
+    futFopExchange="",
+    underlyingSecType="STK",
+    underlyingConId=265598
+)
+print(req_sec_def_opt_params_msg)
+```

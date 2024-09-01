@@ -1,0 +1,20 @@
+# cancel_historical_data { #shinybroker.cancel_historical_data }
+
+`cancel_historical_data(reqId)`
+
+Create a message that will cancel an existing historical data request.
+
+## Parameters
+
+| Name    | Type   | Description                                                         | Default    |
+|---------|--------|---------------------------------------------------------------------|------------|
+| `reqId` | int    | The numerical ID of the historical data request you want to cancel. | _required_ |
+
+## Examples
+
+```
+import shinybroker as sb
+# Message that will cancel historical data request having ID of 1
+cancel_historical_data_msg = sb.cancel_historical_data(1)
+print(cancel_historical_data_msg)
+```

@@ -1,0 +1,20 @@
+# cancel_mkt_data { #shinybroker.cancel_mkt_data }
+
+`cancel_mkt_data(reqId)`
+
+Create a message to cancel an existing market data subscription by ID
+
+## Parameters
+
+| Name    | Type   | Description                                                      | Default    |
+|---------|--------|------------------------------------------------------------------|------------|
+| `reqId` | int    | Numeric identifier of the market data request you want to cancel | _required_ |
+
+## Examples
+
+```
+import shinybroker as sb
+# create message to cancel the market data subscription whose id is 1
+cancel_mkt_data_msg = sb.cancel_mkt_data(1)
+print(cancel_mkt_data_msg)
+```

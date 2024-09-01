@@ -1,0 +1,41 @@
+# req_historical_data { #shinybroker.req_historical_data }
+
+`req_historical_data(reqId, contract, endDateTime='', durationStr='1 D', barSizeSetting='1 hour', whatToShow='Trades', useRTH=True, formatDate=1, keepUpToDate=False)`
+
+Create a request for the historical data of a financial instrument
+
+## Parameters
+
+| Name             | Type     | Description                                                                                                                                                                                                                                   | Default    |
+|------------------|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------|
+| `reqId`          | int      | Numeric identifier of the request                                                                                                                                                                                                             | _required_ |
+| `contract`       | Contract | The [Contract](`shinybroker.Contract`) object for which you want data                                                                                                                                                                         | _required_ |
+| `endDateTime`    |          | Ending datetime string formatted as “YYYYMMDD HH:mm:ss TMZ” specifying the end of the time period for which you want historical data. Leave it as the default "" to get historical data up to the current present moment.                     | `''`       |
+| `durationStr`    |          | A [Duration String](https://www.interactivebrokers.com/campus/ibkr-api-page/twsapi-doc/#hist-duration) that specifies how far back in time you want to fetch data.                                                                            | `'1 D'`    |
+| `barSizeSetting` |          | A [Bar Size](https://www.interactivebrokers.com/campus/ibkr-api-page/twsapi-doc/#hist-bar-size) that specifies how fine-grained you want your historical data to be (daily, weekly, every 30 seconds, etc).                                   | `'1 hour'` |
+| `whatToShow`     |          | You may select from any of the [Historical Data Types](https://www.interactivebrokers.com/campus/ibkr-api-page/twsapi-doc/#historical-whattoshow) but for most cases you'll probably be happy with one of "BID_ASK", "MIDPOINT", or "TRADES". | `'Trades'` |
+| `useRTH`         |          | "Use Regular Trading Hours". Set to `False` if you want the historical data to include after-hours/pre-market trading                                                                                                                         | `True`     |
+| `formatDate`     |          | Numeric code from the [Format Date Received](https://www.interactivebrokers.com/campus/ibkr-api-page/twsapi-doc/#hist-format-date) table that specifies how you want your dates formatted in the data.                                        | `1`        |
+| `keepUpToDate`   |          | Set to `True` if you want to keep receiving new bar data as it becomes available. For a `barSizeSetting` of `5 min`, that would mean you receive new data every 5 minutes.                                                                    | `False`    |
+
+## Examples
+
+```
+import shinybroker as sb
+# create a request for historical TRADES of AAPL for the last 30 days,
+#   starting today. Report the data on a daily basis, regular trading
+#   hours only, and format it as "string time zone date". Make it a one-time
+#   query; don't keep it up-to-date.
+req_historical_data_msg = sb.req_historical_data(
+    reqId=1,
+    contract = Contract({
+        'symbol': "AAPL",
+        'secType': "STK",
+        'exchange': "SMART",
+        'currency': "USD"
+    }),
+    durationStr='30 D',
+    barSizeSetting='1 day'
+)
+print(req_historical_data_msg)
+```

@@ -1,0 +1,20 @@
+# req_matching_symbols { #shinybroker.req_matching_symbols }
+
+`req_matching_symbols(reqId, pattern)`
+
+Create a request string for symbols that loosely match a pattern
+
+## Parameters
+
+| Name      | Type   | Description                                                                  | Default    |
+|-----------|--------|------------------------------------------------------------------------------|------------|
+| `reqId`   | int    | Numeric identifier of the request                                            | _required_ |
+| `pattern` | str    | A string, like "AAPL", "S&P 500" or "Vanguard" that you'd like to search for | _required_ |
+
+## Examples
+
+```
+import shinybroker as sb
+req_matching_symbols_msg = sb.req_market_data_type(3)
+print(req_matching_symbols_msg)
+```

@@ -1,0 +1,32 @@
+# req_mkt_data { #shinybroker.req_mkt_data }
+
+`req_mkt_data(reqId, contract, genericTickList='', snapshot=False, regulatorySnapshot=False)`
+
+Create a market data request string
+
+## Parameters
+
+| Name                 | Type     | Description                                                                                                                                                                 | Default    |
+|----------------------|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------|
+| `reqId`              | int      | Numeric identifier of the request                                                                                                                                           | _required_ |
+| `contract`           | Contract | A [Contract](`shinybroker.Contract`) object                                                                                                                                 | _required_ |
+| `genericTickList`    |          | Comma-separated string of the numerical [Generic Ticks](https://www.interactivebrokers.com/campus/ibkr-api-page/twsapi-doc/#available-tick-types) for which you'd like data | `''`       |
+| `snapshot`           |          | Set to `True` if you want a [snapshot](https://www.interactivebrokers.com/campus/ibkr-api-page/twsapi-doc/#streaming-data-snapshot)                                         | `False`    |
+| `regulatorySnapshot` |          | Set to `True` if you want a [regulatory snapshot](https://www.interactivebrokers.com/campus/ibkr-api-page/twsapi-doc/#regulatory-snapshot)                                  | `False`    |
+
+## Examples
+
+```
+import shinybroker as sb
+mkt_data_req_msg = sb.req_mkt_data(
+    reqId=1,
+    contract=sb.Contract({
+        'symbol': 'AAPL',
+        'secType': 'STK',
+        'exchange': 'SMART',
+        'currency': 'USD'
+    }),
+    genericTickList="233,236"  # request for "RT Volume" & "Shortable"
+)
+print(mkt_data_req_msg)
+```

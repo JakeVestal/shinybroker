@@ -1,0 +1,13 @@
+# req_current_time { #shinybroker.req_current_time }
+
+`req_current_time()`
+
+Create a request string for the current broker time
+
+## Examples
+
+```
+import shinybroker as sb
+req_current_time_msg = sb.req_current_time()
+print(req_current_time_msg)
+```
