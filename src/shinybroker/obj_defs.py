@@ -50,7 +50,7 @@ class Contract:
     ShinyBroker. If it returns only one asset, and it's the asset that you
     had in mind, then you can be sure your definition is good.
 
-    The Contract ID Parameter is Sufficient On its Own
+    Contract ID is Sufficient On its Own
     ----------
     Every tradable asset at IBKR is given its own unique `conId`, which is
     the minimum information you need in order to specify that instrument. If
