@@ -124,9 +124,9 @@ def req_matching_symbols(reqId: int, pattern: str):
 def req_mkt_data(
         reqId: int,
         contract: Contract,
-        genericTickList: str,
-        snapshot: bool,
-        regulatorySnapshot: bool
+        genericTickList="",
+        snapshot=False,
+        regulatorySnapshot=False
 ):
     """Create a market data request string
 
@@ -234,9 +234,8 @@ def cancel_mkt_data(reqId: int):
 
 
 def req_sec_def_opt_params(
-        reqId: str,
+        reqId: int,
         underlyingSymbol: str,
-        futFopExchange: str,
         underlyingSecType: str,
         underlyingConId: int,
         futFopExchange=""
@@ -321,9 +320,9 @@ def req_historical_data(
         durationStr="1 D",
         barSizeSetting='1 hour',
         whatToShow='Trades',
-        useRTH=1,
+        useRTH=True,
         formatDate=1,
-        keepUpToDate=0
+        keepUpToDate=False
 ):
     """Create a request for the historical data of a financial instrument
 
