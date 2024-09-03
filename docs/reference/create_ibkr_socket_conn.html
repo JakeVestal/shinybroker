@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>cancel_mkt_data – ShinyBroker</title>
+<title>create_ibkr_socket_conn – ShinyBroker</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -29,8 +29,6 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../reference/req_sec_def_opt_params.html" rel="next">
-<link href="../reference/req_mkt_data.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -72,7 +70,7 @@ ul.task-list li input[type="checkbox"] {
 <link rel="stylesheet" href="../styles.css">
 </head>
 
-<body class="nav-sidebar floating nav-fixed">
+<body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -101,7 +99,7 @@ ul.task-list li input[type="checkbox"] {
     </ul>
   </li>
   <li class="nav-item">
-    <a class="nav-link active" href="../reference/index.html" aria-current="page"> 
+    <a class="nav-link" href="../reference/index.html"> 
 <span class="menu-text">Reference</span></a>
   </li>  
 </ul>
@@ -117,131 +115,20 @@ ul.task-list li input[type="checkbox"] {
 </div>
       </div> <!-- /container-fluid -->
     </nav>
-  <nav class="quarto-secondary-nav">
-    <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-        <i class="bi bi-layout-text-sidebar-reverse"></i>
-      </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../reference/req_contract_details.html">Low-Level Request Messages</a></li><li class="breadcrumb-item"><a href="../reference/cancel_mkt_data.html">cancel_mkt_data</a></li></ol></nav>
-        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-        </a>
-    </div>
-  </nav>
 </header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="sidebar-menu-container"> 
-    <ul class="list-unstyled mt-1">
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../reference/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Reference</span></a>
-  </div>
-</li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
- <span class="menu-text">ShinyBroker Objects</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../reference/Contract.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Contract</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
- <span class="menu-text">Low-Level Request Messages</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../reference/req_contract_details.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">req_contract_details</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../reference/req_current_time.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">req_current_time</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../reference/req_market_data_type.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">req_market_data_type</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../reference/req_matching_symbols.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">req_matching_symbols</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../reference/req_mkt_data.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">req_mkt_data</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../reference/cancel_mkt_data.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">cancel_mkt_data</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../reference/req_sec_def_opt_params.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">req_sec_def_opt_params</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../reference/req_ids.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">req_ids</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../reference/req_historical_data.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">req_historical_data</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../reference/cancel_historical_data.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">cancel_historical_data</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-    </ul>
-    </div>
-</nav>
-<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#shinybroker.cancel_mkt_data" id="toc-shinybroker.cancel_mkt_data" class="nav-link active" data-scroll-target="#shinybroker.cancel_mkt_data">cancel_mkt_data</a>
+  <li><a href="#shinybroker.create_ibkr_socket_conn" id="toc-shinybroker.create_ibkr_socket_conn" class="nav-link active" data-scroll-target="#shinybroker.create_ibkr_socket_conn">create_ibkr_socket_conn</a>
   <ul class="collapse">
   <li><a href="#parameters" id="toc-parameters" class="nav-link" data-scroll-target="#parameters">Parameters</a></li>
-  <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a></li>
+  <li><a href="#returns" id="toc-returns" class="nav-link" data-scroll-target="#returns">Returns</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -252,18 +139,25 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<section id="shinybroker.cancel_mkt_data" class="level1">
-<h1>cancel_mkt_data</h1>
-<p><code>cancel_mkt_data(reqId)</code></p>
-<p>Create a message to cancel an existing market data subscription by ID</p>
+<section id="shinybroker.create_ibkr_socket_conn" class="level1">
+<h1>create_ibkr_socket_conn</h1>
+<p><code>create_ibkr_socket_conn(host='127.0.0.1', port=7497, client_id=0)</code></p>
+<p>Create a new socket connection to IBKR</p>
+<ol type="1">
+<li>Creates a socket object</li>
+<li>Connects it to an IBKR client accepting connections at the host and port specified in the call to <code>create_ibkr_socket_conn()</code></li>
+<li>Sends a handshake message specifying API version and requesting the start of a new API connection. ShinyBroker will always use the latest version of IBKR’s API.</li>
+<li>Receives a handshake message containing the API version under which the connection was made as well as the timestamp at which the connection was started</li>
+<li>Returns the API version, the Connection Time, and the socket object</li>
+</ol>
 <section id="parameters" class="level2">
 <h2 class="anchored" data-anchor-id="parameters">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 9%">
-<col style="width: 8%">
-<col style="width: 69%">
-<col style="width: 12%">
+<col style="width: 5%">
+<col style="width: 75%">
+<col style="width: 10%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -275,20 +169,42 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>reqId</code></td>
-<td>int</td>
-<td>Numeric identifier of the market data request you want to cancel</td>
-<td><em>required</em></td>
+<td><code>host</code></td>
+<td></td>
+<td>Specifies the address of the host at which an IBKR client such as TWS or IBG is accepting API connections</td>
+<td><code>'127.0.0.1'</code></td>
+</tr>
+<tr class="even">
+<td><code>port</code></td>
+<td></td>
+<td>Specifies the port at which the IBKR client has been configured to accept API connections</td>
+<td><code>7497</code></td>
+</tr>
+<tr class="odd">
+<td><code>client_id</code></td>
+<td></td>
+<td>The Client ID under which you want to connect</td>
+<td><code>0</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="examples" class="level2">
-<h2 class="anchored" data-anchor-id="examples">Examples</h2>
-<pre><code>import shinybroker as sb
-# create message to cancel the market data subscription whose id is 1
-cancel_mkt_data_msg = sb.cancel_mkt_data(1)
-print(cancel_mkt_data_msg)</code></pre>
+<section id="returns" class="level2">
+<h2 class="anchored" data-anchor-id="returns">Returns</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>socket</code></td>
+<td>it’s kewl</td>
+</tr>
+</tbody>
+</table>
 
 
 </section>
@@ -715,18 +631,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
-<nav class="page-navigation">
-  <div class="nav-page nav-page-previous">
-      <a href="../reference/req_mkt_data.html" class="pagination-link" aria-label="req_mkt_data">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">req_mkt_data</span>
-      </a>          
-  </div>
-  <div class="nav-page nav-page-next">
-      <a href="../reference/req_sec_def_opt_params.html" class="pagination-link" aria-label="req_sec_def_opt_params">
-        <span class="nav-page-text">req_sec_def_opt_params</span> <i class="bi bi-arrow-right-short"></i>
-      </a>
-  </div>
-</nav>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">

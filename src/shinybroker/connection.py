@@ -84,7 +84,7 @@ async def ib_msg_reader(sock, sesh, verb):
         if verb:
             print(msg)
         try:
-            sesh.send_custom_message(msg[0], msg[1:])
+            await sesh.send_custom_message(msg[0], msg[1:])
         except AttributeError:
             pass
 

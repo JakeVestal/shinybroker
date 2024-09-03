@@ -1,0 +1,30 @@
+# create_ibkr_socket_conn { #shinybroker.create_ibkr_socket_conn }
+
+`create_ibkr_socket_conn(host='127.0.0.1', port=7497, client_id=0)`
+
+Create a new socket connection to IBKR
+
+1. Creates a socket object
+2. Connects it to an IBKR client accepting connections at the host and
+port specified in the call to `create_ibkr_socket_conn()`
+3. Sends a handshake message specifying API version and requesting the
+start of a new API connection. ShinyBroker will always use the latest
+version of IBKR's API.
+4. Receives a handshake message containing the API version under which
+the connection was made as well as the timestamp at which the connection
+was started
+5. Returns the API version, the Connection Time, and the socket object
+
+## Parameters
+
+| Name        | Type   | Description                                                                                                | Default       |
+|-------------|--------|------------------------------------------------------------------------------------------------------------|---------------|
+| `host`      |        | Specifies the address of the host at which an IBKR client such as TWS or  IBG is accepting API connections | `'127.0.0.1'` |
+| `port`      |        | Specifies the port at which the IBKR client has been configured to accept API connections                  | `7497`        |
+| `client_id` |        | The Client ID under which you want to connect                                                              | `0`           |
+
+## Returns
+
+| Type     | Description   |
+|----------|---------------|
+| `socket` | it's kewl     |
