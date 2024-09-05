@@ -109,11 +109,11 @@ def sb_server(
     @reactive.effect
     @reactive.event(input.next_valid_id)
     def update_next_valid_id():
-        next_valid_id.set(str(input.next_valid_id()[1]))
+        next_valid_id.set(input.next_valid_id()[1])
 
     @render.text
     def next_valid_id_txt():
-        return "Next Valid ID: " + next_valid_id()
+        return "Next Valid ID: " + str(next_valid_id())
 
     # Error Messages
 
