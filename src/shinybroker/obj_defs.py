@@ -3,11 +3,11 @@ from shinybroker.functionary import functionary
 
 class Contract:
     """
-    All tradable assets -- even stocks and currencies -- are considered
-    'contracts' from Interactive Brokers' perspective. Whether you're placing a
-    trade order, requesting market data, or searching for details about a
-    particular financial instrument, the `Contract` object is how you
-    specify to Interactive Brokers exactly *which* asset you're referring to.
+    All tradable assets -- even stocks and currencies -- are 'contracts'.
+    Whether you're placing a trade order, requesting market data,
+    or searching for details about a particular financial instrument,
+    the `Contract` object is how you specify to Interactive Brokers exactly
+    *which* asset you're referring to.
 
     Parameters
     ----------
