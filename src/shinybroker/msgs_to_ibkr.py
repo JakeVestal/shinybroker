@@ -236,8 +236,8 @@ def cancel_mkt_data(reqId: int):
 def req_sec_def_opt_params(
         reqId: int,
         underlyingConId: int,
-        underlyingSymbol="",
-        underlyingSecType="",
+        underlyingSymbol: str,
+        underlyingSecType: str,
         futFopExchange=""
 ):
     """Create a request for the security-defined option parameters of a security
