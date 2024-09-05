@@ -18,14 +18,15 @@ def sb_server(
         host, port, client_id, verbose
 ):
 
-    ib_socket, API_VERSION, CONNECTION_TIME = create_ibkr_socket_conn(
+    ib_conn = create_ibkr_socket_conn(
         host=host, port=port, client_id=client_id
     )
+    ib_socket = ib_conn['ib_socket']
     session.on_ended(ib_socket.close)
 
     print(
-        'Connected to IBKR at ' + CONNECTION_TIME +
-        ' under API protocol version ' + API_VERSION
+        'Connected to IBKR at ' + ib_conn['CONNECTION_TIME'] +
+        ' under API protocol version ' + ib_conn['API_VERSION']
     )
     print(
         'host: ' + host + "\nport: " + str(port) +
@@ -34,8 +35,8 @@ def sb_server(
 
     connection_info = reactive.value(
         pd.DataFrame({
-            'connection_time': [CONNECTION_TIME],
-            'api_version': [API_VERSION]
+            'connection_time': [ib_conn['CONNECTION_TIME']],
+            'api_version': [ib_conn['API_VERSION']]
         })
     )
 
@@ -103,7 +104,7 @@ def sb_server(
 
     # Next Valid ID
 
-    next_valid_id = reactive.value()
+    next_valid_id = reactive.value(ib_conn['NEXT_VALID_ID'])
 
     @reactive.effect
     @reactive.event(input.next_valid_id)

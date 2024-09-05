@@ -235,9 +235,9 @@ def cancel_mkt_data(reqId: int):
 
 def req_sec_def_opt_params(
         reqId: int,
-        underlyingSymbol: str,
-        underlyingSecType: str,
         underlyingConId: int,
+        underlyingSymbol="",
+        underlyingSecType="",
         futFopExchange=""
 ):
     """Create a request for the security-defined option parameters of a security
@@ -246,13 +246,13 @@ def req_sec_def_opt_params(
     ------------
     reqId: int
         Numeric identifier of the request
-    underlyingSymbol: str
-        Symbol of the underlying security for which you want option parameters
-    underlyingSecType:
-        Type of the underlying security; e.g., "`STK`"
     underlyingConId: int
         `conId` of the underlying security
-    futFopExchange: str
+    underlyingSymbol: ""
+        Symbol of the underlying security for which you want option parameters.
+    underlyingSecType: ""
+        Type of the underlying security; e.g., "`STK`"
+    futFopExchange: ""
         Only set this parameter if the underlying is a futures contract; in
         other words, don't change it from the default `""` if your underlying is
          a stock. If your underlying **is** a futures contract, then use
@@ -265,6 +265,12 @@ def req_sec_def_opt_params(
     --------
     ```
     import shinybroker as sb
+    # You can specify contract id only
+    req_sec_def_opt_params_msg = sb.req_sec_def_opt_params(
+        reqId=1,
+        underlyingConId=265598
+    )
+    print(req_sec_def_opt_params_msg)
     req_sec_def_opt_params_msg = sb.req_sec_def_opt_params(
         reqId=1,
         underlyingSymbol="AAPL",

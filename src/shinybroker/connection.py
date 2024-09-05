@@ -1,10 +1,22 @@
-import asyncio
-import socket
-import struct
-import select
+import asyncio, socket, struct, select, time
 
 from shinybroker.functionary import functionary
 from shinybroker.utils import pack_message
+
+
+def read_ib_msg(sock):
+    (rd, wt, er) = select.select([sock], [], [])
+    msg_prefix = rd[0].recv(4)
+    msg_size = struct.unpack("!I", msg_prefix)[0]
+    msg = list(
+        filter(
+            None,
+            [x.decode('ascii') for x in sock.recv(
+                msg_size
+            ).split(b"\x00")]
+        )
+    )
+    return msg
 
 
 def create_ibkr_socket_conn(host='127.0.0.1', port=7497, client_id=0):
@@ -56,10 +68,16 @@ def create_ibkr_socket_conn(host='127.0.0.1', port=7497, client_id=0):
         )
     )
 
-    API_VERSION = handshake_msg[0]
-    CONNECTION_TIME = handshake_msg[1]
+    (rd, wt, er) = select.select([ib_socket], [], [])
+    msg = read_ib_msg(rd[0])
+    ib_conn = {
+        'ib_socket': ib_socket,
+        'API_VERSION': handshake_msg[0],
+        'CONNECTION_TIME': handshake_msg[1],
+        'NEXT_VALID_ID': msg[1]
+    }
 
-    return ib_socket, API_VERSION, CONNECTION_TIME
+    return ib_conn
 
 
 # make an async function that can be awaited so that we know if there's a
@@ -93,17 +111,6 @@ def ib_msg_reader_run_loop(ib_sock, shiny_sesh=None, verbose=False):
     asyncio.run(ib_msg_reader(sock=ib_sock, sesh=shiny_sesh, verb=verbose))
 
 
-def ib_msg_reader_sync(sock):
-    (rd, wt, er) = select.select([sock], [], [])
-    msg_prefix = rd[0].recv(4)
-    msg_size = struct.unpack("!I", msg_prefix)[0]
-    msg = list(
-        filter(
-            None,
-            [x.decode('ascii') for x in sock.recv(
-                msg_size
-            ).split(b"\x00")]
-        )
-    )
-    return msg
-
+def send_ib_message(s, msg):
+    (rd, wt, er) = select.select([], [s], [])
+    return wt[0].send(msg)

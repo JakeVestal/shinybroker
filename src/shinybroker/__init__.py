@@ -1,7 +1,9 @@
 VERSION = '0.6.19'
 
 from shinybroker.connection import (
-    create_ibkr_socket_conn, ib_msg_reader_run_loop, ib_msg_reader_sync
+    create_ibkr_socket_conn,
+    read_ib_msg,
+    send_ib_message
 )
 from shinybroker.format_ibkr_inputs import *
 from shinybroker.market_data_subscriptions import (
