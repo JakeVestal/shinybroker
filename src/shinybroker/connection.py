@@ -74,7 +74,7 @@ def create_ibkr_socket_conn(host='127.0.0.1', port=7497, client_id=0):
         'ib_socket': ib_socket,
         'API_VERSION': handshake_msg[0],
         'CONNECTION_TIME': handshake_msg[1],
-        'NEXT_VALID_ID': msg[1]
+        'NEXT_VALID_ID': int(msg[1])
     }
 
     return ib_conn
