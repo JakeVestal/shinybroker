@@ -81,7 +81,7 @@ print(q)
 # )
 #
 # while True:
-#     incoming_msg = sb.ib_msg_reader_sync(sock=ib_socket)
+#     incoming_msg = sb.read_ib_msg(sock=ib_socket)
 #     print(incoming_msg)
 #     if incoming_msg[0] == sb.functionary['incoming_msg_codes'][
 #         'SECURITY_DEFINITION_OPTION_PARAMETER'
@@ -132,7 +132,7 @@ print(q)
 # )
 #
 # while True:
-#     incoming_msg = sb.ib_msg_reader_sync(sock=ib_socket)
+#     incoming_msg = sb.read_ib_msg(sock=ib_socket)
 #     print(incoming_msg)
 #     if incoming_msg[0] == sb.functionary['incoming_msg_codes'][
 #         'SECURITY_DEFINITION_OPTION_PARAMETER'
