@@ -81,7 +81,8 @@ ready to move on. If you used a demo account, know that any trades you make will
 
 5) Check **Enable ActiveX and Socket Clients**
 
-6) Un-check **Read-only API**
+6) Un-check **Read-only API**, which will instruct TWS to accept any orders
+passed to it by ShinyBroker via the API.
 
 7) You can leave the rest of the settings alone. By default, your settings menu
 should look like the below:
