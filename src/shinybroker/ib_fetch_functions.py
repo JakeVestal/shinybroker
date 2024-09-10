@@ -1,11 +1,16 @@
-import atexit, datetime
+import atexit
 
+from datetime import datetime
 from shinybroker.connection import (
     create_ibkr_socket_conn, send_ib_message, read_ib_msg
 )
-from shinybroker.functionary import functionary
-from shinybroker.msgs_to_ibkr import req_sec_def_opt_params
 from shinybroker.format_ibkr_inputs import *
+from shinybroker.functionary import functionary
+from shinybroker.msgs_to_ibkr import (
+    req_historical_data,
+    req_sec_def_opt_params
+)
+from shinybroker.obj_defs import Contract
 
 
 def fetch_sec_def_opt_params(
@@ -73,7 +78,6 @@ def fetch_sec_def_opt_params(
     )
     ib_socket = ib_conn['ib_socket']
     ib_socket.settimeout(1)
-    atexit.register(ib_socket.close)
 
     incoming_msg = read_ib_msg(ib_socket)
 
@@ -89,7 +93,7 @@ def fetch_sec_def_opt_params(
     )
 
     sdops = []
-    start_time = datetime.datetime.now()
+    start_time = datetime.now()
     while incoming_msg[0] != functionary['incoming_msg_codes'][
         'SECURITY_DEFINITION_OPTION_PARAMETER_END'
     ]:
@@ -99,7 +103,7 @@ def fetch_sec_def_opt_params(
         ]:
             sdops.append(
                 format_sec_def_opt_params_input(sdop=incoming_msg[2:]))
-        if (datetime.datetime.now() - start_time).seconds > timeout:
+        if (datetime.now() - start_time).seconds > timeout:
             break
 
     try:
@@ -110,6 +114,110 @@ def fetch_sec_def_opt_params(
     except ValueError:
         sec_def_opt_params = None
 
+    ib_socket.close()
+
     return sec_def_opt_params
 
 
+def fetch_historical_data(
+        contract: Contract,
+        endDateTime="",
+        durationStr="1 D",
+        barSizeSetting='1 hour',
+        whatToShow='Trades',
+        useRTH=True,
+        host='127.0.0.1',
+        port=7497,
+        client_id=9999,
+        timeout=3
+):
+    """
+    Creates a temporary IBKR client socket at the specified `host`, `port`, and
+    `client_id`, then makes a query for the historical data specified by the
+    input parameters, receives the response, closes the socket, formats the
+    response, and returns the result.
+
+    If `timeout` number of seconds elapse before receiving historical data,
+    then `fetch_historical_data` returns `None`.
+
+    Parameters
+    ------------
+    underlyingConId: int
+        `conId` of the underlying security
+    underlyingSymbol: str
+        Symbol of the underlying security for which you want option parameters.
+    underlyingSecType: str
+        Type of the underlying security; e.g., "`STK`"
+    host: '127.0.0.1'
+        Address of a running IBKR client (such as TWS or IBG) that has been
+        configured to accept API connections
+    port: 7497
+        Port of a running IBKR client
+    client_id: 9999
+        Client ID you want to use for the request. If you are connecting to a
+        system that is used by multiple users, then you may wish to set aside an
+         ID for this purpose; if you're the only one using the account then
+         you probably don't have to worry about it -- just use the default.
+
+    Examples
+    --------
+    ```
+    {{< include ../examples/fetch_historical_data.py >}}
+    ```
+    """
+
+    # contract = Contract({
+    #     'symbol': "AAPL",
+    #     'secType': "STK",
+    #     'exchange': "SMART",
+    #     'currency': "USD"
+    # })
+    # endDateTime = ""
+    # durationStr = "1 D"
+    # barSizeSetting = '1 hour'
+    # whatToShow = 'Trades'
+    # useRTH = True
+    # host = '127.0.0.1'
+    # port = 7497
+    # client_id = 9999
+    # timeout = 3
+
+    ib_conn = create_ibkr_socket_conn(
+        host=host, port=port, client_id=client_id
+    )
+    ib_socket = ib_conn['ib_socket']
+    atexit.register(ib_socket.close)
+
+    incoming_msg = read_ib_msg(ib_socket)
+
+    send_ib_message(
+        s=ib_socket,
+        msg=req_historical_data(
+            reqId=1,
+            contract=contract,
+            endDateTime=endDateTime,
+            durationStr=durationStr,
+            barSizeSetting=barSizeSetting,
+            whatToShow=whatToShow,
+            useRTH=useRTH,
+            formatDate=2,
+            keepUpToDate=False
+        )
+    )
+
+    historical_data = None
+
+    while True:
+        incoming_msg = read_ib_msg(sock=ib_socket)
+        if incoming_msg[0] == '4' and incoming_msg[3] == '321':
+            print(incoming_msg[4])
+            break
+        if incoming_msg[0] == functionary['incoming_msg_codes'][
+            'HISTORICAL_DATA'
+        ]:
+            historical_data = format_historical_data_input(incoming_msg[1:])
+            break
+
+    ib_socket.close()
+
+    return historical_data

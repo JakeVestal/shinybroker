@@ -1,5 +1,7 @@
 import pandas as pd
 
+from datetime import datetime
+
 
 def format_historical_data_input(hst_dta):
     hd_len = len(hst_dta)
@@ -7,7 +9,11 @@ def format_historical_data_input(hst_dta):
         'startDateStr': hst_dta[1],
         'endDateStr': hst_dta[2],
         'hst_dta': pd.DataFrame({
-            'timestamp': [hst_dta[i] for i in range(4, hd_len, 8)],
+            'timestamp': [
+                datetime.fromtimestamp(
+                    int(hst_dta[i])
+                ) for i in range(4, hd_len, 8)
+            ],
             'open': [float(hst_dta[i]) for i in range(5, hd_len, 8)],
             'high': [float(hst_dta[i]) for i in range(6, hd_len, 8)],
             'low': [float(hst_dta[i]) for i in range(7, hd_len, 8)],

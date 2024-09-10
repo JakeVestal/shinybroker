@@ -1,0 +1,28 @@
+# fetch_historical_data { #shinybroker.fetch_historical_data }
+
+`fetch_historical_data(contract, endDateTime='', durationStr='1 D', barSizeSetting='1 hour', whatToShow='Trades', useRTH=True, host='127.0.0.1', port=7497, client_id=9999, timeout=3)`
+
+Creates a temporary IBKR client socket at the specified `host`, `port`, and
+`client_id`, then makes a query for the historical data specified by the
+input parameters, receives the response, closes the socket, formats the
+response, and returns the result.
+
+If `timeout` number of seconds elapse before receiving historical data,
+then `fetch_historical_data` returns `None`.
+
+## Parameters
+
+| Name                | Type   | Description                                                                                                                                                                                                                                                                            | Default       |
+|---------------------|--------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
+| `underlyingConId`   |        | `conId` of the underlying security                                                                                                                                                                                                                                                     | _required_    |
+| `underlyingSymbol`  |        | Symbol of the underlying security for which you want option parameters.                                                                                                                                                                                                                | _required_    |
+| `underlyingSecType` |        | Type of the underlying security; e.g., "`STK`"                                                                                                                                                                                                                                         | _required_    |
+| `host`              |        | Address of a running IBKR client (such as TWS or IBG) that has been configured to accept API connections                                                                                                                                                                               | `'127.0.0.1'` |
+| `port`              |        | Port of a running IBKR client                                                                                                                                                                                                                                                          | `7497`        |
+| `client_id`         |        | Client ID you want to use for the request. If you are connecting to a system that is used by multiple users, then you may wish to set aside an  ID for this purpose; if you're the only one using the account then  you probably don't have to worry about it -- just use the default. | `9999`        |
+
+## Examples
+
+```
+{{< include ../examples/fetch_historical_data.py >}}
+```

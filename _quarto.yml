@@ -63,6 +63,7 @@ quartodoc:
         persistent, continually-updated data subscriptions; in other words, you 
         can't call `fetch_historical_data` with `keepUpToDate = True`.
       contents:
+        - fetch_historical_data
         - fetch_sec_def_opt_params
     - title: Low-Level Request Messages
       desc: These functions process their inputs into packed binary data 

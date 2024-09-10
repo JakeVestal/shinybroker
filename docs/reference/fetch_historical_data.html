@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>req_ids – ShinyBroker</title>
+<title>fetch_historical_data – ShinyBroker</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -29,8 +29,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../reference/req_historical_data.html" rel="next">
-<link href="../reference/req_sec_def_opt_params.html" rel="prev">
+<link href="../reference/fetch_sec_def_opt_params.html" rel="next">
+<link href="../reference/Contract.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -122,7 +122,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../reference/req_contract_details.html">Low-Level Request Messages</a></li><li class="breadcrumb-item"><a href="../reference/req_ids.html">req_ids</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../reference/fetch_historical_data.html">\"Fetch\" Functions</a></li><li class="breadcrumb-item"><a href="../reference/fetch_historical_data.html">fetch_historical_data</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -168,7 +168,7 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../reference/fetch_historical_data.html" class="sidebar-item-text sidebar-link">
+  <a href="../reference/fetch_historical_data.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">fetch_historical_data</span></a>
   </div>
 </li>
@@ -233,7 +233,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../reference/req_ids.html" class="sidebar-item-text sidebar-link active">
+  <a href="../reference/req_ids.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">req_ids</span></a>
   </div>
 </li>
@@ -261,9 +261,9 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#shinybroker.req_ids" id="toc-shinybroker.req_ids" class="nav-link active" data-scroll-target="#shinybroker.req_ids">req_ids</a>
+  <li><a href="#shinybroker.fetch_historical_data" id="toc-shinybroker.fetch_historical_data" class="nav-link active" data-scroll-target="#shinybroker.fetch_historical_data">fetch_historical_data</a>
   <ul class="collapse">
-  <li><a href="#parameter" id="toc-parameter" class="nav-link" data-scroll-target="#parameter">Parameter</a></li>
+  <li><a href="#parameters" id="toc-parameters" class="nav-link" data-scroll-target="#parameters">Parameters</a></li>
   <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a></li>
   </ul></li>
   </ul>
@@ -275,20 +275,96 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<section id="shinybroker.req_ids" class="level1">
-<h1>req_ids</h1>
-<p><code>req_ids(numIds)</code></p>
-<p>Create a request for the next valid numeric ID that can be used to create a trade order</p>
-<section id="parameter" class="level2">
-<h2 class="anchored" data-anchor-id="parameter">Parameter</h2>
-<p>numIds: int Specifies how many valid IDs you want in the result</p>
+<section id="shinybroker.fetch_historical_data" class="level1">
+<h1>fetch_historical_data</h1>
+<p><code>fetch_historical_data(contract, endDateTime='', durationStr='1 D', barSizeSetting='1 hour', whatToShow='Trades', useRTH=True, host='127.0.0.1', port=7497, client_id=9999, timeout=3)</code></p>
+<p>Creates a temporary IBKR client socket at the specified <code>host</code>, <code>port</code>, and <code>client_id</code>, then makes a query for the historical data specified by the input parameters, receives the response, closes the socket, formats the response, and returns the result.</p>
+<p>If <code>timeout</code> number of seconds elapse before receiving historical data, then <code>fetch_historical_data</code> returns <code>None</code>.</p>
+<section id="parameters" class="level2">
+<h2 class="anchored" data-anchor-id="parameters">Parameters</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 2%">
+<col style="width: 86%">
+<col style="width: 4%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>underlyingConId</code></td>
+<td></td>
+<td><code>conId</code> of the underlying security</td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td><code>underlyingSymbol</code></td>
+<td></td>
+<td>Symbol of the underlying security for which you want option parameters.</td>
+<td><em>required</em></td>
+</tr>
+<tr class="odd">
+<td><code>underlyingSecType</code></td>
+<td></td>
+<td>Type of the underlying security; e.g., “<code>STK</code>”</td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td><code>host</code></td>
+<td></td>
+<td>Address of a running IBKR client (such as TWS or IBG) that has been configured to accept API connections</td>
+<td><code>'127.0.0.1'</code></td>
+</tr>
+<tr class="odd">
+<td><code>port</code></td>
+<td></td>
+<td>Port of a running IBKR client</td>
+<td><code>7497</code></td>
+</tr>
+<tr class="even">
+<td><code>client_id</code></td>
+<td></td>
+<td>Client ID you want to use for the request. If you are connecting to a system that is used by multiple users, then you may wish to set aside an ID for this purpose; if you’re the only one using the account then you probably don’t have to worry about it – just use the default.</td>
+<td><code>9999</code></td>
+</tr>
+</tbody>
+</table>
 </section>
 <section id="examples" class="level2">
 <h2 class="anchored" data-anchor-id="examples">Examples</h2>
 <pre><code>import shinybroker as sb
-# create a message that asks for 10 valid IDs
-req_ids_msg = sb.req_ids(10)
-print(req_ids_msg)</code></pre>
+
+historical_data = sb.fetch_historical_data(
+    contract=sb.Contract({
+        'symbol': "AAPL",
+        'secType': "STK",
+        'exchange': "SMART",
+        'currency': "USD"
+    })
+)
+
+print(historical_data)
+
+#### Try an example with a bad barSizeSetting
+#### fetch_historical_data prints an informative error message and returns None
+historical_data_bad_barsize = sb.fetch_historical_data(
+    contract=sb.Contract({
+        'symbol': "AAPL",
+        'secType': "STK",
+        'exchange': "SMART",
+        'currency': "USD"
+    }),
+    barSizeSetting="1 hrs"
+)
+print(historical_data_bad_barsize)
+</code></pre>
 
 
 </section>
@@ -717,13 +793,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../reference/req_sec_def_opt_params.html" class="pagination-link" aria-label="req_sec_def_opt_params">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">req_sec_def_opt_params</span>
+      <a href="../reference/Contract.html" class="pagination-link" aria-label="Contract">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Contract</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../reference/req_historical_data.html" class="pagination-link" aria-label="req_historical_data">
-        <span class="nav-page-text">req_historical_data</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../reference/fetch_sec_def_opt_params.html" class="pagination-link" aria-label="fetch_sec_def_opt_params">
+        <span class="nav-page-text">fetch_sec_def_opt_params</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
