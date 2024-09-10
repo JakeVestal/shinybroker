@@ -334,14 +334,14 @@
     "href": "index.html",
     "title": "Overview",
     "section": "",
-    "text": "ShinyBroker current version:   0.6.19\n\n\nThis package is under frequent heavy development, so in order to stay current with the examples and tutorials, you should make sure that your local install of ShinyBroker is up-to-date with the most current version. You can easily check what version of ShinyBroker you have installed via the command:\n\n\npip show shinybroker\n\n\n…and you can update to the latest version with:\n\n\npip install shinybroker --upgrade"
+    "text": "ShinyBroker current version:   0.6.20\n\n\nThis package is under frequent heavy development, so in order to stay current with the examples and tutorials, you should make sure that your local install of ShinyBroker is up-to-date with the most current version. You can easily check what version of ShinyBroker you have installed via the command:\n\n\npip show shinybroker\n\n\n…and you can update to the latest version with:\n\n\npip install shinybroker --upgrade"
   },
   {
     "objectID": "index.html#welcome",
     "href": "index.html#welcome",
     "title": "Overview",
     "section": "",
-    "text": "ShinyBroker current version:   0.6.19\n\n\nThis package is under frequent heavy development, so in order to stay current with the examples and tutorials, you should make sure that your local install of ShinyBroker is up-to-date with the most current version. You can easily check what version of ShinyBroker you have installed via the command:\n\n\npip show shinybroker\n\n\n…and you can update to the latest version with:\n\n\npip install shinybroker --upgrade"
+    "text": "ShinyBroker current version:   0.6.20\n\n\nThis package is under frequent heavy development, so in order to stay current with the examples and tutorials, you should make sure that your local install of ShinyBroker is up-to-date with the most current version. You can easily check what version of ShinyBroker you have installed via the command:\n\n\npip show shinybroker\n\n\n…and you can update to the latest version with:\n\n\npip install shinybroker --upgrade"
   },
   {
     "objectID": "index.html#about",
