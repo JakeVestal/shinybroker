@@ -273,7 +273,10 @@ ul.task-list li input[type="checkbox"] {
 <h1>fetch_sec_def_opt_params</h1>
 <p><code>fetch_sec_def_opt_params(underlyingConId, underlyingSymbol, underlyingSecType, host='127.0.0.1', port=7497, client_id=9999, futFopExchange='', timeout=3)</code></p>
 <p>Fetch Security-Defined Option Parameters</p>
-<p>Creates a temporary IBKR client socket at the specified <code>host</code>, <code>port</code>, and <code>client_id</code>, then makes a query for the security-defined option parameters for the security defined by <code>underlyingConId</code>, <code>underlyingSymbol</code>, <code>underlyingSecType</code>, and <code>futFopExchange</code>. <code>fetch_sec_def_opt_params</code> will collect all <code>SECURITY_DEFINITION_OPTION_PARAMETER</code> messages it receives and returns them in a dataframe when it receives a <code>SECURITY_DEFINITION_OPTION_PARAMETER_END</code> message. If <code>timeout</code> number of seconds elapse before receiving <code>SECURITY_DEFINITION_OPTION_PARAMETER_END</code>, then <code>fetch_sec_def_opt_params</code> returns <code>None</code>. Upon completion, <code>fetch_sec_def_opt_params</code> closes the socket it opened.</p>
+<p>Creates a temporary IBKR client socket at the specified <code>host</code>, <code>port</code>, and <code>client_id</code>, then makes a query for the security-defined option parameters for the security defined by <code>underlyingConId</code>, <code>underlyingSymbol</code>, <code>underlyingSecType</code>, and <code>futFopExchange</code>.</p>
+<p><code>fetch_sec_def_opt_params</code> will collect all <code>SECURITY_DEFINITION_OPTION_PARAMETER</code> messages it receives and return them in a dataframe when it receives a <code>SECURITY_DEFINITION_OPTION_PARAMETER_END</code> message.</p>
+<p>If <code>timeout</code> number of seconds elapse before receiving <code>SECURITY_DEFINITION_OPTION_PARAMETER_END</code>, then <code>fetch_sec_def_opt_params</code> returns <code>None</code>.</p>
+<p>Upon completion, <code>fetch_sec_def_opt_params</code> closes the socket it opened.</p>
 <section id="parameters" class="level2">
 <h2 class="anchored" data-anchor-id="parameters">Parameters</h2>
 <table class="caption-top table">

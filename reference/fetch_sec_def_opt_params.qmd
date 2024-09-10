@@ -7,13 +7,18 @@ Fetch Security-Defined Option Parameters
 Creates a temporary IBKR client socket at the specified `host`, `port`, and
 `client_id`, then makes a query for the security-defined option parameters
 for the security defined by `underlyingConId`, `underlyingSymbol`,
-`underlyingSecType`, and `futFopExchange`. `fetch_sec_def_opt_params` will
-collect all `SECURITY_DEFINITION_OPTION_PARAMETER` messages it receives
-and returns them in a dataframe when it receives a
-`SECURITY_DEFINITION_OPTION_PARAMETER_END` message. If `timeout` number of
-seconds elapse before receiving `SECURITY_DEFINITION_OPTION_PARAMETER_END`,
-then `fetch_sec_def_opt_params` returns `None`. Upon completion,
-`fetch_sec_def_opt_params` closes the socket it opened.
+`underlyingSecType`, and `futFopExchange`.
+
+`fetch_sec_def_opt_params` will collect all
+`SECURITY_DEFINITION_OPTION_PARAMETER` messages it receives and return
+them in a dataframe when it receives a
+`SECURITY_DEFINITION_OPTION_PARAMETER_END` message.
+
+If `timeout` number of seconds elapse before receiving
+`SECURITY_DEFINITION_OPTION_PARAMETER_END`, then `fetch_sec_def_opt_params`
+returns `None`.
+
+Upon completion, `fetch_sec_def_opt_params` closes the socket it opened.
 
 ## Parameters
 
