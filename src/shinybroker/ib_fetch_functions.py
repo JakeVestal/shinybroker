@@ -18,8 +18,7 @@ def fetch_sec_def_opt_params(
         futFopExchange="",
         timeout=3
 ):
-    """Fetch Security-Defined Option Parameters
-
+    """
     Creates a temporary IBKR client socket at the specified `host`, `port`, and
     `client_id`, then makes a query for the security-defined option parameters
     for the security defined by `underlyingConId`, `underlyingSymbol`,
@@ -100,7 +99,17 @@ def fetch_sec_def_opt_params(
         ]:
             sdops.append(
                 format_sec_def_opt_params_input(sdop=incoming_msg[2:]))
+        if (datetime.datetime.now() - start_time).seconds > timeout:
+            break
 
-    return pd.concat(sdops, ignore_index=True).sort_values('exchange')
+    try:
+        sec_def_opt_params = pd.concat(
+            sdops,
+            ignore_index=True
+        ).sort_values('exchange')
+    except ValueError:
+        sec_def_opt_params = None
+
+    return sec_def_opt_params
 
 

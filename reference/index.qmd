@@ -14,7 +14,7 @@ Use these functions to quickly query & receive data from IBKR. They create their
 
 | | |
 | --- | --- |
-| [fetch_sec_def_opt_params](fetch_sec_def_opt_params.qmd#shinybroker.fetch_sec_def_opt_params) | Fetch Security-Defined Option Parameters |
+| [fetch_sec_def_opt_params](fetch_sec_def_opt_params.qmd#shinybroker.fetch_sec_def_opt_params) | Creates a temporary IBKR client socket at the specified `host`, `port`, and |
 
 ## Low-Level Request Messages
 
