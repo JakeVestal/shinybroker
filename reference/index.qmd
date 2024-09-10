@@ -6,7 +6,15 @@ These objects are the building blocks that your application uses to work with im
 
 | | |
 | --- | --- |
-| [Contract](Contract.qmd#shinybroker.Contract) | All tradable assets -- even stocks and currencies -- are considered |
+| [Contract](Contract.qmd#shinybroker.Contract) | All tradable assets -- even stocks and currencies -- are 'contracts'. |
+
+## \"Fetch\" Functions
+
+Use these functions to quickly query & receive data from IBKR. They create their own sockets, use them for the query, listen for the response to come back in blocking mode, and return the result, which is immediately available for use. Since these functions operate in a "one-off" or "synchronous" manner, they can't be used to create persistent, continually-updated data subscriptions; in other words, you can't call `fetch_historical_data` with `keepUpToDate = True`.
+
+| | |
+| --- | --- |
+| [fetch_sec_def_opt_params](fetch_sec_def_opt_params.qmd#shinybroker.fetch_sec_def_opt_params) | Fetch Security-Defined Option Parameters |
 
 ## Low-Level Request Messages
 

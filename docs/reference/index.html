@@ -159,12 +159,29 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
- <span class="menu-text">Low-Level Request Messages</span></a>
+ <span class="menu-text">"Fetch" Functions</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/fetch_sec_def_opt_params.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">fetch_sec_def_opt_params</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Low-Level Request Messages</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../reference/req_contract_details.html" class="sidebar-item-text sidebar-link">
@@ -240,6 +257,7 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#reference" id="toc-reference" class="nav-link active" data-scroll-target="#reference">Reference</a>
   <ul class="collapse">
   <li><a href="#shinybroker-objects" id="toc-shinybroker-objects" class="nav-link" data-scroll-target="#shinybroker-objects">ShinyBroker Objects</a></li>
+  <li><a href="#fetch-functions" id="toc-fetch-functions" class="nav-link" data-scroll-target="#fetch-functions">"Fetch" Functions</a></li>
   <li><a href="#low-level-request-messages" id="toc-low-level-request-messages" class="nav-link" data-scroll-target="#low-level-request-messages">Low-Level Request Messages</a></li>
   </ul></li>
   </ul>
@@ -260,7 +278,19 @@ ul.task-list li input[type="checkbox"] {
 <tbody>
 <tr class="odd">
 <td><a href="../reference/Contract.html#shinybroker.Contract">Contract</a></td>
-<td>All tradable assets – even stocks and currencies – are considered</td>
+<td>All tradable assets – even stocks and currencies – are ‘contracts’.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="fetch-functions" class="level2">
+<h2 class="anchored" data-anchor-id="fetch-functions">"Fetch" Functions</h2>
+<p>Use these functions to quickly query &amp; receive data from IBKR. They create their own sockets, use them for the query, listen for the response to come back in blocking mode, and return the result, which is immediately available for use. Since these functions operate in a “one-off” or “synchronous” manner, they can’t be used to create persistent, continually-updated data subscriptions; in other words, you can’t call <code>fetch_historical_data</code> with <code>keepUpToDate = True</code>.</p>
+<table class="caption-top table">
+<tbody>
+<tr class="odd">
+<td><a href="../reference/fetch_sec_def_opt_params.html#shinybroker.fetch_sec_def_opt_params">fetch_sec_def_opt_params</a></td>
+<td>Fetch Security-Defined Option Parameters</td>
 </tr>
 </tbody>
 </table>

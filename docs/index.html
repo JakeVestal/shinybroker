@@ -189,19 +189,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="welcome" class="level2">
 <h2 class="anchored" data-anchor-id="welcome">Welcome!</h2>
-<div id="fb04eba6" class="cell" data-execution_count="1">
+<div id="ebfcfc21" class="cell" data-execution_count="1">
 <div class="cell-output cell-output-stdout">
 <pre><code>ShinyBroker current version:   0.6.19</code></pre>
 </div>
 </div>
 <p>This package is under frequent heavy development, so in order to stay current with the examples and tutorials, you should make sure that your local install of ShinyBroker is up-to-date with the most current version. You can easily check what version of ShinyBroker you have installed via the command:</p>
-<div id="93d76888" class="cell" data-execution_count="2">
+<div id="335d93f0" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-stdout">
 <pre><code>pip show shinybroker</code></pre>
 </div>
 </div>
 <p>…and you can update to the latest version with:</p>
-<div id="2d3a65e3" class="cell" data-execution_count="3">
+<div id="ad7d14aa" class="cell" data-execution_count="3">
 <div class="cell-output cell-output-stdout">
 <pre><code>pip install shinybroker --upgrade</code></pre>
 </div>
@@ -221,14 +221,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p>Once you’re signed in, familiarize yourself with the system until you’re ready to move on. If you used a demo account, know that any trades you make will be erased when you log out.</p></li>
 <li><p>Open the API Configuration menu using the <strong>File</strong> dropdown. You can find the menu at File &gt; Global Configuration &gt; API &gt; Settings.</p></li>
 <li><p>Check <strong>Enable ActiveX and Socket Clients</strong></p></li>
-<li><p>Un-check <strong>Read-only API</strong></p></li>
+<li><p>Un-check <strong>Read-only API</strong>, which will instruct TWS to accept any orders passed to it by ShinyBroker via the API.</p></li>
 <li><p>You can leave the rest of the settings alone. By default, your settings menu should look like the below: <img src="data/api_config.png" class="img-fluid" alt="Settings Menu"></p></li>
 <li><p>Install ShinyBroker with <code>pip install shinybroker</code></p></li>
 <li><p>In Python, run the following: (<em>make sure TWS is open and running</em>)</p></li>
 </ol>
 <section id="code" class="level5">
 <h5 class="anchored" data-anchor-id="code">Code:</h5>
-<div id="14a478c6" class="cell" data-execution_count="4">
+<div id="6f602284" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shinybroker <span class="im">as</span> sb</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create an instance of a ShinyBroker App object using the default ui and server</span></span>
@@ -258,7 +258,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="code-1" class="level5">
 <h5 class="anchored" data-anchor-id="code-1">Code:</h5>
-<div id="02d49e5d" class="cell" data-execution_count="5">
+<div id="b88f711b" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shinybroker <span class="im">as</span> sb</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shiny <span class="im">import</span> Inputs, Outputs, Session, ui, render</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>

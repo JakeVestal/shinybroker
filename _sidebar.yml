@@ -6,6 +6,9 @@ website:
       - reference/Contract.qmd
       section: ShinyBroker Objects
     - contents:
+      - reference/fetch_sec_def_opt_params.qmd
+      section: \"Fetch\" Functions
+    - contents:
       - reference/req_contract_details.qmd
       - reference/req_current_time.qmd
       - reference/req_market_data_type.qmd

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>"Headless Mode" for In-App Scripting and Development – ShinyBroker</title>
+<title>fetch_sec_def_opt_params – ShinyBroker</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,58 +20,26 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="dark">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../reference/req_contract_details.html" rel="next">
+<link href="../reference/Contract.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -101,17 +69,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="../styles.css">
 </head>
 
-<body class="nav-fixed">
+<body class="nav-sidebar floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">ShinyBroker</span>
     </a>
   </div>
@@ -127,13 +95,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-get-started">    
         <li>
-    <a class="dropdown-item" href="./query_and_display_market_data.html">
+    <a class="dropdown-item" href="../query_and_display_market_data.html">
  <span class="dropdown-text">Query and Display Market Data</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="./reference/index.html"> 
+    <a class="nav-link active" href="../reference/index.html" aria-current="page"> 
 <span class="menu-text">Reference</span></a>
   </li>  
 </ul>
@@ -149,90 +117,238 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
       </div> <!-- /container-fluid -->
     </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../reference/fetch_sec_def_opt_params.html">\"Fetch\" Functions</a></li><li class="breadcrumb-item"><a href="../reference/fetch_sec_def_opt_params.html">fetch_sec_def_opt_params</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
 </header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Reference</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">ShinyBroker Objects</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/Contract.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Contract</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">"Fetch" Functions</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/fetch_sec_def_opt_params.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">fetch_sec_def_opt_params</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Low-Level Request Messages</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/req_contract_details.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">req_contract_details</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/req_current_time.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">req_current_time</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/req_market_data_type.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">req_market_data_type</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/req_matching_symbols.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">req_matching_symbols</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/req_mkt_data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">req_mkt_data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/cancel_mkt_data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">cancel_mkt_data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/req_sec_def_opt_params.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">req_sec_def_opt_params</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/req_ids.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">req_ids</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/req_historical_data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">req_historical_data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/cancel_historical_data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">cancel_historical_data</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#somewhat-interactive-development-mode" id="toc-somewhat-interactive-development-mode" class="nav-link active" data-scroll-target="#somewhat-interactive-development-mode">“Somewhat Interactive” Development Mode</a></li>
+  <li><a href="#shinybroker.fetch_sec_def_opt_params" id="toc-shinybroker.fetch_sec_def_opt_params" class="nav-link active" data-scroll-target="#shinybroker.fetch_sec_def_opt_params">fetch_sec_def_opt_params</a>
+  <ul class="collapse">
+  <li><a href="#parameters" id="toc-parameters" class="nav-link" data-scroll-target="#parameters">Parameters</a></li>
+  <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">"Headless Mode" for In-App Scripting and Development</h1>
-</div>
 
 
 
-<div class="quarto-title-meta">
+<section id="shinybroker.fetch_sec_def_opt_params" class="level1">
+<h1>fetch_sec_def_opt_params</h1>
+<p><code>fetch_sec_def_opt_params(underlyingConId, underlyingSymbol, underlyingSecType, host='127.0.0.1', port=7497, client_id=9999, futFopExchange='', timeout=3)</code></p>
+<p>Fetch Security-Defined Option Parameters</p>
+<p>Creates a temporary IBKR client socket at the specified <code>host</code>, <code>port</code>, and <code>client_id</code>, then makes a query for the security-defined option parameters for the security defined by <code>underlyingConId</code>, <code>underlyingSymbol</code>, <code>underlyingSecType</code>, and <code>futFopExchange</code>. <code>fetch_sec_def_opt_params</code> will collect all <code>SECURITY_DEFINITION_OPTION_PARAMETER</code> messages it receives and returns them in a dataframe when it receives a <code>SECURITY_DEFINITION_OPTION_PARAMETER_END</code> message. If <code>timeout</code> number of seconds elapse before receiving <code>SECURITY_DEFINITION_OPTION_PARAMETER_END</code>, then <code>fetch_sec_def_opt_params</code> returns <code>None</code>. Upon completion, <code>fetch_sec_def_opt_params</code> closes the socket it opened.</p>
+<section id="parameters" class="level2">
+<h2 class="anchored" data-anchor-id="parameters">Parameters</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 4%">
+<col style="width: 1%">
+<col style="width: 90%">
+<col style="width: 3%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>underlyingConId</code></td>
+<td>int</td>
+<td><code>conId</code> of the underlying security</td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td><code>underlyingSymbol</code></td>
+<td>str</td>
+<td>Symbol of the underlying security for which you want option parameters.</td>
+<td><em>required</em></td>
+</tr>
+<tr class="odd">
+<td><code>underlyingSecType</code></td>
+<td>str</td>
+<td>Type of the underlying security; e.g., “<code>STK</code>”</td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td><code>host</code></td>
+<td></td>
+<td>Address of a running IBKR client (such as TWS or IBG) that has been configured to accept API connections</td>
+<td><code>'127.0.0.1'</code></td>
+</tr>
+<tr class="odd">
+<td><code>port</code></td>
+<td></td>
+<td>Port of a running IBKR client</td>
+<td><code>7497</code></td>
+</tr>
+<tr class="even">
+<td><code>client_id</code></td>
+<td></td>
+<td>Client ID you want to use for the request. If you are connecting to a system that is used by multiple users, then you may wish to set aside an ID for this purpose; if you’re the only one using the account then you probably don’t have to worry about it – just use the default.</td>
+<td><code>9999</code></td>
+</tr>
+<tr class="odd">
+<td><code>futFopExchange</code></td>
+<td></td>
+<td>Only set this parameter if the underlying is a futures contract; in other words, don’t change it from the default <code>""</code> if your underlying is a stock. If your underlying <strong>is</strong> a futures contract, then use <code>futFopExchange</code> to specify the exchange for which you want option parameters. You may still pass in <code>""</code> if you want the results to include <strong>all</strong> of the exchanges available at IBKR that trade options on your specified underlying.</td>
+<td><code>''</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="examples" class="level2">
+<h2 class="anchored" data-anchor-id="examples">Examples</h2>
+<pre><code>import shinybroker as sb
 
-    
-  
-    
-  </div>
-  
+sec_def_opt_params = sb.fetch_sec_def_opt_params(
+    underlyingConId=265598,
+    underlyingSymbol="AAPL",
+    underlyingSecType="STK"
+)
 
-
-</header>
-
-
-<section id="somewhat-interactive-development-mode" class="level2">
-<h2 class="anchored" data-anchor-id="somewhat-interactive-development-mode">“Somewhat Interactive” Development Mode</h2>
-<p>As you’re developing apps, it’s sometimes useful to just create a scratch file containing a bit of code that grabs some input. You can watch the information get printed by the async reader loop as it becomes available off the socket, and maybe copy-paste it from the terminal printout do perform some of your exploratory development work.</p>
-<section id="simple-exploratory-example" class="level4">
-<h4 class="anchored" data-anchor-id="simple-exploratory-example">Simple exploratory example:</h4>
-<div id="39f0ed14" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shinybroker <span class="im">as</span> sb</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>con_id <span class="op">=</span> <span class="dv">265598</span>  <span class="co"># AAPL Stock</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>ib_conn <span class="op">=</span> sb.create_ibkr_socket_conn()</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>ib_socket <span class="op">=</span> ib_conn[<span class="st">'ib_socket'</span>]</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>sb.send_ib_message(</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    s<span class="op">=</span>ib_socket,</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    msg<span class="op">=</span>sb.req_sec_def_opt_params(</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        reqId<span class="op">=</span><span class="dv">1</span>,</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        underlyingSymbol<span class="op">=</span><span class="st">"AAPL"</span>,</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        futFopExchange<span class="op">=</span><span class="st">""</span>,</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>        underlyingSecType<span class="op">=</span><span class="st">"STK"</span>,</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>        underlyingConId<span class="op">=</span><span class="dv">265598</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co"># start_time = datetime.datetime.now()</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co"># while (datetime.datetime.now() - start_time).seconds &lt; timeout:</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>incoming_msg <span class="op">=</span> sb.read_ib_msg(sock<span class="op">=</span>ib_socket)</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>sdops <span class="op">=</span> []</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> incoming_msg[<span class="dv">0</span>] <span class="op">!=</span> sb.functionary[<span class="st">'incoming_msg_codes'</span>][</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    <span class="st">'SECURITY_DEFINITION_OPTION_PARAMETER_END'</span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>]:</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    incoming_msg <span class="op">=</span> sb.read_ib_msg(sock<span class="op">=</span>ib_socket)</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> incoming_msg[<span class="dv">0</span>] <span class="op">==</span> sb.functionary[<span class="st">'incoming_msg_codes'</span>][</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>        <span class="st">'SECURITY_DEFINITION_OPTION_PARAMETER'</span></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    ]:</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    sdops.append(sb.format_sec_def_opt_params_input(sdop<span class="op">=</span>incoming_msg[<span class="dv">2</span>:]))</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>ib_socket.close()</span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(</span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>    pd.concat(sdops, ignore_index<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>    .sort_values(<span class="st">'exchange'</span>)</span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
+print(sec_def_opt_params)
+</code></pre>
 
 
 </section>
@@ -659,6 +775,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../reference/Contract.html" class="pagination-link" aria-label="Contract">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Contract</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../reference/req_contract_details.html" class="pagination-link" aria-label="req_contract_details">
+        <span class="nav-page-text">req_contract_details</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">

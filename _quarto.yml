@@ -54,6 +54,16 @@ quartodoc:
         a trade order.
       contents:
         - Contract
+    - title: \"Fetch\" Functions
+      desc: Use these functions to quickly query & receive data from IBKR. They 
+        create their own sockets, use them for the query, listen for the 
+        response to come back in blocking mode, and return the result, which 
+        is immediately available for use. Since these functions operate in a 
+        "one-off" or "synchronous" manner, they can't be used to create 
+        persistent, continually-updated data subscriptions; in other words, you 
+        can't call `fetch_historical_data` with `keepUpToDate = True`.
+      contents:
+        - fetch_sec_def_opt_params
     - title: Low-Level Request Messages
       desc: These functions process their inputs into packed binary data 
         messages that you can send to a connected IBKR socket to instruct it 

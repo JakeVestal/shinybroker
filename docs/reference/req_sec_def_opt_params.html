@@ -160,12 +160,29 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
- <span class="menu-text">Low-Level Request Messages</span></a>
+ <span class="menu-text">"Fetch" Functions</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/fetch_sec_def_opt_params.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">fetch_sec_def_opt_params</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Low-Level Request Messages</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../reference/req_contract_details.html" class="sidebar-item-text sidebar-link">
@@ -254,7 +271,7 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="shinybroker.req_sec_def_opt_params" class="level1">
 <h1>req_sec_def_opt_params</h1>
-<p><code>req_sec_def_opt_params(reqId, underlyingSymbol, underlyingSecType, underlyingConId, futFopExchange='')</code></p>
+<p><code>req_sec_def_opt_params(reqId, underlyingConId, underlyingSymbol, underlyingSecType, futFopExchange='')</code></p>
 <p>Create a request for the security-defined option parameters of a security</p>
 <section id="parameters" class="level2">
 <h2 class="anchored" data-anchor-id="parameters">Parameters</h2>
@@ -281,21 +298,21 @@ ul.task-list li input[type="checkbox"] {
 <td><em>required</em></td>
 </tr>
 <tr class="even">
-<td><code>underlyingSymbol</code></td>
-<td>str</td>
-<td>Symbol of the underlying security for which you want option parameters</td>
-<td><em>required</em></td>
-</tr>
-<tr class="odd">
-<td><code>underlyingSecType</code></td>
-<td>str</td>
-<td>Type of the underlying security; e.g., “<code>STK</code>”</td>
-<td><em>required</em></td>
-</tr>
-<tr class="even">
 <td><code>underlyingConId</code></td>
 <td>int</td>
 <td><code>conId</code> of the underlying security</td>
+<td><em>required</em></td>
+</tr>
+<tr class="odd">
+<td><code>underlyingSymbol</code></td>
+<td>str</td>
+<td>Symbol of the underlying security for which you want option parameters.</td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td><code>underlyingSecType</code></td>
+<td>str</td>
+<td>Type of the underlying security; e.g., “<code>STK</code>”</td>
 <td><em>required</em></td>
 </tr>
 <tr class="odd">
@@ -310,6 +327,12 @@ ul.task-list li input[type="checkbox"] {
 <section id="examples" class="level2">
 <h2 class="anchored" data-anchor-id="examples">Examples</h2>
 <pre><code>import shinybroker as sb
+# You can specify contract id only
+req_sec_def_opt_params_msg = sb.req_sec_def_opt_params(
+    reqId=1,
+    underlyingConId=265598
+)
+print(req_sec_def_opt_params_msg)
 req_sec_def_opt_params_msg = sb.req_sec_def_opt_params(
     reqId=1,
     underlyingSymbol="AAPL",
