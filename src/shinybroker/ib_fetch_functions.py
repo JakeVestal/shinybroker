@@ -23,7 +23,8 @@ def fetch_sec_def_opt_params(
         futFopExchange="",
         timeout=3
 ):
-    """
+    """Fetch the option parameters for a security.
+
     Creates a temporary IBKR client socket at the specified `host`, `port`, and
     `client_id`, then makes a query for the security-defined option parameters
     for the security defined by `underlyingConId`, `underlyingSymbol`,
@@ -131,7 +132,8 @@ def fetch_historical_data(
         client_id=9999,
         timeout=3
 ):
-    """
+    """Fetch historical data for a tradable asset
+
     Creates a temporary IBKR client socket at the specified `host`, `port`, and
     `client_id`, then makes a query for the historical data specified by the
     input parameters, receives the response, closes the socket, formats the
