@@ -49,6 +49,21 @@ def start_historical_data_subscription(
         formatDate=1,
         keepUpToDate=0
 ):
+    """
+
+    :param historical_data:
+    :param hd_socket:
+    :param subscription_id:
+    :param contract:
+    :param endDateTime:
+    :param durationStr:
+    :param barSizeSetting:
+    :param whatToShow:
+    :param useRTH:
+    :param formatDate:
+    :param keepUpToDate:
+    :return:
+    """
     hd = historical_data()
 
     if subscription_id is None:
