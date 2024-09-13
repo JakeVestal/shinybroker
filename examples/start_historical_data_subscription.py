@@ -3,14 +3,30 @@ from shiny import Inputs, Outputs, Session, ui, render, reactive, req
 
 shdss_ui = ui.page_fluid(
     ui.h2("Historical Data Fetcher"),
+    ui.p(
+        'When you click the "Fetch Historical Data" button, this app ' +
+        'feeds each of the labelled inputs to ',
+        ui.code("start_historical_data_subscription"),
+        "which assigns an ID to each query and makes the data request. " +
+        "ShinyBroker then reactively receives the data as it comes in and " +
+        "stores it in the reactive variable ",
+        ui.code("sb_rvs['historical_data']"),
+        ", which this app uses to populate the output fields."
+    ),
+    ui.p(
+        "For simplicity, the contract object is defined here using ",
+        ui.code("conId"),
+        " only. Feel free to experiment with other IDs such as '76792991' " +
+        "(Tesla), '43645865' (IBKR), '36285627' (GameStop), or use the " +
+        "tools from the \"Inspect\" tab of ShinyBroker to look up more."
+    ),
+    ui.br(),
     ui.row(
         ui.column(
             3,
-            ui.h4('Contract ID'),
-            ui.p('The unique `conId` for your security of interest.'),
             ui.input_text(
                 id='con_id',
-                label='',
+                label='conId',
                 value='265598'
             )
         ),
@@ -26,16 +42,18 @@ shdss_ui = ui.page_fluid(
     ui.row(
         ui.column(
             3,
-            ui.h6('endDateTime'),
-            ui.p('explaination goes here'),
-            ui.input_text(id='endDateTime', label='', value='')
+            ui.input_text(
+                id='endDateTime',
+                label='endDateTime',
+                value=''
+            )
         ),
         ui.column(
             3,
             ui.input_text(
                 id='durationStr',
                 label='durationStr',
-                value='1 D'
+                value='1 W'
             )
         ),
         ui.column(
@@ -43,7 +61,7 @@ shdss_ui = ui.page_fluid(
             ui.input_text(
                 id='barSizeSetting',
                 label='barSizeSetting',
-                value='1 hour'
+                value='1 day'
             )
         ),
         ui.column(
@@ -121,6 +139,7 @@ def shdss_server(
                         )
                     )
                 ),
+                ui.output_ui('hd_description'),
                 ui.output_data_frame('selected_hd_data')
             )
         else:
@@ -133,9 +152,43 @@ def shdss_server(
 
     @render.data_frame
     def selected_hd_data():
-        selected_hd = sb_rvs['historical_data']().get(input.selected_hd_id())
-        req('hst_dta' in selected_hd.keys())
-        return render.DataTable(selected_hd['hst_dta'])
+        selected_hd = sb_rvs['historical_data']().get(
+            input.selected_hd_id(), {}
+        ).get('hst_dta', False)
+        req(selected_hd is not False, cancel_output=True)
+        return render.DataTable(selected_hd)
+
+
+    @render.ui
+    def hd_description():
+        return ui.TagList(
+            ui.br(),
+            ui.h5(
+                "Here is the output of all the elements of ",
+                ui.code("sb_rvs['historical_data']"),
+                " except for ",
+                ui.code('\'hst_dta\''),
+                ":"
+            ),
+            ui.code(str({
+                key: value for (key, value) in
+                sb_rvs['historical_data']().get(
+                    input.selected_hd_id()).items() if
+                key != 'hst_dta'
+            })),
+            ui.br(),
+            ui.br(),
+            ui.h5(
+                '...and here are the contents of ',
+                ui.code(
+                    "sb_rvs['historical_data']().get(input.selected_hd_id)" +
+                    ".get('hst_dta')"
+                ),
+                ", rendered as a data table output:"
+            )
+        )
+
+
 
 
 # Create a ShinyBroker app with the new ui and server
