@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>req_historical_data – ShinyBroker</title>
+<title>start_historical_data_subscription – ShinyBroker</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -29,8 +29,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../reference/cancel_historical_data.html" rel="next">
-<link href="../reference/req_ids.html" rel="prev">
+<link href="../reference/fetch_historical_data.html" rel="next">
+<link href="../reference/Contract.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -122,7 +122,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../reference/req_contract_details.html">Low-Level Request Messages</a></li><li class="breadcrumb-item"><a href="../reference/req_historical_data.html">req_historical_data</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../reference/start_historical_data_subscription.html">Market Data Functions</a></li><li class="breadcrumb-item"><a href="../reference/start_historical_data_subscription.html">start_historical_data_subscription</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -168,7 +168,7 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../reference/start_historical_data_subscription.html" class="sidebar-item-text sidebar-link">
+  <a href="../reference/start_historical_data_subscription.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">start_historical_data_subscription</span></a>
   </div>
 </li>
@@ -256,7 +256,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../reference/req_historical_data.html" class="sidebar-item-text sidebar-link active">
+  <a href="../reference/req_historical_data.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">req_historical_data</span></a>
   </div>
 </li>
@@ -278,10 +278,10 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#shinybroker.req_historical_data" id="toc-shinybroker.req_historical_data" class="nav-link active" data-scroll-target="#shinybroker.req_historical_data">req_historical_data</a>
+  <li><a href="#shinybroker.start_historical_data_subscription" id="toc-shinybroker.start_historical_data_subscription" class="nav-link active" data-scroll-target="#shinybroker.start_historical_data_subscription">start_historical_data_subscription</a>
   <ul class="collapse">
   <li><a href="#parameters" id="toc-parameters" class="nav-link" data-scroll-target="#parameters">Parameters</a></li>
-  <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a></li>
+  <li><a href="#example" id="toc-example" class="nav-link" data-scroll-target="#example">Example</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -292,10 +292,11 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<section id="shinybroker.req_historical_data" class="level1">
-<h1>req_historical_data</h1>
-<p><code>req_historical_data(reqId, contract, endDateTime='', durationStr='1 D', barSizeSetting='1 hour', whatToShow='Trades', useRTH=True, formatDate=1, keepUpToDate=False)</code></p>
-<p>Create a request for the historical data of a financial instrument</p>
+<section id="shinybroker.start_historical_data_subscription" class="level1">
+<h1>start_historical_data_subscription</h1>
+<p><code>start_historical_data_subscription(historical_data=None, hd_socket=None, subscription_id=None, contract=Contract({}), endDateTime='', durationStr='1 D', barSizeSetting='1 hour', whatToShow='Trades', useRTH=1, formatDate=1, keepUpToDate=0)</code></p>
+<p>Reactively get historical data</p>
+<p>Creates a subscription for historical data using the parameters supplied. Results will appear in the <code>sb_rvs['historical_data']</code> object, where they are accessible by other functions in your app.</p>
 <section id="parameters" class="level2">
 <h2 class="anchored" data-anchor-id="parameters">Parameters</h2>
 <table class="caption-top table">
@@ -309,16 +310,28 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>reqId</code></td>
-<td>int</td>
-<td>Numeric identifier of the request</td>
-<td><em>required</em></td>
+<td><code>historical_data</code></td>
+<td></td>
+<td>You probably want to pass <code>sb_rvs['historical_data']</code> to this parameter unless you have declared a different reactive variable for storing your historical data queries. Unless you have a very specific use case to do otherwise, use <code>sb_rvs['historical_data']</code>.</td>
+<td><code>None</code></td>
+</tr>
+<tr class="even">
+<td><code>hd_socket</code></td>
+<td></td>
+<td>The socket on which you want to make the historical data subscription. You almost certainly want to pass <code>ib_socket</code> as this parameter unless you have constructed an app that uses different sockets for different tasks. This is not recommended except for advanced use cases.</td>
+<td><code>None</code></td>
+</tr>
+<tr class="odd">
+<td><code>subscription_id</code></td>
+<td></td>
+<td>Identifier of the request. You may use your own system, such as using contract <code>symbol</code> as your ID if you wish. If not supplied, then ShinyBroker will assign the smallest number that isn’t already in use as a historical data subscription ID.</td>
+<td><code>None</code></td>
 </tr>
 <tr class="even">
 <td><code>contract</code></td>
-<td>Contract</td>
+<td></td>
 <td>The <a href="`shinybroker.Contract`">Contract</a> object for which you want data</td>
-<td><em>required</em></td>
+<td><code>Contract({})</code></td>
 </tr>
 <tr class="odd">
 <td><code>endDateTime</code></td>
@@ -348,7 +361,7 @@ ul.task-list li input[type="checkbox"] {
 <td><code>useRTH</code></td>
 <td></td>
 <td>“Use Regular Trading Hours”. Set to <code>False</code> if you want the historical data to include after-hours/pre-market trading</td>
-<td><code>True</code></td>
+<td><code>1</code></td>
 </tr>
 <tr class="even">
 <td><code>formatDate</code></td>
@@ -360,30 +373,218 @@ ul.task-list li input[type="checkbox"] {
 <td><code>keepUpToDate</code></td>
 <td></td>
 <td>Set to <code>True</code> if you want to keep receiving new bar data as it becomes available. For a <code>barSizeSetting</code> of <code>5 min</code>, that would mean you receive new data every 5 minutes.</td>
-<td><code>False</code></td>
+<td><code>0</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="examples" class="level2">
-<h2 class="anchored" data-anchor-id="examples">Examples</h2>
+<section id="example" class="level2">
+<h2 class="anchored" data-anchor-id="example">Example</h2>
+<p>Run the app below for an informative exploration of this function and related objects.</p>
 <pre><code>import shinybroker as sb
-# create a request for historical TRADES of AAPL for the last 30 days,
-#   starting today. Report the data on a daily basis, regular trading
-#   hours only, and format it as "string time zone date". Make it a one-time
-#   query; don't keep it up-to-date.
-req_historical_data_msg = sb.req_historical_data(
-    reqId=1,
-    contract = Contract({
-        'symbol': "AAPL",
-        'secType': "STK",
-        'exchange': "SMART",
-        'currency': "USD"
-    }),
-    durationStr='30 D',
-    barSizeSetting='1 day'
+from shiny import Inputs, Outputs, Session, ui, render, reactive, req
+
+shdss_ui = ui.page_fluid(
+    ui.h2("Historical Data Fetcher"),
+    ui.p(
+        'When you click the "Fetch Historical Data" button, this app ' +
+        'feeds each of the labelled inputs to ',
+        ui.code("start_historical_data_subscription"),
+        "which assigns an ID to each query and makes the data request. " +
+        "ShinyBroker then reactively receives the data as it comes in and " +
+        "stores it in the reactive variable ",
+        ui.code("sb_rvs['historical_data']"),
+        ", which this app uses to populate the output fields."
+    ),
+    ui.p(
+        "For simplicity, the contract object is defined here using ",
+        ui.code("conId"),
+        " only. Feel free to experiment with other IDs such as '76792991' " +
+        "(Tesla), '43645865' (IBKR), '36285627' (GameStop), or use the " +
+        "tools from the \"Inspect\" tab of ShinyBroker to look up more."
+    ),
+    ui.br(),
+    ui.row(
+        ui.column(
+            3,
+            ui.input_text(
+                id='con_id',
+                label='conId',
+                value='265598'
+            )
+        ),
+        ui.column(6),
+        ui.column(
+            3,
+            ui.input_action_button(
+                id='fetch_data',
+                label='Fetch Historical Data'
+            )
+        )
+    ),
+    ui.row(
+        ui.column(
+            3,
+            ui.input_text(
+                id='endDateTime',
+                label='endDateTime',
+                value=''
+            )
+        ),
+        ui.column(
+            3,
+            ui.input_text(
+                id='durationStr',
+                label='durationStr',
+                value='1 W'
+            )
+        ),
+        ui.column(
+            3,
+            ui.input_text(
+                id='barSizeSetting',
+                label='barSizeSetting',
+                value='1 day'
+            )
+        ),
+        ui.column(
+            3,
+            ui.input_text(
+                id='whatToShow',
+                label='whatToShow',
+                value='Trades'
+            )
+        )
+    ),
+    ui.row(
+        ui.column(
+            3,
+            ui.input_switch(id="useRTH", label="useRTH", value=True)
+        ),
+        ui.column(
+            3,
+            ui.input_radio_buttons(
+                "formatDate",
+                "formatDate",
+                {
+                    "1": "String Time Zone Date",
+                    "2": "Epoch Date",
+                    "3": "Day &amp; Time Date"
+                }
+            )
+        ),
+        ui.column(
+            3,
+            ui.input_switch(
+                id="keepUpToDate", label="keepUpToDate", value=False
+            )
+        ),
+        ui.column(3)
+    ),
+    ui.output_ui('hd_selector'),
+    ui.output_ui('hd_output')
 )
-print(req_historical_data_msg)</code></pre>
+
+
+# Server to support the new UI
+# Signature must always contain the following five parameters:
+#   input, output, session, ib_socket, and sb_rvs
+def shdss_server(
+        input: Inputs, output: Outputs, session: Session, ib_socket, sb_rvs
+):
+
+    @reactive.effect
+    @reactive.event(input.fetch_data, ignore_init=True)
+    def fetch_historical_data():
+        sb.start_historical_data_subscription(
+            historical_data=sb_rvs['historical_data'],
+            hd_socket=ib_socket,
+            contract=sb.Contract({'conId': input.con_id()}),
+            endDateTime=input.endDateTime(),
+            durationStr=input.durationStr(),
+            barSizeSetting=input.barSizeSetting(),
+            useRTH=input.useRTH(),
+            formatDate=input.formatDate(),
+            keepUpToDate=input.keepUpToDate()
+        )
+
+    @render.ui
+    def hd_selector():
+        if len(sb_rvs['historical_data']().keys()) &gt; 0:
+            return ui.TagList(
+                ui.input_radio_buttons(
+                    id='selected_hd_id',
+                    label='Select an ID to display historical data',
+                    choices=dict(
+                        zip(
+                            sb_rvs['historical_data']().keys(),
+                            sb_rvs['historical_data']().keys()
+                        )
+                    )
+                ),
+                ui.output_ui('hd_description'),
+                ui.output_data_frame('selected_hd_data')
+            )
+        else:
+            return ui.TagList(
+                ui.p(
+                    'Please make a historical data request and the results ' +
+                    'will appear here.'
+                )
+            )
+
+    @render.data_frame
+    def selected_hd_data():
+        selected_hd = sb_rvs['historical_data']().get(
+            input.selected_hd_id(), {}
+        ).get('hst_dta', False)
+        req(selected_hd is not False, cancel_output=True)
+        return render.DataTable(selected_hd)
+
+
+    @render.ui
+    def hd_description():
+        return ui.TagList(
+            ui.br(),
+            ui.h5(
+                "Here is the output of all the elements of ",
+                ui.code("sb_rvs['historical_data']"),
+                " except for ",
+                ui.code('\'hst_dta\''),
+                ":"
+            ),
+            ui.code(str({
+                key: value for (key, value) in
+                sb_rvs['historical_data']().get(
+                    input.selected_hd_id()).items() if
+                key != 'hst_dta'
+            })),
+            ui.br(),
+            ui.br(),
+            ui.h5(
+                '...and here are the contents of ',
+                ui.code(
+                    "sb_rvs['historical_data']().get(input.selected_hd_id)" +
+                    ".get('hst_dta')"
+                ),
+                ", rendered as a data table output:"
+            )
+        )
+
+
+
+
+# Create a ShinyBroker app with the new ui and server
+app = sb.sb_app(
+    shdss_ui,
+    shdss_server,
+    host='127.0.0.1',
+    port=7497,
+    client_id=10742
+)
+
+app.run()
+</code></pre>
 
 
 </section>
@@ -812,13 +1013,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../reference/req_ids.html" class="pagination-link" aria-label="req_ids">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">req_ids</span>
+      <a href="../reference/Contract.html" class="pagination-link" aria-label="Contract">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Contract</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../reference/cancel_historical_data.html" class="pagination-link" aria-label="cancel_historical_data">
-        <span class="nav-page-text">cancel_historical_data</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../reference/fetch_historical_data.html" class="pagination-link" aria-label="fetch_historical_data">
+        <span class="nav-page-text">fetch_historical_data</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

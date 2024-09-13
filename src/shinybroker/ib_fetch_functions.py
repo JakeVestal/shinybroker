@@ -67,6 +67,8 @@ def fetch_sec_def_opt_params(
          parameters. You may still pass in `""` if you want the results to
          include **all** of the exchanges available at IBKR that trade
          options on your specified underlying.
+    timeout: 3
+        Time in seconds to wait for a response.
 
     Examples
     --------
@@ -144,22 +146,27 @@ def fetch_historical_data(
 
     Parameters
     ------------
-    underlyingConId: int
-        `conId` of the underlying security
-    underlyingSymbol: str
-        Symbol of the underlying security for which you want option parameters.
-    underlyingSecType: str
-        Type of the underlying security; e.g., "`STK`"
-    host: '127.0.0.1'
-        Address of a running IBKR client (such as TWS or IBG) that has been
-        configured to accept API connections
-    port: 7497
-        Port of a running IBKR client
-    client_id: 9999
-        Client ID you want to use for the request. If you are connecting to a
-        system that is used by multiple users, then you may wish to set aside an
-         ID for this purpose; if you're the only one using the account then
-         you probably don't have to worry about it -- just use the default.
+    contract: Contract
+        The [Contract](`shinybroker.Contract`) object for which you want data
+    endDateTime: ""
+        Ending datetime string formatted as “YYYYMMDD HH:mm:ss TMZ”
+        specifying the end of the time period for which you want historical
+        data. Leave it as the default "" to get historical data up to the
+        current present moment.
+    durationStr: "1 D"
+        A [Duration String](https://www.interactivebrokers.com/campus/ibkr-api-page/twsapi-doc/#hist-duration)
+        that specifies how far back in time you want to fetch data.
+    barSizeSetting: "1 hour"
+        A [Bar Size](https://www.interactivebrokers.com/campus/ibkr-api-page/twsapi-doc/#hist-bar-size)
+        that specifies how fine-grained you want your historical data to be
+        (daily, weekly, every 30 seconds, etc).
+    whatToShow: "Trades"
+        You may select from any of the [Historical Data Types](https://www.interactivebrokers.com/campus/ibkr-api-page/twsapi-doc/#historical-whattoshow)
+        but for most cases you'll probably be happy with one of "BID_ASK",
+        "MIDPOINT", or "TRADES".
+    useRTH: True
+        "Use Regular Trading Hours". Set to `False` if you want the historical
+        data to include after-hours/pre-market trading
 
     Examples
     --------

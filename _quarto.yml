@@ -54,6 +54,11 @@ quartodoc:
         a trade order.
       contents:
         - Contract
+    - title: Market Data Functions
+      desc: Request and receive live market data. Can be kept up-to-date as 
+        ongoing subscriptions.
+      contents:
+        - start_historical_data_subscription
     - title: \"Fetch\" Functions
       desc: Use these functions to quickly query & receive data from IBKR. They 
         create their own sockets, use them for the query, listen for the 

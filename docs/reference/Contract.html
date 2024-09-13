@@ -29,7 +29,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../reference/fetch_historical_data.html" rel="next">
+<link href="../reference/start_historical_data_subscription.html" rel="next">
 <link href="../reference/index.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -160,12 +160,29 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
- <span class="menu-text">"Fetch" Functions</span></a>
+ <span class="menu-text">Market Data Functions</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/start_historical_data_subscription.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">start_historical_data_subscription</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">"Fetch" Functions</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../reference/fetch_historical_data.html" class="sidebar-item-text sidebar-link">
@@ -182,13 +199,13 @@ ul.task-list li input[type="checkbox"] {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
  <span class="menu-text">Low-Level Request Messages</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../reference/req_contract_details.html" class="sidebar-item-text sidebar-link">
@@ -369,10 +386,12 @@ aapl_contract = Contract({
     'exchange': "SMART",
     'currency': "USD"
 })</code></pre>
-<p><strong>Way 3</strong>: Pass in just the <code>conId</code> as a string or integer:</p>
+<p><strong>Way 3</strong>: Pass in just the <code>conId</code> as a string or integer: <em>Note</em>: If you create contracts in this way then ShinyBroker will assume that since you didn’t pass an <code>exchange</code> parameter the exchange doesn’t matter to your use case and will create a contract object with <code>exchange='SMART'</code>, allowing IBKR to select the exchange its algorithm picks as ‘best’.</p>
 <pre><code>from shinybroker import Contract
 aapl_contract = Contract(265598)
-aapl_contract = Contract("265598")</code></pre>
+print(aapl_contract)
+aapl_contract = Contract("265598")
+print(aapl_contract)</code></pre>
 </section>
 <section id="compact-printing" class="level2">
 <h2 class="anchored" data-anchor-id="compact-printing">Compact Printing</h2>
@@ -426,7 +445,7 @@ print(goog_put)</code></pre>
 </section>
 <section id="so-why-not-always-specify-contracts-using-contract-id-only" class="level2">
 <h2 class="anchored" data-anchor-id="so-why-not-always-specify-contracts-using-contract-id-only">“So Why Not Always Specify Contracts Using Contract Id Only”?</h2>
-<p>You can. Go right ahead – you can probably adopt that practice and build apps for quite a while without a problem. However, in some use cases it might be handy for you to NOT have to look up all the <code>conId</code>s and, instead, just loop through contract parameters like this:</p>
+<p>If you’re OK with always using the SMART exchange (the default), then you can. Go right ahead – you can probably adopt that practice and build apps for quite a while without a problem. However, in some use cases it might be handy for you to NOT have to look up all the <code>conId</code>s and, instead, just loop through contract parameters like this:</p>
 <pre><code>for strike in list_of_strikes:
     for expiry in list_of_expiries:
         goog_call = sb.Contract({
@@ -875,8 +894,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../reference/fetch_historical_data.html" class="pagination-link" aria-label="fetch_historical_data">
-        <span class="nav-page-text">fetch_historical_data</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../reference/start_historical_data_subscription.html" class="pagination-link" aria-label="start_historical_data_subscription">
+        <span class="nav-page-text">start_historical_data_subscription</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

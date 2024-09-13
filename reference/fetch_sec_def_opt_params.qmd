@@ -2,6 +2,8 @@
 
 `fetch_sec_def_opt_params(underlyingConId, underlyingSymbol, underlyingSecType, host='127.0.0.1', port=7497, client_id=9999, futFopExchange='', timeout=3)`
 
+Fetch the option parameters for a security.
+
 Creates a temporary IBKR client socket at the specified `host`, `port`, and
 `client_id`, then makes a query for the security-defined option parameters
 for the security defined by `underlyingConId`, `underlyingSymbol`,
@@ -29,6 +31,7 @@ Upon completion, `fetch_sec_def_opt_params` closes the socket it opened.
 | `port`              |        | Port of a running IBKR client                                                                                                                                                                                                                                                                                                                                                                                                                              | `7497`        |
 | `client_id`         |        | Client ID you want to use for the request. If you are connecting to a system that is used by multiple users, then you may wish to set aside an  ID for this purpose; if you're the only one using the account then  you probably don't have to worry about it -- just use the default.                                                                                                                                                                     | `9999`        |
 | `futFopExchange`    |        | Only set this parameter if the underlying is a futures contract; in other words, don't change it from the default `""` if your underlying is  a stock. If your underlying **is** a futures contract, then use  `futFopExchange` to specify the exchange for which you want option  parameters. You may still pass in `""` if you want the results to  include **all** of the exchanges available at IBKR that trade  options on your specified underlying. | `''`          |
+| `timeout`           |        | Time in seconds to wait for a response.                                                                                                                                                                                                                                                                                                                                                                                                                    | `3`           |
 
 ## Examples
 

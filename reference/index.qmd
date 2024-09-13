@@ -8,14 +8,22 @@ These objects are the building blocks that your application uses to work with im
 | --- | --- |
 | [Contract](Contract.qmd#shinybroker.Contract) | All tradable assets -- even stocks and currencies -- are 'contracts'. |
 
+## Market Data Functions
+
+Request and receive live market data. Can be kept up-to-date as ongoing subscriptions.
+
+| | |
+| --- | --- |
+| [start_historical_data_subscription](start_historical_data_subscription.qmd#shinybroker.start_historical_data_subscription) | Reactively get historical data |
+
 ## \"Fetch\" Functions
 
 Use these functions to quickly query & receive data from IBKR. They create their own sockets, use them for the query, listen for the response to come back in blocking mode, and return the result, which is immediately available for use. Since these functions operate in a "one-off" or "synchronous" manner, they can't be used to create persistent, continually-updated data subscriptions; in other words, you can't call `fetch_historical_data` with `keepUpToDate = True`.
 
 | | |
 | --- | --- |
-| [fetch_historical_data](fetch_historical_data.qmd#shinybroker.fetch_historical_data) | Creates a temporary IBKR client socket at the specified `host`, `port`, and |
-| [fetch_sec_def_opt_params](fetch_sec_def_opt_params.qmd#shinybroker.fetch_sec_def_opt_params) | Creates a temporary IBKR client socket at the specified `host`, `port`, and |
+| [fetch_historical_data](fetch_historical_data.qmd#shinybroker.fetch_historical_data) | Fetch historical data for a tradable asset |
+| [fetch_sec_def_opt_params](fetch_sec_def_opt_params.qmd#shinybroker.fetch_sec_def_opt_params) | Fetch the option parameters for a security. |
 
 ## Low-Level Request Messages
 
