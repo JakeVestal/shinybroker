@@ -27,14 +27,13 @@ def create_ibkr_socket_conn(host='127.0.0.1', port=7497, client_id=0):
     ib_socket = socket.socket()
     try:
         ib_socket.connect((host, port))
-    except ConnectionRefusedError as noconn:
-        print(noconn)
-        print(
-            "Couldn't connect to an IBKR client at host: " + host + \
-            "; port: " + str(port) + ".\n" + \
-            "Make sure that there is a running instance of TWS or IBG at " + \
-            "that host & port,\n" + \
-            "and that the API settings in the client have been configured " + \
+    except ConnectionRefusedError:
+        raise ConnectionRefusedError(
+            "Couldn't connect to an IBKR client at host: " + host +
+            "; port: " + str(port) + ".\n" +
+            "Make sure that there is a running instance of TWS or IBG at " +
+            "that host & port,\n" +
+            "and that the API settings in the client have been configured " +
             "to accept a connection!"
         )
 
