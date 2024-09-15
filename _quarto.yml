@@ -69,6 +69,7 @@ quartodoc:
         can't call `fetch_historical_data` with `keepUpToDate = True`.
       contents:
         - fetch_historical_data
+        - fetch_matching_symbols
         - fetch_sec_def_opt_params
     - title: Low-Level Request Messages
       desc: These functions process their inputs into packed binary data 

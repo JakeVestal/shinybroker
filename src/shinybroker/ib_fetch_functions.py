@@ -1,13 +1,18 @@
-import atexit
+import pandas as pd
 
 from datetime import datetime
 from shinybroker.connection import (
     create_ibkr_socket_conn, send_ib_message, read_ib_msg
 )
-from shinybroker.format_ibkr_inputs import *
+from shinybroker.format_ibkr_inputs import (
+    format_historical_data_input,
+    format_sec_def_opt_params_input,
+    format_symbol_samples_input
+)
 from shinybroker.functionary import functionary
 from shinybroker.msgs_to_ibkr import (
     req_historical_data,
+    req_matching_symbols,
     req_sec_def_opt_params
 )
 from shinybroker.obj_defs import Contract
@@ -131,8 +136,7 @@ def fetch_historical_data(
         useRTH=True,
         host='127.0.0.1',
         port=7497,
-        client_id=9999,
-        timeout=3
+        client_id=9999
 ):
     """Fetch historical data for a tradable asset
 
@@ -167,6 +171,16 @@ def fetch_historical_data(
     useRTH: True
         "Use Regular Trading Hours". Set to `False` if you want the historical
         data to include after-hours/pre-market trading
+    host: '127.0.0.1'
+        Address of a running IBKR client (such as TWS or IBG) that has been
+        configured to accept API connections
+    port: 7497
+        Port of a running IBKR client
+    client_id: 9999
+        Client ID you want to use for the request. If you are connecting to a
+        system that is used by multiple users, then you may wish to set aside an
+         ID for this purpose; if you're the only one using the account then
+         you probably don't have to worry about it -- just use the default.
 
     Examples
     --------
@@ -175,29 +189,10 @@ def fetch_historical_data(
     ```
     """
 
-    # contract = Contract({
-    #     'symbol': "AAPL",
-    #     'secType': "STK",
-    #     'exchange': "SMART",
-    #     'currency': "USD"
-    # })
-    # endDateTime = ""
-    # durationStr = "1 D"
-    # barSizeSetting = '1 hour'
-    # whatToShow = 'Trades'
-    # useRTH = True
-    # host = '127.0.0.1'
-    # port = 7497
-    # client_id = 9999
-    # timeout = 3
-
     ib_conn = create_ibkr_socket_conn(
         host=host, port=port, client_id=client_id
     )
     ib_socket = ib_conn['ib_socket']
-    atexit.register(ib_socket.close)
-
-    incoming_msg = read_ib_msg(ib_socket)
 
     send_ib_message(
         s=ib_socket,
@@ -230,3 +225,57 @@ def fetch_historical_data(
     ib_socket.close()
 
     return historical_data
+
+
+def fetch_matching_symbols(
+        pattern: str,
+        host='127.0.0.1',
+        port=7497,
+        client_id=9999
+):
+    """Fetch assets whose symbol loosely matches a pattern
+
+    Parameters
+    -------------
+    pattern: str
+        A string, like "AAPL", "S&P 500" or "Vanguard" that you'd like to
+        search for
+    host: '127.0.0.1'
+        Address of a running IBKR client (such as TWS or IBG) that has been
+        configured to accept API connections
+    port: 7497
+        Port of a running IBKR client
+    client_id: 9999
+        Client ID you want to use for the request. If you are connecting to a
+        system that is used by multiple users, then you may wish to set aside an
+         ID for this purpose; if you're the only one using the account then
+        you probably don't have to worry about it -- just use the default.
+
+    Examples
+    --------
+    ```
+    {{< include ../examples/fetch_matching_symbols.py >}}
+    ```
+    """
+
+    ib_conn = create_ibkr_socket_conn(
+        host=host, port=port, client_id=client_id
+    )
+    ib_socket = ib_conn['ib_socket']
+
+    send_ib_message(
+        s=ib_socket, msg=req_matching_symbols(reqId=1, pattern=pattern)
+    )
+
+    while True:
+        incoming_msg = read_ib_msg(sock=ib_socket)
+        if incoming_msg[0] == functionary['incoming_msg_codes'][
+            'SYMBOL_SAMPLES'
+        ]:
+            matching_symbols = format_symbol_samples_input(incoming_msg[3:])
+            break
+
+    ib_socket.close()
+
+    return matching_symbols
+

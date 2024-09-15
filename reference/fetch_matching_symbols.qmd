@@ -1,0 +1,20 @@
+# fetch_matching_symbols { #shinybroker.fetch_matching_symbols }
+
+`fetch_matching_symbols(pattern, host='127.0.0.1', port=7497, client_id=9999)`
+
+Fetch assets whose symbol loosely matches a pattern
+
+## Parameters
+
+| Name        | Type   | Description                                                                                                                                                                                                                                                                           | Default       |
+|-------------|--------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
+| `pattern`   | str    | A string, like "AAPL", "S&P 500" or "Vanguard" that you'd like to search for                                                                                                                                                                                                          | _required_    |
+| `host`      |        | Address of a running IBKR client (such as TWS or IBG) that has been configured to accept API connections                                                                                                                                                                              | `'127.0.0.1'` |
+| `port`      |        | Port of a running IBKR client                                                                                                                                                                                                                                                         | `7497`        |
+| `client_id` |        | Client ID you want to use for the request. If you are connecting to a system that is used by multiple users, then you may wish to set aside an  ID for this purpose; if you're the only one using the account then you probably don't have to worry about it -- just use the default. | `9999`        |
+
+## Examples
+
+```
+{{< include ../examples/fetch_matching_symbols.py >}}
+```

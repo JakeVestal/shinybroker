@@ -23,6 +23,7 @@ Use these functions to quickly query & receive data from IBKR. They create their
 | | |
 | --- | --- |
 | [fetch_historical_data](fetch_historical_data.qmd#shinybroker.fetch_historical_data) | Fetch historical data for a tradable asset |
+| [fetch_matching_symbols](fetch_matching_symbols.qmd#shinybroker.fetch_matching_symbols) | Fetch assets whose symbol loosely matches a pattern |
 | [fetch_sec_def_opt_params](fetch_sec_def_opt_params.qmd#shinybroker.fetch_sec_def_opt_params) | Fetch the option parameters for a security. |
 
 ## Low-Level Request Messages

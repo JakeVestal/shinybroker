@@ -72,436 +72,40 @@
     ]
   },
   {
-    "objectID": "reference/req_sec_def_opt_params.html",
-    "href": "reference/req_sec_def_opt_params.html",
-    "title": "req_sec_def_opt_params",
+    "objectID": "reference/cancel_historical_data.html",
+    "href": "reference/cancel_historical_data.html",
+    "title": "cancel_historical_data",
     "section": "",
-    "text": "req_sec_def_opt_params(reqId, underlyingConId, underlyingSymbol, underlyingSecType, futFopExchange='')\nCreate a request for the security-defined option parameters of a security\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nreqId\nint\nNumeric identifier of the request\nrequired\n\n\nunderlyingConId\nint\nconId of the underlying security\nrequired\n\n\nunderlyingSymbol\nstr\nSymbol of the underlying security for which you want option parameters.\nrequired\n\n\nunderlyingSecType\nstr\nType of the underlying security; e.g., “STK”\nrequired\n\n\nfutFopExchange\n\nOnly set this parameter if the underlying is a futures contract; in other words, don’t change it from the default \"\" if your underlying is a stock. If your underlying is a futures contract, then use futFopExchange to specify the exchange for which you want option parameters. You may still pass in \"\" if you want the results to include all of the exchanges available at IBKR that trade options on your specified underlying.\n''\n\n\n\n\n\n\nimport shinybroker as sb\n# You can specify contract id only\nreq_sec_def_opt_params_msg = sb.req_sec_def_opt_params(\n    reqId=1,\n    underlyingConId=265598\n)\nprint(req_sec_def_opt_params_msg)\nreq_sec_def_opt_params_msg = sb.req_sec_def_opt_params(\n    reqId=1,\n    underlyingSymbol=\"AAPL\",\n    futFopExchange=\"\",\n    underlyingSecType=\"STK\",\n    underlyingConId=265598\n)\nprint(req_sec_def_opt_params_msg)",
+    "text": "cancel_historical_data(reqId)\nCreate a message that will cancel an existing historical data request.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nreqId\nint\nThe numerical ID of the historical data request you want to cancel.\nrequired\n\n\n\n\n\n\nimport shinybroker as sb\n# Message that will cancel historical data request having ID of 1\ncancel_historical_data_msg = sb.cancel_historical_data(1)\nprint(cancel_historical_data_msg)",
     "crumbs": [
       "Reference",
       "Low-Level Request Messages",
-      "req_sec_def_opt_params"
+      "cancel_historical_data"
     ]
   },
   {
-    "objectID": "reference/req_sec_def_opt_params.html#parameters",
-    "href": "reference/req_sec_def_opt_params.html#parameters",
-    "title": "req_sec_def_opt_params",
+    "objectID": "reference/cancel_historical_data.html#parameters",
+    "href": "reference/cancel_historical_data.html#parameters",
+    "title": "cancel_historical_data",
     "section": "",
-    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nreqId\nint\nNumeric identifier of the request\nrequired\n\n\nunderlyingConId\nint\nconId of the underlying security\nrequired\n\n\nunderlyingSymbol\nstr\nSymbol of the underlying security for which you want option parameters.\nrequired\n\n\nunderlyingSecType\nstr\nType of the underlying security; e.g., “STK”\nrequired\n\n\nfutFopExchange\n\nOnly set this parameter if the underlying is a futures contract; in other words, don’t change it from the default \"\" if your underlying is a stock. If your underlying is a futures contract, then use futFopExchange to specify the exchange for which you want option parameters. You may still pass in \"\" if you want the results to include all of the exchanges available at IBKR that trade options on your specified underlying.\n''",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nreqId\nint\nThe numerical ID of the historical data request you want to cancel.\nrequired",
     "crumbs": [
       "Reference",
       "Low-Level Request Messages",
-      "req_sec_def_opt_params"
+      "cancel_historical_data"
     ]
   },
   {
-    "objectID": "reference/req_sec_def_opt_params.html#examples",
-    "href": "reference/req_sec_def_opt_params.html#examples",
-    "title": "req_sec_def_opt_params",
+    "objectID": "reference/cancel_historical_data.html#examples",
+    "href": "reference/cancel_historical_data.html#examples",
+    "title": "cancel_historical_data",
     "section": "",
-    "text": "import shinybroker as sb\n# You can specify contract id only\nreq_sec_def_opt_params_msg = sb.req_sec_def_opt_params(\n    reqId=1,\n    underlyingConId=265598\n)\nprint(req_sec_def_opt_params_msg)\nreq_sec_def_opt_params_msg = sb.req_sec_def_opt_params(\n    reqId=1,\n    underlyingSymbol=\"AAPL\",\n    futFopExchange=\"\",\n    underlyingSecType=\"STK\",\n    underlyingConId=265598\n)\nprint(req_sec_def_opt_params_msg)",
+    "text": "import shinybroker as sb\n# Message that will cancel historical data request having ID of 1\ncancel_historical_data_msg = sb.cancel_historical_data(1)\nprint(cancel_historical_data_msg)",
     "crumbs": [
       "Reference",
       "Low-Level Request Messages",
-      "req_sec_def_opt_params"
+      "cancel_historical_data"
     ]
-  },
-  {
-    "objectID": "reference/req_mkt_data.html",
-    "href": "reference/req_mkt_data.html",
-    "title": "req_mkt_data",
-    "section": "",
-    "text": "req_mkt_data(reqId, contract, genericTickList='', snapshot=False, regulatorySnapshot=False)\nCreate a market data request string\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nreqId\nint\nNumeric identifier of the request\nrequired\n\n\ncontract\nContract\nA Contract object\nrequired\n\n\ngenericTickList\n\nComma-separated string of the numerical Generic Ticks for which you’d like data\n''\n\n\nsnapshot\n\nSet to True if you want a snapshot\nFalse\n\n\nregulatorySnapshot\n\nSet to True if you want a regulatory snapshot\nFalse\n\n\n\n\n\n\nimport shinybroker as sb\nmkt_data_req_msg = sb.req_mkt_data(\n    reqId=1,\n    contract=sb.Contract({\n        'symbol': 'AAPL',\n        'secType': 'STK',\n        'exchange': 'SMART',\n        'currency': 'USD'\n    }),\n    genericTickList=\"233,236\"  # request for \"RT Volume\" & \"Shortable\"\n)\nprint(mkt_data_req_msg)",
-    "crumbs": [
-      "Reference",
-      "Low-Level Request Messages",
-      "req_mkt_data"
-    ]
-  },
-  {
-    "objectID": "reference/req_mkt_data.html#parameters",
-    "href": "reference/req_mkt_data.html#parameters",
-    "title": "req_mkt_data",
-    "section": "",
-    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nreqId\nint\nNumeric identifier of the request\nrequired\n\n\ncontract\nContract\nA Contract object\nrequired\n\n\ngenericTickList\n\nComma-separated string of the numerical Generic Ticks for which you’d like data\n''\n\n\nsnapshot\n\nSet to True if you want a snapshot\nFalse\n\n\nregulatorySnapshot\n\nSet to True if you want a regulatory snapshot\nFalse",
-    "crumbs": [
-      "Reference",
-      "Low-Level Request Messages",
-      "req_mkt_data"
-    ]
-  },
-  {
-    "objectID": "reference/req_mkt_data.html#examples",
-    "href": "reference/req_mkt_data.html#examples",
-    "title": "req_mkt_data",
-    "section": "",
-    "text": "import shinybroker as sb\nmkt_data_req_msg = sb.req_mkt_data(\n    reqId=1,\n    contract=sb.Contract({\n        'symbol': 'AAPL',\n        'secType': 'STK',\n        'exchange': 'SMART',\n        'currency': 'USD'\n    }),\n    genericTickList=\"233,236\"  # request for \"RT Volume\" & \"Shortable\"\n)\nprint(mkt_data_req_msg)",
-    "crumbs": [
-      "Reference",
-      "Low-Level Request Messages",
-      "req_mkt_data"
-    ]
-  },
-  {
-    "objectID": "reference/index.html",
-    "href": "reference/index.html",
-    "title": "Reference",
-    "section": "",
-    "text": "These objects are the building blocks that your application uses to work with important tasks like fetching market data or submitting a trade order.\n\n\n\nContract\nAll tradable assets – even stocks and currencies – are ‘contracts’.\n\n\n\n\n\n\nRequest and receive live market data. Can be kept up-to-date as ongoing subscriptions.\n\n\n\nstart_historical_data_subscription\nReactively get historical data\n\n\n\n\n\n\nUse these functions to quickly query & receive data from IBKR. They create their own sockets, use them for the query, listen for the response to come back in blocking mode, and return the result, which is immediately available for use. Since these functions operate in a “one-off” or “synchronous” manner, they can’t be used to create persistent, continually-updated data subscriptions; in other words, you can’t call fetch_historical_data with keepUpToDate = True.\n\n\n\nfetch_historical_data\nFetch historical data for a tradable asset\n\n\nfetch_sec_def_opt_params\nFetch the option parameters for a security.\n\n\n\n\n\n\nThese functions process their inputs into packed binary data messages that you can send to a connected IBKR socket to instruct it to do something you’re interested in such as place an order, start or cancel a market data subscription, or simply request the current time.\n\n\n\nreq_contract_details\nCreate a contract details request string\n\n\nreq_current_time\nCreate a request string for the current broker time\n\n\nreq_market_data_type\nCreate a string for setting your session’s market data type\n\n\nreq_matching_symbols\nCreate a request string for symbols that loosely match a pattern\n\n\nreq_mkt_data\nCreate a market data request string\n\n\ncancel_mkt_data\nCreate a message to cancel an existing market data subscription by ID\n\n\nreq_sec_def_opt_params\nCreate a request for the security-defined option parameters of a security\n\n\nreq_ids\nCreate a request for the next valid numeric ID that can be used to\n\n\nreq_historical_data\nCreate a request for the historical data of a financial instrument\n\n\ncancel_historical_data\nCreate a message that will cancel an existing historical data request.",
-    "crumbs": [
-      "Reference"
-    ]
-  },
-  {
-    "objectID": "reference/index.html#shinybroker-objects",
-    "href": "reference/index.html#shinybroker-objects",
-    "title": "Reference",
-    "section": "",
-    "text": "These objects are the building blocks that your application uses to work with important tasks like fetching market data or submitting a trade order.\n\n\n\nContract\nAll tradable assets – even stocks and currencies – are ‘contracts’.",
-    "crumbs": [
-      "Reference"
-    ]
-  },
-  {
-    "objectID": "reference/index.html#market-data-functions",
-    "href": "reference/index.html#market-data-functions",
-    "title": "Reference",
-    "section": "",
-    "text": "Request and receive live market data. Can be kept up-to-date as ongoing subscriptions.\n\n\n\nstart_historical_data_subscription\nReactively get historical data",
-    "crumbs": [
-      "Reference"
-    ]
-  },
-  {
-    "objectID": "reference/index.html#fetch-functions",
-    "href": "reference/index.html#fetch-functions",
-    "title": "Reference",
-    "section": "",
-    "text": "Use these functions to quickly query & receive data from IBKR. They create their own sockets, use them for the query, listen for the response to come back in blocking mode, and return the result, which is immediately available for use. Since these functions operate in a “one-off” or “synchronous” manner, they can’t be used to create persistent, continually-updated data subscriptions; in other words, you can’t call fetch_historical_data with keepUpToDate = True.\n\n\n\nfetch_historical_data\nFetch historical data for a tradable asset\n\n\nfetch_sec_def_opt_params\nFetch the option parameters for a security.",
-    "crumbs": [
-      "Reference"
-    ]
-  },
-  {
-    "objectID": "reference/index.html#low-level-request-messages",
-    "href": "reference/index.html#low-level-request-messages",
-    "title": "Reference",
-    "section": "",
-    "text": "These functions process their inputs into packed binary data messages that you can send to a connected IBKR socket to instruct it to do something you’re interested in such as place an order, start or cancel a market data subscription, or simply request the current time.\n\n\n\nreq_contract_details\nCreate a contract details request string\n\n\nreq_current_time\nCreate a request string for the current broker time\n\n\nreq_market_data_type\nCreate a string for setting your session’s market data type\n\n\nreq_matching_symbols\nCreate a request string for symbols that loosely match a pattern\n\n\nreq_mkt_data\nCreate a market data request string\n\n\ncancel_mkt_data\nCreate a message to cancel an existing market data subscription by ID\n\n\nreq_sec_def_opt_params\nCreate a request for the security-defined option parameters of a security\n\n\nreq_ids\nCreate a request for the next valid numeric ID that can be used to\n\n\nreq_historical_data\nCreate a request for the historical data of a financial instrument\n\n\ncancel_historical_data\nCreate a message that will cancel an existing historical data request.",
-    "crumbs": [
-      "Reference"
-    ]
-  },
-  {
-    "objectID": "reference/fetch_sec_def_opt_params.html",
-    "href": "reference/fetch_sec_def_opt_params.html",
-    "title": "fetch_sec_def_opt_params",
-    "section": "",
-    "text": "fetch_sec_def_opt_params(underlyingConId, underlyingSymbol, underlyingSecType, host='127.0.0.1', port=7497, client_id=9999, futFopExchange='', timeout=3)\nFetch the option parameters for a security.\nCreates a temporary IBKR client socket at the specified host, port, and client_id, then makes a query for the security-defined option parameters for the security defined by underlyingConId, underlyingSymbol, underlyingSecType, and futFopExchange.\nfetch_sec_def_opt_params will collect all SECURITY_DEFINITION_OPTION_PARAMETER messages it receives and return them in a dataframe when it receives a SECURITY_DEFINITION_OPTION_PARAMETER_END message.\nIf timeout number of seconds elapse before receiving SECURITY_DEFINITION_OPTION_PARAMETER_END, then fetch_sec_def_opt_params returns None.\nUpon completion, fetch_sec_def_opt_params closes the socket it opened.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nunderlyingConId\nint\nconId of the underlying security\nrequired\n\n\nunderlyingSymbol\nstr\nSymbol of the underlying security for which you want option parameters.\nrequired\n\n\nunderlyingSecType\nstr\nType of the underlying security; e.g., “STK”\nrequired\n\n\nhost\n\nAddress of a running IBKR client (such as TWS or IBG) that has been configured to accept API connections\n'127.0.0.1'\n\n\nport\n\nPort of a running IBKR client\n7497\n\n\nclient_id\n\nClient ID you want to use for the request. If you are connecting to a system that is used by multiple users, then you may wish to set aside an ID for this purpose; if you’re the only one using the account then you probably don’t have to worry about it – just use the default.\n9999\n\n\nfutFopExchange\n\nOnly set this parameter if the underlying is a futures contract; in other words, don’t change it from the default \"\" if your underlying is a stock. If your underlying is a futures contract, then use futFopExchange to specify the exchange for which you want option parameters. You may still pass in \"\" if you want the results to include all of the exchanges available at IBKR that trade options on your specified underlying.\n''\n\n\ntimeout\n\nTime in seconds to wait for a response.\n3\n\n\n\n\n\n\nimport shinybroker as sb\n\nsec_def_opt_params = sb.fetch_sec_def_opt_params(\n    underlyingConId=265598,\n    underlyingSymbol=\"AAPL\",\n    underlyingSecType=\"STK\"\n)\n\nprint(sec_def_opt_params)",
-    "crumbs": [
-      "Reference",
-      "\\\"Fetch\\\" Functions",
-      "fetch_sec_def_opt_params"
-    ]
-  },
-  {
-    "objectID": "reference/fetch_sec_def_opt_params.html#parameters",
-    "href": "reference/fetch_sec_def_opt_params.html#parameters",
-    "title": "fetch_sec_def_opt_params",
-    "section": "",
-    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nunderlyingConId\nint\nconId of the underlying security\nrequired\n\n\nunderlyingSymbol\nstr\nSymbol of the underlying security for which you want option parameters.\nrequired\n\n\nunderlyingSecType\nstr\nType of the underlying security; e.g., “STK”\nrequired\n\n\nhost\n\nAddress of a running IBKR client (such as TWS or IBG) that has been configured to accept API connections\n'127.0.0.1'\n\n\nport\n\nPort of a running IBKR client\n7497\n\n\nclient_id\n\nClient ID you want to use for the request. If you are connecting to a system that is used by multiple users, then you may wish to set aside an ID for this purpose; if you’re the only one using the account then you probably don’t have to worry about it – just use the default.\n9999\n\n\nfutFopExchange\n\nOnly set this parameter if the underlying is a futures contract; in other words, don’t change it from the default \"\" if your underlying is a stock. If your underlying is a futures contract, then use futFopExchange to specify the exchange for which you want option parameters. You may still pass in \"\" if you want the results to include all of the exchanges available at IBKR that trade options on your specified underlying.\n''\n\n\ntimeout\n\nTime in seconds to wait for a response.\n3",
-    "crumbs": [
-      "Reference",
-      "\\\"Fetch\\\" Functions",
-      "fetch_sec_def_opt_params"
-    ]
-  },
-  {
-    "objectID": "reference/fetch_sec_def_opt_params.html#examples",
-    "href": "reference/fetch_sec_def_opt_params.html#examples",
-    "title": "fetch_sec_def_opt_params",
-    "section": "",
-    "text": "import shinybroker as sb\n\nsec_def_opt_params = sb.fetch_sec_def_opt_params(\n    underlyingConId=265598,\n    underlyingSymbol=\"AAPL\",\n    underlyingSecType=\"STK\"\n)\n\nprint(sec_def_opt_params)",
-    "crumbs": [
-      "Reference",
-      "\\\"Fetch\\\" Functions",
-      "fetch_sec_def_opt_params"
-    ]
-  },
-  {
-    "objectID": "reference/req_market_data_type.html",
-    "href": "reference/req_market_data_type.html",
-    "title": "req_market_data_type",
-    "section": "",
-    "text": "req_market_data_type(marketDataType)\nCreate a string for setting your session’s market data type\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nmarketDataType\nint\nInteger identifier for the market data type that you want\nrequired\n\n\n\n\n\n\nimport shinybroker as sb\n# create a request string for setting the market data type to \"DELAYED\"\nreq_market_data_type_msg = sb.req_market_data_type(3)\nprint(req_market_data_type_msg)",
-    "crumbs": [
-      "Reference",
-      "Low-Level Request Messages",
-      "req_market_data_type"
-    ]
-  },
-  {
-    "objectID": "reference/req_market_data_type.html#parameters",
-    "href": "reference/req_market_data_type.html#parameters",
-    "title": "req_market_data_type",
-    "section": "",
-    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nmarketDataType\nint\nInteger identifier for the market data type that you want\nrequired",
-    "crumbs": [
-      "Reference",
-      "Low-Level Request Messages",
-      "req_market_data_type"
-    ]
-  },
-  {
-    "objectID": "reference/req_market_data_type.html#examples",
-    "href": "reference/req_market_data_type.html#examples",
-    "title": "req_market_data_type",
-    "section": "",
-    "text": "import shinybroker as sb\n# create a request string for setting the market data type to \"DELAYED\"\nreq_market_data_type_msg = sb.req_market_data_type(3)\nprint(req_market_data_type_msg)",
-    "crumbs": [
-      "Reference",
-      "Low-Level Request Messages",
-      "req_market_data_type"
-    ]
-  },
-  {
-    "objectID": "reference/req_matching_symbols.html",
-    "href": "reference/req_matching_symbols.html",
-    "title": "req_matching_symbols",
-    "section": "",
-    "text": "req_matching_symbols(reqId, pattern)\nCreate a request string for symbols that loosely match a pattern\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nreqId\nint\nNumeric identifier of the request\nrequired\n\n\npattern\nstr\nA string, like “AAPL”, “S&P 500” or “Vanguard” that you’d like to search for\nrequired\n\n\n\n\n\n\nimport shinybroker as sb\nreq_matching_symbols_msg = sb.req_market_data_type(3)\nprint(req_matching_symbols_msg)",
-    "crumbs": [
-      "Reference",
-      "Low-Level Request Messages",
-      "req_matching_symbols"
-    ]
-  },
-  {
-    "objectID": "reference/req_matching_symbols.html#parameters",
-    "href": "reference/req_matching_symbols.html#parameters",
-    "title": "req_matching_symbols",
-    "section": "",
-    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nreqId\nint\nNumeric identifier of the request\nrequired\n\n\npattern\nstr\nA string, like “AAPL”, “S&P 500” or “Vanguard” that you’d like to search for\nrequired",
-    "crumbs": [
-      "Reference",
-      "Low-Level Request Messages",
-      "req_matching_symbols"
-    ]
-  },
-  {
-    "objectID": "reference/req_matching_symbols.html#examples",
-    "href": "reference/req_matching_symbols.html#examples",
-    "title": "req_matching_symbols",
-    "section": "",
-    "text": "import shinybroker as sb\nreq_matching_symbols_msg = sb.req_market_data_type(3)\nprint(req_matching_symbols_msg)",
-    "crumbs": [
-      "Reference",
-      "Low-Level Request Messages",
-      "req_matching_symbols"
-    ]
-  },
-  {
-    "objectID": "query_and_display_market_data.html",
-    "href": "query_and_display_market_data.html",
-    "title": "Query and Display Market Data",
-    "section": "",
-    "text": "So you’ve installed Shinybroker and gotten the hello world example to work. Congrats! Now it’s time to actually build an app that uses some of the features.\nThis example will introduce you, in steps, to using ShinyBroker to write an app that will calculate beta between two assets, display that information, and use it to trade. Each step below adds a layer of functionality to the app. You can use this example to learn how to:\n\naccess & use the ShinyBroker reactive variables in sb_rvs\nimplement some initial setup logic to fetch data from IBKR\nprocess your data and display it\n\nComing Soon: live updating data, dynamic contract entry, positions, order placement, and finally– a video walkthrough of all this :)\n\nStep 1: sb_rvs and setup logic\nWe’re interested in calculating beta between two assets, so first we’re going to need to pull price data from IBKR in order to make the calculation. We can accomplish this task by writing a server function that sends the data request query to the IBKR data farms.\n\nThe Design Pattern\nThe server function, appropriately named step_1_server, contains within it a single function named make_historical_data_queries(), which is decorated with reactive effect and reactive event.\n\nWhy sb_rvs['connection_info'] is a good trigger for startup logic\nBecause it is a reactive event that takes sb_rvs['connection_info'], as a dependency, the code in make_historical_data_queries() will only run when the reactive variable sb_rvs['connection_info'] is updated. However, sb_rvs['connection_info'] is only updated once during the running lifetime of a ShinyBroker session. Since the update takes place right after a socket connection has been made to the client (e.g., TWS), you, the trader, can be sure that if sb_rvs['connection_info'] has been successfully set, then the socket connection is connected and ready for use. Therefore, sb_rvs[‘connection_info’] makes a good choice for a trigger for logic that you want to run only once at the beginning of a user session in your app.\n\n\n\nThe Setup Function: make_historical_data_queries\nOnce triggered, make_historical_data_queries makes two calls to start_historical_data_subscription, a function provided by the ShinyBroker library. Even though in this case we’re performing a static, one-time data query, the word “subscription” appears in the function’s name because it can be called by setting the keepUpToDate parameter to True. Doing so results in the historical data being kept up-to-date with live market data as it becomes available, and we’ll do exactly this in a later step.\nFor now, you should understand four things about start_historical_data_subscription:\n\nThe data it fetches is written to the reactive variable named ‘historical_data’. Because this is a native ShinyBroker reactive variable, you can always access it in your code with sb_rvs['historical_data']\nsb_rvs['historical_data']() is a dictionary that contains the data retrieved by each query. That dictionary is keyed by the integer-valued subscription_id you pass to it. If you don’t pass a subscription id, as in the code below, then ShinyBroker will just find the maximum subscription id already used in a historical data query for that session, add 1 to that, and treat the result as the subscription_id, beginning with 1 if no previous subscriptions are found for the current session.\nYou must define the contract for which you want data using the Contract constructor, which is provided by the ShinyBroker package.\nAs currently written, you must tell start_historical_data_subscription which IBKR connection socket you want it to use by defining the hd_socket parameter. In the code below, the default ib_socket provided by the ShinyBroker app is used. This choice was made by the ShinyBroker author in order to allow advanced users to work with more than one socket connection within their apps. Most users of ShinyBroker won’t need that functionality and can just keep passing ib_socket as the socket parameter in their apps without having to think too much about it.\n\n\n\nRun the code below\nRun the code!\n\nView your Shiny app in a browser by clicking the hyperlink that prints in your Python console\nWithin the app, navigate to the Market Data panel\nOpen the “Historical Data” accordion panel… …and you should see an output of the historical data fetched by your query that looks something like the below:  Once you’ve successfully accomplished that, you can move on to the next step!\n\n\n\nCode:\n\nimport shinybroker as sb\nfrom shiny import Inputs, Outputs, Session, reactive\n\n\n# Declare a server function...\n#   ...just like you would when making an ordinary Shiny app.\ndef step_1_server(\n        input: Inputs, output: Outputs, session: Session, ib_socket, sb_rvs\n):\n\n    @reactive.effect\n    @reactive.event(sb_rvs['connection_info'])\n    def make_historical_data_queries():\n\n        # Fetch the hourly trade data for AAPL for the past 3 days.\n        sb.start_historical_data_subscription(\n            historical_data=sb_rvs['historical_data'],\n            hd_socket=ib_socket,\n            contract=sb.Contract({\n                'symbol': \"AAPL\",\n                'secType': \"STK\",\n                'exchange': \"SMART\",\n                'currency': \"USD\",\n            }),\n            durationStr=\"3 D\",\n            barSizeSetting=\"1 hour\"\n        )\n\n        # Do the same, but for the S&P 500 Index\n        sb.start_historical_data_subscription(\n            historical_data=sb_rvs['historical_data'],\n            hd_socket=ib_socket,\n            contract=sb.Contract({\n                'symbol': 'SPX',\n                'secType': 'IND',\n                'currency': 'USD',\n                'exchange': 'CBOE'\n            }),\n            durationStr=\"3 D\",\n            barSizeSetting=\"1 hour\"\n        )\n\n\n# create an app object using your server function\n# Adjust your connection parameters if not using the default TWS paper trader,\n#   or if you want a different client id, etc.\napp = sb.sb_app(\n    server_fn=step_1_server,\n    host='127.0.0.1',\n    port=7497,\n    client_id=10799,\n    verbose=True\n)\n\n# run the app.\napp.run()\n\n\n\n\nStep 2: Calculations and ui\nIn this step we’ll add the calculations of alpha and beta, including the observed historical returns over the time period, plus the necessary pieces of UI to display the calculated information. We’ll be using some additional Python libraries to accomplish this task:\n\nfaicons\nplotly\nsklearn, which is available after installing scikit-learn\n\n…so make sure those libraries are installed.\n\nThe UI\nThe code below follows the same general design pattern of Step 1, but adds in a ui object named step_2_ui. This object contains within it the HTML structure that sb_app() will place in the Home tab of the rendered app. Reference documentation for for these and other webpage-generating ui objects available within Shiny can be found on Shiny’s documentation page.\nExamine the definition of step_2_ui in the code below. You will notice that it contains the four new ui features that have been added in this step:\n\nAn HTML level 5 title tag which reads ‘Calculated Returns’\nA dataframe output that displays the returns calculated for the two assets\nAn info box for calculated alpha value\nAn info box for calculated beta value\n\nAny valid Shiny ui object passed to sb_app() will be rendered in the Home tab.\n\n\nThe Server Function\nIn order to populate the new ui objects with data, we need to add logic to the server function.\n\nThe calculate_log_returns() Function\nThe reactive calculation that operates on the retrieved historical data is named calculate_log_returns(). The function operates as follows:\nFirst, it looks at the data stored in sb_rvs['historical_data'] and assigns it to a new variable hd for the analysis. If hd doesn’t contain TWO entries – one for AAPL and one for SPX – then a KeyError exception gets raised when attempting to declare aapl_rtns and spx_rtns. In that case, calculate_log_returns() exits early and returns None because we need data\nCalculation proceeds otherwise. The period-over-period log returns are calculated for each asset and stored in two dataframes named asset_1 and asset_2 alongside a column named timestamp that contains the date & time at which each return was observed.\nNote that in order to make this datetime conversion easier, the calls to start_historical_data_subscription were made with the formatDate argument set to 2. IBKR’s documentation for historical data requests tells us that datetimes received with this choice of parameter will be in Unix Epoch Date format, which is nice and easy to handle in Python for datetime conversions.\nOnce dataframes for both asset_1 and asset_2 are calculated, they are merged together via an inner join on timestamp. The reason for doing so is because sometimes, one asset might be updated before the other one, meaning that it has one more measured return. By creating a new df using the merge on datetime, we ensure that our returns match up for an equal number of observations of both assets.\nThat merged dataframe is the return value of calculate_log_returns(). Therefore, when calculate_log_returns() is called within any other reactive function in the app, Shiny will ensure that the value returned always contains the most up-to-date calculation, even if the historical data changes.\n\n\nA @render Function: log_returns_df()\nIn the Shiny world, to “render” means “to display the contents of variables as UI objects in an app”. Because it has the [dataframe render decorator] (https://shiny.posit.co/py/api/core/render.data_frame.html), Shiny knows to look for a UI object having the same ID as the name of the function and update that ui object with HTML that displays the returns in the dataframe calculated by calculate_log_returns(). If calculate_log_returns() returns None, then log_returns_df() exits early with a silent exception that does nothing.\nTo summarize: this simple function says the following to Shiny: “whenever the value of ’calculate_log_returns()` changes, render the output as html and insert it into the ui object named having the same name as this function (which in this case is”log_returns_df”)“. Therefore, the data in the datatable display in the UI will always be kept up to date with the historical data calculation.\n\n\nDeclaring alpha and beta as reactive variables\nNext we define two new reactive variables– alpha and beta. Once they are set, follow-on code can call them to perform whatever calculations you like; for for example, you might have some specific trading logic you’d like to trigger if beta moves beyond a threshold that you set. We can calculate values for them by finding the y-intercept and slope of a linear regression fitted through the returns data with SPX on the x-axis as described below.\n\n\nThe update_alpha_beta() Function\nupdate_alpha_beta() is a reactive effect function that uses sklearn to fit a basic linear regression model to the calculated returns, with the benchmark (SPX) on the X axis and the asset (AAPL) on the Y. Beta is defined as the slope of the regression, and alpha is the x-intercept. Each parameter thus obtained is set to its respective reactive variable.\n\n\nRendering the Value Box Text\nFinally, the last two functions place text values in the value boxes for display to the user. They take in alpha and beta, perform some string manipulation, and put the result in the UI text object having the same name as the function definition. Because these UI objects were defined as the value parameter within the value box definition in step_2_ui, the value box’s contents gets updated for the user. The call to req is performed to require that the incoming variable is something other than an empty float.\n\n\nRun & View the App\nWhen you see something like the below when you run your app, you are successful! Move on to the next step when ready :) \n\n\nCode:\n\nimport numpy as np\nimport pandas as pd\nimport shinybroker as sb\n\nfrom datetime import datetime\nfrom faicons import icon_svg\nfrom sklearn import linear_model\nfrom shiny import Inputs, Outputs, Session, reactive, ui, req, render\nfrom shiny.types import SilentException\n\nstep_2_ui = ui.page_fluid(\n    ui.row(\n        ui.h5('Calculated Returns'),\n        ui.column(\n            7,\n            ui.output_data_frame('log_returns_df')\n        ),\n        ui.column(\n            5,\n            ui.value_box(\n                title=\"Alpha\",\n                value=ui.output_ui('alpha_txt'),\n                showcase=icon_svg('chart-line')\n            ),\n            ui.value_box(\n                title=\"Beta\",\n                value=ui.output_ui('beta_txt'),\n                showcase=icon_svg('chart-line')\n            )\n        )\n    )\n)\n\n\n# Declare a server function...\n#   ...just like you would when making an ordinary Shiny app.\ndef step_2_server(\n        input: Inputs, output: Outputs, session: Session, ib_socket, sb_rvs\n):\n\n    @reactive.effect\n    @reactive.event(sb_rvs['connection_info'])\n    def make_historical_data_queries():\n\n        # Fetch the hourly trade data for AAPL for the past 3 days.\n        sb.start_historical_data_subscription(\n            historical_data=sb_rvs['historical_data'],\n            hd_socket=ib_socket,\n            contract=sb.Contract({\n                'symbol': \"AAPL\",\n                'secType': \"STK\",\n                'exchange': \"SMART\",\n                'currency': \"USD\",\n            }),\n            durationStr=\"3 D\",\n            barSizeSetting=\"1 hour\",\n            formatDate=2\n        )\n\n        # Do the same, but for the S&P 500 Index\n        sb.start_historical_data_subscription(\n            historical_data=sb_rvs['historical_data'],\n            hd_socket=ib_socket,\n            contract=sb.Contract({\n                'symbol': 'SPX',\n                'secType': 'IND',\n                'currency': 'USD',\n                'exchange': 'CBOE'\n            }),\n            durationStr=\"3 D\",\n            barSizeSetting=\"1 hour\",\n            formatDate=2\n        )\n\n    @reactive.calc\n    def calculate_log_returns():\n        hd = sb_rvs['historical_data']()\n\n        # Make sure that BOTH assets have been added to historical_data\n        try:\n            aapl_rtns = hd['1']['hst_dta']\n            spx_rtns  = hd['2']['hst_dta']\n        except KeyError:\n            return None\n\n        asset_1 = pd.DataFrame({\n            'timestamp': [\n                datetime.fromtimestamp(int(x)) for\n                x in hd['1']['hst_dta'].loc[1:, 'timestamp']\n            ],\n            'aapl_returns': np.log(\n                aapl_rtns.loc[1:, 'close'].reset_index(drop=True) /\n                aapl_rtns.iloc[:-1]['close'].reset_index(drop=True)\n            )\n        })\n        asset_2 = pd.DataFrame({\n            'timestamp': [\n                datetime.fromtimestamp(int(x)) for\n                x in hd['2']['hst_dta'].loc[1:, 'timestamp']\n            ],\n            'spx_returns': np.log(\n                spx_rtns.loc[1:, 'close'].reset_index(drop=True) /\n                spx_rtns.iloc[:-1]['close'].reset_index(drop=True)\n            )\n        })\n        return pd.merge(asset_1, asset_2, on='timestamp', how='inner')\n\n    @render.data_frame\n    def log_returns_df():\n        if calculate_log_returns() is None:\n            raise SilentException()\n        return render.DataTable(calculate_log_returns())\n\n    alpha = reactive.value(float())\n    beta = reactive.value(float())\n\n    @reactive.effect\n    def update_alpha_beta():\n        log_rtns = calculate_log_returns()\n\n        if log_rtns is None:\n            raise SilentException()\n\n        regr = linear_model.LinearRegression()\n        regr.fit(\n            log_rtns.spx_returns.values.reshape(log_rtns.shape[0], 1),\n            log_rtns.aapl_returns.values.reshape(log_rtns.shape[0], 1)\n        )\n        alpha.set(regr.intercept_[0])\n        beta.set(regr.coef_[0][0])\n\n    @render.text\n    def alpha_txt():\n        a = req(alpha())\n        return f\"{a * 100:.7f} %\"\n\n    @render.text\n    def beta_txt():\n        b = req(beta())\n        return str(round(b, 3))\n\n\n# create an app object using your server function\n# Adjust your connection parameters if not using the default TWS paper trader,\n#   or if you want a different client id, etc.\napp = sb.sb_app(\n    home_ui=step_2_ui,\n    server_fn=step_2_server,\n    host='127.0.0.1',\n    port=7497,\n    client_id=10799,\n    verbose=True\n)\n\n# run the app.\napp.run()\n\n\n\n\n\nStep 3: Add a plot!\nEvery good app needs a plot. In the code below, we add a reactive calc for a plotly scatterplot object named fig within the server code. We also add two render functions. The first one renders the plot object display graphic. Since plotly includes a trendline feature using statsmodels, we make use of that feature by adding an ‘ols’ trendline. We also add a render function that selects and returns the summary property of the ols trendline and renders it as html next to the benchmark plot.\nAnd of course, we add output elements for these new features in to the ui definition where the plot and table output for our alpha & beta calcs will be displayed in the top row of the *Home** section.\nNOTE FOR MAC USERS and anyone else experiencing an ImportError saying something like “symbol not found in flat namespace ’_npy_cabs’“: There is a known bug between statsmodels and SciPy that causes a problem when you try to add trendlines to a Plotly chart in Python running in OSX. Until the bug is fixed, the workaround is to simply revert to numpy version 2. You can do that in one step with the shell command pip install --force-reinstall numpy==2.0.0.\nSuccess means you can get your app to look like this: \n\nCode:\n\nimport numpy as np\nimport pandas as pd\nimport shinybroker as sb\nimport plotly.express as px\n\nfrom datetime import datetime\nfrom faicons import icon_svg\nfrom sklearn import linear_model\nfrom shiny import Inputs, Outputs, Session, reactive, ui, req, render\nfrom shiny.types import SilentException\nfrom shinywidgets import output_widget, render_plotly\n\nstep_3_ui = ui.page_fluid(\n    ui.row(\n        ui.column(\n            6,\n            ui.h5(\"Benchmark Plot\"),\n            output_widget(\"alphabeta_scatter\")\n        ),\n        ui.column(\n            6,\n            ui.h5(\"Statsmodels Results\"),\n            ui.output_ui(\"alphabeta_trendline_summary\")\n        )\n    ),\n    ui.row(\n        ui.h5('Calculated Returns'),\n        ui.column(\n            7,\n            ui.output_data_frame('log_returns_df')\n        ),\n        ui.column(\n            5,\n            ui.value_box(\n                title=\"Alpha\",\n                value=ui.output_ui('alpha_txt'),\n                showcase=icon_svg('chart-line')\n            ),\n            ui.value_box(\n                title=\"Beta\",\n                value=ui.output_ui('beta_txt'),\n                showcase=icon_svg('chart-line')\n            )\n        )\n    )\n)\n\n# Declare a server function...\n#   ...just like you would when making an ordinary Shiny app.\ndef step_3_server(\n        input: Inputs, output: Outputs, session: Session, ib_socket, sb_rvs\n):\n\n    @reactive.effect\n    @reactive.event(sb_rvs['connection_info'])\n    def make_historical_data_queries():\n\n        # Fetch the hourly trade data for AAPL for the past 3 days.\n        sb.start_historical_data_subscription(\n            historical_data=sb_rvs['historical_data'],\n            hd_socket=ib_socket,\n            contract=sb.Contract({\n                'symbol': \"AAPL\",\n                'secType': \"STK\",\n                'exchange': \"SMART\",\n                'currency': \"USD\",\n            }),\n            durationStr=\"3 D\",\n            barSizeSetting=\"1 hour\",\n            formatDate=2\n        )\n\n        # Do the same, but for the S&P 500 Index\n        sb.start_historical_data_subscription(\n            historical_data=sb_rvs['historical_data'],\n            hd_socket=ib_socket,\n            contract=sb.Contract({\n                'symbol': 'SPX',\n                'secType': 'IND',\n                'currency': 'USD',\n                'exchange': 'CBOE'\n            }),\n            durationStr=\"3 D\",\n            barSizeSetting=\"1 hour\",\n            formatDate=2\n        )\n\n    @reactive.calc\n    def calculate_log_returns():\n        hd = sb_rvs['historical_data']()\n\n        # Make sure that BOTH assets have been added to historical_data\n        try:\n            aapl_rtns = hd['1']['hst_dta']\n            spx_rtns = hd['2']['hst_dta']\n        except KeyError:\n            return None\n\n        asset_1 = pd.DataFrame({\n            'timestamp': [\n                datetime.fromtimestamp(int(x)) for\n                x in hd['1']['hst_dta'].loc[1:, 'timestamp']\n            ],\n            'aapl_returns': np.log(\n                aapl_rtns.loc[1:, 'close'].reset_index(drop=True) /\n                aapl_rtns.iloc[:-1]['close'].reset_index(drop=True)\n            )\n        })\n        asset_2 = pd.DataFrame({\n            'timestamp': [\n                datetime.fromtimestamp(int(x)) for\n                x in hd['2']['hst_dta'].loc[1:, 'timestamp']\n            ],\n            'spx_returns': np.log(\n                spx_rtns.loc[1:, 'close'].reset_index(drop=True) /\n                spx_rtns.iloc[:-1]['close'].reset_index(drop=True)\n            )\n        })\n\n        return pd.merge(asset_1, asset_2, on='timestamp', how='inner')\n\n    @render.data_frame\n    def log_returns_df():\n        if calculate_log_returns() is None:\n            raise SilentException()\n        return render.DataTable(calculate_log_returns())\n\n    alpha = reactive.value(float())\n    beta = reactive.value(float())\n\n    @reactive.effect\n    def update_alpha_beta():\n        log_rtns = calculate_log_returns()\n\n        if log_rtns is None:\n            raise SilentException()\n\n        regr = linear_model.LinearRegression()\n        regr.fit(\n            log_rtns.spx_returns.values.reshape(log_rtns.shape[0], 1),\n            log_rtns.aapl_returns.values.reshape(log_rtns.shape[0], 1)\n        )\n        alpha.set(regr.intercept_[0])\n        beta.set(regr.coef_[0][0])\n\n    @render.text\n    def alpha_txt():\n        a = req(alpha())\n        return f\"{a * 100:.7f} %\"\n\n    @render.text\n    def beta_txt():\n        b = req(beta())\n        return str(round(b, 3))\n\n    @reactive.calc\n    def calculate_alphabeta_scatter():\n        log_rtns = calculate_log_returns()\n\n        if log_rtns is None:\n            raise SilentException()\n\n        fig = px.scatter(\n            log_rtns,\n            x='spx_returns',\n            y='aapl_returns',\n            trendline='ols'\n        )\n        fig.layout.xaxis.tickformat = ',.2%'\n        fig.layout.yaxis.tickformat = ',.2%'\n        fig.update_layout(plot_bgcolor='white')\n        return fig\n\n    @render_plotly\n    def alphabeta_scatter():\n        return calculate_alphabeta_scatter()\n\n    @render.ui\n    def alphabeta_trendline_summary():\n        summy = px.get_trendline_results(\n            calculate_alphabeta_scatter()\n        ).px_fit_results.iloc[0].summary().as_html()\n        return ui.HTML(summy)\n\n\n# create an app object using your server function\n# Adjust your connection parameters if not using the default TWS paper trader,\n#   or if you want a different client id, etc.\napp = sb.sb_app(\n    home_ui=step_3_ui,\n    server_fn=step_3_server,\n    host='127.0.0.1',\n    port=7497,\n    client_id=10799,\n    verbose=True\n)\n\n# run the app.\napp.run()"
-  },
-  {
-    "objectID": "headless_mode_demo.html",
-    "href": "headless_mode_demo.html",
-    "title": "\"Headless Mode\" for In-App Scripting and Development",
-    "section": "",
-    "text": "As you’re developing apps, it’s sometimes useful to just create a scratch file containing a bit of code that grabs some input. You can watch the information get printed by the async reader loop as it becomes available off the socket, and maybe copy-paste it from the terminal printout do perform some of your exploratory development work.\n\n\n\nimport shinybroker as sb\nimport pandas as pd\n\n\ncon_id = 265598  # AAPL Stock\n\n\nib_conn = sb.create_ibkr_socket_conn()\nib_socket = ib_conn['ib_socket']\n\nsb.send_ib_message(\n    s=ib_socket,\n    msg=sb.req_sec_def_opt_params(\n        reqId=1,\n        underlyingSymbol=\"AAPL\",\n        futFopExchange=\"\",\n        underlyingSecType=\"STK\",\n        underlyingConId=265598\n    )\n)\n\n# start_time = datetime.datetime.now()\n# while (datetime.datetime.now() - start_time).seconds &lt; timeout:\nincoming_msg = sb.read_ib_msg(sock=ib_socket)\nsdops = []\nwhile incoming_msg[0] != sb.functionary['incoming_msg_codes'][\n    'SECURITY_DEFINITION_OPTION_PARAMETER_END'\n]:\n    incoming_msg = sb.read_ib_msg(sock=ib_socket)\n    if incoming_msg[0] == sb.functionary['incoming_msg_codes'][\n        'SECURITY_DEFINITION_OPTION_PARAMETER'\n    ]:\n    sdops.append(sb.format_sec_def_opt_params_input(sdop=incoming_msg[2:]))\n\nib_socket.close()\n\n\nprint(\n    pd.concat(sdops, ignore_index=True)\n    .sort_values('exchange')\n)"
-  },
-  {
-    "objectID": "headless_mode_demo.html#somewhat-interactive-development-mode",
-    "href": "headless_mode_demo.html#somewhat-interactive-development-mode",
-    "title": "\"Headless Mode\" for In-App Scripting and Development",
-    "section": "",
-    "text": "As you’re developing apps, it’s sometimes useful to just create a scratch file containing a bit of code that grabs some input. You can watch the information get printed by the async reader loop as it becomes available off the socket, and maybe copy-paste it from the terminal printout do perform some of your exploratory development work.\n\n\n\nimport shinybroker as sb\nimport pandas as pd\n\n\ncon_id = 265598  # AAPL Stock\n\n\nib_conn = sb.create_ibkr_socket_conn()\nib_socket = ib_conn['ib_socket']\n\nsb.send_ib_message(\n    s=ib_socket,\n    msg=sb.req_sec_def_opt_params(\n        reqId=1,\n        underlyingSymbol=\"AAPL\",\n        futFopExchange=\"\",\n        underlyingSecType=\"STK\",\n        underlyingConId=265598\n    )\n)\n\n# start_time = datetime.datetime.now()\n# while (datetime.datetime.now() - start_time).seconds &lt; timeout:\nincoming_msg = sb.read_ib_msg(sock=ib_socket)\nsdops = []\nwhile incoming_msg[0] != sb.functionary['incoming_msg_codes'][\n    'SECURITY_DEFINITION_OPTION_PARAMETER_END'\n]:\n    incoming_msg = sb.read_ib_msg(sock=ib_socket)\n    if incoming_msg[0] == sb.functionary['incoming_msg_codes'][\n        'SECURITY_DEFINITION_OPTION_PARAMETER'\n    ]:\n    sdops.append(sb.format_sec_def_opt_params_input(sdop=incoming_msg[2:]))\n\nib_socket.close()\n\n\nprint(\n    pd.concat(sdops, ignore_index=True)\n    .sort_values('exchange')\n)"
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Overview",
-    "section": "",
-    "text": "ShinyBroker current version:   0.6.22\n\n\nThis package is under frequent heavy development, so in order to stay current with the examples and tutorials, you should make sure that your local install of ShinyBroker is up-to-date with the most current version. You can easily check what version of ShinyBroker you have installed via the command:\n\n\npip show shinybroker\n\n\n…and you can update to the latest version with:\n\n\npip install shinybroker --upgrade"
-  },
-  {
-    "objectID": "index.html#welcome",
-    "href": "index.html#welcome",
-    "title": "Overview",
-    "section": "",
-    "text": "ShinyBroker current version:   0.6.22\n\n\nThis package is under frequent heavy development, so in order to stay current with the examples and tutorials, you should make sure that your local install of ShinyBroker is up-to-date with the most current version. You can easily check what version of ShinyBroker you have installed via the command:\n\n\npip show shinybroker\n\n\n…and you can update to the latest version with:\n\n\npip install shinybroker --upgrade"
-  },
-  {
-    "objectID": "index.html#about",
-    "href": "index.html#about",
-    "title": "Overview",
-    "section": "About",
-    "text": "About\nShinyBroker is based on the realization that in trading, everything is a reactive variable. Your orders, the prices of assets you’re tracking, current positions, Greeks, p/l– everything is time-dynamic, and can trigger trade order events according to algorithms written by the user. In ShinyBroker, those dynamic variables are kept updated over a socket connection to your account – live or paper – at Interactive Brokers, and are made accessible within Posit’s Shiny framework – a brilliant piece of coding that provides a natural sandbox for reactive variables and their live visualization as webpages.\nThe ‘hello world’ example below will walk you through a trivial setup case. You do not need an account at Interactive Brokers in order to follow the example, but it is suggested that you set up a free paper trader account with them if you’re interested in keeping track of your trades."
-  },
-  {
-    "objectID": "index.html#hello-world-example",
-    "href": "index.html#hello-world-example",
-    "title": "Overview",
-    "section": "Hello World Example",
-    "text": "Hello World Example\nRun the base ShinyBroker app, and inject a simple bit of UI & server code.\n\nDownload and install TWS Latest for your OS. TWS (TraderWorkstation) is what ShinyBroker connects to in order to communicate with IBKR and the market exchanges. Whenever you use ShinyBroker, you’ll need to have TWS open and running.\nOpen up TWS and sign in to the demo by clicking the link indicated by the yellow rectangle below. You’ll be asked for an email and whether or not you’d like IBKR to contact you. If you have a paper account already then you can certainly use it, so just sign in as usual. \nOnce you’re signed in, familiarize yourself with the system until you’re ready to move on. If you used a demo account, know that any trades you make will be erased when you log out.\nOpen the API Configuration menu using the File dropdown. You can find the menu at File &gt; Global Configuration &gt; API &gt; Settings.\nCheck Enable ActiveX and Socket Clients\nUn-check Read-only API, which will instruct TWS to accept any orders passed to it by ShinyBroker via the API.\nYou can leave the rest of the settings alone. By default, your settings menu should look like the below: \nInstall ShinyBroker with pip install shinybroker\nIn Python, run the following: (make sure TWS is open and running)\n\n\nCode:\n\nimport shinybroker as sb\n\n# Create an instance of a ShinyBroker App object using the default ui and server\napp = sb.sb_app(\n    host='127.0.0.1',  # localhost TWS is being served on your local machine\n    port=7497,         # make this match the port in your API Settings config\n    client_id=10742    # picked at random, choose another Client ID if preferred\n)\n\n# Run the app\napp.run()\n\nThis code performs three main operations:\n\nDefines where ShinyBroker can find a running instance of an IBKR client (TWS) (host and port) and what client ID to use when connecting (client_id)\nCreates a ShinyBroker sb_app object\nRuns the app\n\n\nClick the link in the command line to open up a web browser at localhost and explore the app.\n\nNote that there is nothing in the “home” tab. That space is reserved for you, the user, to inject your own graphics, controls, inputs & outputs, as well as your algorithm logic.\nLet’s demonstrate that functionality by injecting some UI, and the server code to handle the backend, into this base ShinyBroker app.\n\nStop the running instance of the ShinyBroker app and modify your code as shown below:\n\n\n\nCode:\n\nimport shinybroker as sb\nfrom shiny import Inputs, Outputs, Session, ui, render\n\n\n# Some UI to add to the app\na_piece_of_new_ui = ui.div(\n    ui.input_text(\n        id='sb_example_text_in',\n        label='Example Input. Type something!'\n    ),\n    ui.output_code('sb_example_text_out')\n)\n\n\n# Server to support the new UI\n# Signature must always contain the following five parameters:\n#   input, output, session, ib_socket, and sb_rvs\ndef a_server_function(\n        input: Inputs, output: Outputs, session: Session, ib_socket, sb_rvs\n):\n    @render.code\n    def sb_example_text_out():\n        return f\"You entered '{input.sb_example_text_in()}'.\"\n\n\n# Create a ShinyBroker app with the new ui and server\napp = sb.sb_app(\n    a_piece_of_new_ui,\n    a_server_function,\n    host='127.0.0.1',\n    port=7497,\n    client_id=10742\n)\n\napp.run()\n\nHere, we have added two additional elements: a ui and a server(), just like we normally would when building a Shiny app with the Core syntax.\n\nui: We added a text input and a text output contained within a div\nserver: A Shiny server function just like a normal server function except that its signature includes a fourth argument – ib_socket – in addition to the usual three (input, output, session). The simple function in this example reads whatever text has been input by the user into the text_input, appends “You entered” to the beginning of it, and renders the text as output.\n\n\nRun the modified code above. Your app should now look something like the screenshot below: \n\nIf you can get that far, success! From this simple starting point you can build a trading algorithm that does just about anything. More usage examples that cover market data, orders, positions, and other topics will be treated in other tutorials and videos accessible on this site."
-  },
-  {
-    "objectID": "reference/fetch_historical_data.html",
-    "href": "reference/fetch_historical_data.html",
-    "title": "fetch_historical_data",
-    "section": "",
-    "text": "fetch_historical_data(contract, endDateTime='', durationStr='1 D', barSizeSetting='1 hour', whatToShow='Trades', useRTH=True, host='127.0.0.1', port=7497, client_id=9999, timeout=3)\nFetch historical data for a tradable asset\nCreates a temporary IBKR client socket at the specified host, port, and client_id, then makes a query for the historical data specified by the input parameters, receives the response, closes the socket, formats the response, and returns the result.\nIf timeout number of seconds elapse before receiving historical data, then fetch_historical_data returns None.\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ncontract\nContract\nThe Contract object for which you want data\nrequired\n\n\nendDateTime\n\nEnding datetime string formatted as “YYYYMMDD HH:mm:ss TMZ” specifying the end of the time period for which you want historical data. Leave it as the default “” to get historical data up to the current present moment.\n''\n\n\ndurationStr\n\nA Duration String that specifies how far back in time you want to fetch data.\n'1 D'\n\n\nbarSizeSetting\n\nA Bar Size that specifies how fine-grained you want your historical data to be (daily, weekly, every 30 seconds, etc).\n'1 hour'\n\n\nwhatToShow\n\nYou may select from any of the Historical Data Types but for most cases you’ll probably be happy with one of “BID_ASK”, “MIDPOINT”, or “TRADES”.\n'Trades'\n\n\nuseRTH\n\n“Use Regular Trading Hours”. Set to False if you want the historical data to include after-hours/pre-market trading\nTrue\n\n\n\n\n\n\nimport shinybroker as sb\n\nhistorical_data = sb.fetch_historical_data(\n    contract=sb.Contract({\n        'symbol': \"AAPL\",\n        'secType': \"STK\",\n        'exchange': \"SMART\",\n        'currency': \"USD\"\n    })\n)\n\nprint(historical_data)\n\n#### Try an example with a bad barSizeSetting\n#### fetch_historical_data prints an informative error message and returns None\nhistorical_data_bad_barsize = sb.fetch_historical_data(\n    contract=sb.Contract({\n        'symbol': \"AAPL\",\n        'secType': \"STK\",\n        'exchange': \"SMART\",\n        'currency': \"USD\"\n    }),\n    barSizeSetting=\"1 hrs\"\n)\nprint(historical_data_bad_barsize)",
-    "crumbs": [
-      "Reference",
-      "\\\"Fetch\\\" Functions",
-      "fetch_historical_data"
-    ]
-  },
-  {
-    "objectID": "reference/fetch_historical_data.html#parameters",
-    "href": "reference/fetch_historical_data.html#parameters",
-    "title": "fetch_historical_data",
-    "section": "",
-    "text": "Name\nType\nDescription\nDefault\n\n\n\n\ncontract\nContract\nThe Contract object for which you want data\nrequired\n\n\nendDateTime\n\nEnding datetime string formatted as “YYYYMMDD HH:mm:ss TMZ” specifying the end of the time period for which you want historical data. Leave it as the default “” to get historical data up to the current present moment.\n''\n\n\ndurationStr\n\nA Duration String that specifies how far back in time you want to fetch data.\n'1 D'\n\n\nbarSizeSetting\n\nA Bar Size that specifies how fine-grained you want your historical data to be (daily, weekly, every 30 seconds, etc).\n'1 hour'\n\n\nwhatToShow\n\nYou may select from any of the Historical Data Types but for most cases you’ll probably be happy with one of “BID_ASK”, “MIDPOINT”, or “TRADES”.\n'Trades'\n\n\nuseRTH\n\n“Use Regular Trading Hours”. Set to False if you want the historical data to include after-hours/pre-market trading\nTrue",
-    "crumbs": [
-      "Reference",
-      "\\\"Fetch\\\" Functions",
-      "fetch_historical_data"
-    ]
-  },
-  {
-    "objectID": "reference/fetch_historical_data.html#examples",
-    "href": "reference/fetch_historical_data.html#examples",
-    "title": "fetch_historical_data",
-    "section": "",
-    "text": "import shinybroker as sb\n\nhistorical_data = sb.fetch_historical_data(\n    contract=sb.Contract({\n        'symbol': \"AAPL\",\n        'secType': \"STK\",\n        'exchange': \"SMART\",\n        'currency': \"USD\"\n    })\n)\n\nprint(historical_data)\n\n#### Try an example with a bad barSizeSetting\n#### fetch_historical_data prints an informative error message and returns None\nhistorical_data_bad_barsize = sb.fetch_historical_data(\n    contract=sb.Contract({\n        'symbol': \"AAPL\",\n        'secType': \"STK\",\n        'exchange': \"SMART\",\n        'currency': \"USD\"\n    }),\n    barSizeSetting=\"1 hrs\"\n)\nprint(historical_data_bad_barsize)",
-    "crumbs": [
-      "Reference",
-      "\\\"Fetch\\\" Functions",
-      "fetch_historical_data"
-    ]
-  },
-  {
-    "objectID": "reference/req_historical_data.html",
-    "href": "reference/req_historical_data.html",
-    "title": "req_historical_data",
-    "section": "",
-    "text": "req_historical_data(reqId, contract, endDateTime='', durationStr='1 D', barSizeSetting='1 hour', whatToShow='Trades', useRTH=True, formatDate=1, keepUpToDate=False)\nCreate a request for the historical data of a financial instrument\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nreqId\nint\nNumeric identifier of the request\nrequired\n\n\ncontract\nContract\nThe Contract object for which you want data\nrequired\n\n\nendDateTime\n\nEnding datetime string formatted as “YYYYMMDD HH:mm:ss TMZ” specifying the end of the time period for which you want historical data. Leave it as the default “” to get historical data up to the current present moment.\n''\n\n\ndurationStr\n\nA Duration String that specifies how far back in time you want to fetch data.\n'1 D'\n\n\nbarSizeSetting\n\nA Bar Size that specifies how fine-grained you want your historical data to be (daily, weekly, every 30 seconds, etc).\n'1 hour'\n\n\nwhatToShow\n\nYou may select from any of the Historical Data Types but for most cases you’ll probably be happy with one of “BID_ASK”, “MIDPOINT”, or “TRADES”.\n'Trades'\n\n\nuseRTH\n\n“Use Regular Trading Hours”. Set to False if you want the historical data to include after-hours/pre-market trading\nTrue\n\n\nformatDate\n\nNumeric code from the Format Date Received table that specifies how you want your dates formatted in the data.\n1\n\n\nkeepUpToDate\n\nSet to True if you want to keep receiving new bar data as it becomes available. For a barSizeSetting of 5 min, that would mean you receive new data every 5 minutes.\nFalse\n\n\n\n\n\n\nimport shinybroker as sb\n# create a request for historical TRADES of AAPL for the last 30 days,\n#   starting today. Report the data on a daily basis, regular trading\n#   hours only, and format it as \"string time zone date\". Make it a one-time\n#   query; don't keep it up-to-date.\nreq_historical_data_msg = sb.req_historical_data(\n    reqId=1,\n    contract = Contract({\n        'symbol': \"AAPL\",\n        'secType': \"STK\",\n        'exchange': \"SMART\",\n        'currency': \"USD\"\n    }),\n    durationStr='30 D',\n    barSizeSetting='1 day'\n)\nprint(req_historical_data_msg)",
-    "crumbs": [
-      "Reference",
-      "Low-Level Request Messages",
-      "req_historical_data"
-    ]
-  },
-  {
-    "objectID": "reference/req_historical_data.html#parameters",
-    "href": "reference/req_historical_data.html#parameters",
-    "title": "req_historical_data",
-    "section": "",
-    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nreqId\nint\nNumeric identifier of the request\nrequired\n\n\ncontract\nContract\nThe Contract object for which you want data\nrequired\n\n\nendDateTime\n\nEnding datetime string formatted as “YYYYMMDD HH:mm:ss TMZ” specifying the end of the time period for which you want historical data. Leave it as the default “” to get historical data up to the current present moment.\n''\n\n\ndurationStr\n\nA Duration String that specifies how far back in time you want to fetch data.\n'1 D'\n\n\nbarSizeSetting\n\nA Bar Size that specifies how fine-grained you want your historical data to be (daily, weekly, every 30 seconds, etc).\n'1 hour'\n\n\nwhatToShow\n\nYou may select from any of the Historical Data Types but for most cases you’ll probably be happy with one of “BID_ASK”, “MIDPOINT”, or “TRADES”.\n'Trades'\n\n\nuseRTH\n\n“Use Regular Trading Hours”. Set to False if you want the historical data to include after-hours/pre-market trading\nTrue\n\n\nformatDate\n\nNumeric code from the Format Date Received table that specifies how you want your dates formatted in the data.\n1\n\n\nkeepUpToDate\n\nSet to True if you want to keep receiving new bar data as it becomes available. For a barSizeSetting of 5 min, that would mean you receive new data every 5 minutes.\nFalse",
-    "crumbs": [
-      "Reference",
-      "Low-Level Request Messages",
-      "req_historical_data"
-    ]
-  },
-  {
-    "objectID": "reference/req_historical_data.html#examples",
-    "href": "reference/req_historical_data.html#examples",
-    "title": "req_historical_data",
-    "section": "",
-    "text": "import shinybroker as sb\n# create a request for historical TRADES of AAPL for the last 30 days,\n#   starting today. Report the data on a daily basis, regular trading\n#   hours only, and format it as \"string time zone date\". Make it a one-time\n#   query; don't keep it up-to-date.\nreq_historical_data_msg = sb.req_historical_data(\n    reqId=1,\n    contract = Contract({\n        'symbol': \"AAPL\",\n        'secType': \"STK\",\n        'exchange': \"SMART\",\n        'currency': \"USD\"\n    }),\n    durationStr='30 D',\n    barSizeSetting='1 day'\n)\nprint(req_historical_data_msg)",
-    "crumbs": [
-      "Reference",
-      "Low-Level Request Messages",
-      "req_historical_data"
-    ]
-  },
-  {
-    "objectID": "reference/req_current_time.html",
-    "href": "reference/req_current_time.html",
-    "title": "req_current_time",
-    "section": "",
-    "text": "req_current_time()\nCreate a request string for the current broker time\n\n\nimport shinybroker as sb\nreq_current_time_msg = sb.req_current_time()\nprint(req_current_time_msg)",
-    "crumbs": [
-      "Reference",
-      "Low-Level Request Messages",
-      "req_current_time"
-    ]
-  },
-  {
-    "objectID": "reference/req_current_time.html#examples",
-    "href": "reference/req_current_time.html#examples",
-    "title": "req_current_time",
-    "section": "",
-    "text": "import shinybroker as sb\nreq_current_time_msg = sb.req_current_time()\nprint(req_current_time_msg)",
-    "crumbs": [
-      "Reference",
-      "Low-Level Request Messages",
-      "req_current_time"
-    ]
-  },
-  {
-    "objectID": "reference/req_contract_details.html",
-    "href": "reference/req_contract_details.html",
-    "title": "req_contract_details",
-    "section": "",
-    "text": "req_contract_details(reqId, contract)\nCreate a contract details request string\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nreqId\nint\nNumeric identifier of the request\nrequired\n\n\ncontract\nContract\nA Contract object\nrequired\n\n\n\n\n\n\nimport shinybroker as sb\nreq_contract_details_msg = sb.req_contract_details(\n    reqId=1,\n    contract=Contract({\n        'symbol': \"AAPL\",\n        'secType': \"STK\",\n        'exchange': \"SMART\",\n        'currency': \"USD\"\n    })\n)\nprint(req_contract_details_msg)",
-    "crumbs": [
-      "Reference",
-      "Low-Level Request Messages",
-      "req_contract_details"
-    ]
-  },
-  {
-    "objectID": "reference/req_contract_details.html#parameters",
-    "href": "reference/req_contract_details.html#parameters",
-    "title": "req_contract_details",
-    "section": "",
-    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nreqId\nint\nNumeric identifier of the request\nrequired\n\n\ncontract\nContract\nA Contract object\nrequired",
-    "crumbs": [
-      "Reference",
-      "Low-Level Request Messages",
-      "req_contract_details"
-    ]
-  },
-  {
-    "objectID": "reference/req_contract_details.html#examples",
-    "href": "reference/req_contract_details.html#examples",
-    "title": "req_contract_details",
-    "section": "",
-    "text": "import shinybroker as sb\nreq_contract_details_msg = sb.req_contract_details(\n    reqId=1,\n    contract=Contract({\n        'symbol': \"AAPL\",\n        'secType': \"STK\",\n        'exchange': \"SMART\",\n        'currency': \"USD\"\n    })\n)\nprint(req_contract_details_msg)",
-    "crumbs": [
-      "Reference",
-      "Low-Level Request Messages",
-      "req_contract_details"
-    ]
-  },
-  {
-    "objectID": "reference/create_ibkr_socket_conn.html",
-    "href": "reference/create_ibkr_socket_conn.html",
-    "title": "create_ibkr_socket_conn",
-    "section": "",
-    "text": "create_ibkr_socket_conn(host='127.0.0.1', port=7497, client_id=0)\nCreate a new socket connection to IBKR\n\nCreates a socket object\nConnects it to an IBKR client accepting connections at the host and port specified in the call to create_ibkr_socket_conn()\nSends a handshake message specifying API version and requesting the start of a new API connection. ShinyBroker will always use the latest version of IBKR’s API.\nReceives a handshake message containing the API version under which the connection was made as well as the timestamp at which the connection was started\nReturns the API version, the Connection Time, and the socket object\n\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nhost\n\nSpecifies the address of the host at which an IBKR client such as TWS or IBG is accepting API connections\n'127.0.0.1'\n\n\nport\n\nSpecifies the port at which the IBKR client has been configured to accept API connections\n7497\n\n\nclient_id\n\nThe Client ID under which you want to connect\n0\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nsocket\nit’s kewl"
-  },
-  {
-    "objectID": "reference/create_ibkr_socket_conn.html#parameters",
-    "href": "reference/create_ibkr_socket_conn.html#parameters",
-    "title": "create_ibkr_socket_conn",
-    "section": "",
-    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nhost\n\nSpecifies the address of the host at which an IBKR client such as TWS or IBG is accepting API connections\n'127.0.0.1'\n\n\nport\n\nSpecifies the port at which the IBKR client has been configured to accept API connections\n7497\n\n\nclient_id\n\nThe Client ID under which you want to connect\n0"
-  },
-  {
-    "objectID": "reference/create_ibkr_socket_conn.html#returns",
-    "href": "reference/create_ibkr_socket_conn.html#returns",
-    "title": "create_ibkr_socket_conn",
-    "section": "",
-    "text": "Type\nDescription\n\n\n\n\nsocket\nit’s kewl"
   },
   {
     "objectID": "reference/Contract.html",
@@ -624,39 +228,471 @@
     ]
   },
   {
-    "objectID": "reference/cancel_historical_data.html",
-    "href": "reference/cancel_historical_data.html",
-    "title": "cancel_historical_data",
+    "objectID": "reference/create_ibkr_socket_conn.html",
+    "href": "reference/create_ibkr_socket_conn.html",
+    "title": "create_ibkr_socket_conn",
     "section": "",
-    "text": "cancel_historical_data(reqId)\nCreate a message that will cancel an existing historical data request.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nreqId\nint\nThe numerical ID of the historical data request you want to cancel.\nrequired\n\n\n\n\n\n\nimport shinybroker as sb\n# Message that will cancel historical data request having ID of 1\ncancel_historical_data_msg = sb.cancel_historical_data(1)\nprint(cancel_historical_data_msg)",
+    "text": "create_ibkr_socket_conn(host='127.0.0.1', port=7497, client_id=0)\nCreate a new socket connection to IBKR\n\nCreates a socket object\nConnects it to an IBKR client accepting connections at the host and port specified in the call to create_ibkr_socket_conn()\nSends a handshake message specifying API version and requesting the start of a new API connection. ShinyBroker will always use the latest version of IBKR’s API.\nReceives a handshake message containing the API version under which the connection was made as well as the timestamp at which the connection was started\nReturns the API version, the Connection Time, and the socket object\n\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nhost\n\nSpecifies the address of the host at which an IBKR client such as TWS or IBG is accepting API connections\n'127.0.0.1'\n\n\nport\n\nSpecifies the port at which the IBKR client has been configured to accept API connections\n7497\n\n\nclient_id\n\nThe Client ID under which you want to connect\n0\n\n\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nsocket\nit’s kewl"
+  },
+  {
+    "objectID": "reference/create_ibkr_socket_conn.html#parameters",
+    "href": "reference/create_ibkr_socket_conn.html#parameters",
+    "title": "create_ibkr_socket_conn",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nhost\n\nSpecifies the address of the host at which an IBKR client such as TWS or IBG is accepting API connections\n'127.0.0.1'\n\n\nport\n\nSpecifies the port at which the IBKR client has been configured to accept API connections\n7497\n\n\nclient_id\n\nThe Client ID under which you want to connect\n0"
+  },
+  {
+    "objectID": "reference/create_ibkr_socket_conn.html#returns",
+    "href": "reference/create_ibkr_socket_conn.html#returns",
+    "title": "create_ibkr_socket_conn",
+    "section": "",
+    "text": "Type\nDescription\n\n\n\n\nsocket\nit’s kewl"
+  },
+  {
+    "objectID": "reference/req_contract_details.html",
+    "href": "reference/req_contract_details.html",
+    "title": "req_contract_details",
+    "section": "",
+    "text": "req_contract_details(reqId, contract)\nCreate a contract details request string\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nreqId\nint\nNumeric identifier of the request\nrequired\n\n\ncontract\nContract\nA Contract object\nrequired\n\n\n\n\n\n\nimport shinybroker as sb\nreq_contract_details_msg = sb.req_contract_details(\n    reqId=1,\n    contract=Contract({\n        'symbol': \"AAPL\",\n        'secType': \"STK\",\n        'exchange': \"SMART\",\n        'currency': \"USD\"\n    })\n)\nprint(req_contract_details_msg)",
     "crumbs": [
       "Reference",
       "Low-Level Request Messages",
-      "cancel_historical_data"
+      "req_contract_details"
     ]
   },
   {
-    "objectID": "reference/cancel_historical_data.html#parameters",
-    "href": "reference/cancel_historical_data.html#parameters",
-    "title": "cancel_historical_data",
+    "objectID": "reference/req_contract_details.html#parameters",
+    "href": "reference/req_contract_details.html#parameters",
+    "title": "req_contract_details",
     "section": "",
-    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nreqId\nint\nThe numerical ID of the historical data request you want to cancel.\nrequired",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nreqId\nint\nNumeric identifier of the request\nrequired\n\n\ncontract\nContract\nA Contract object\nrequired",
     "crumbs": [
       "Reference",
       "Low-Level Request Messages",
-      "cancel_historical_data"
+      "req_contract_details"
     ]
   },
   {
-    "objectID": "reference/cancel_historical_data.html#examples",
-    "href": "reference/cancel_historical_data.html#examples",
-    "title": "cancel_historical_data",
+    "objectID": "reference/req_contract_details.html#examples",
+    "href": "reference/req_contract_details.html#examples",
+    "title": "req_contract_details",
     "section": "",
-    "text": "import shinybroker as sb\n# Message that will cancel historical data request having ID of 1\ncancel_historical_data_msg = sb.cancel_historical_data(1)\nprint(cancel_historical_data_msg)",
+    "text": "import shinybroker as sb\nreq_contract_details_msg = sb.req_contract_details(\n    reqId=1,\n    contract=Contract({\n        'symbol': \"AAPL\",\n        'secType': \"STK\",\n        'exchange': \"SMART\",\n        'currency': \"USD\"\n    })\n)\nprint(req_contract_details_msg)",
     "crumbs": [
       "Reference",
       "Low-Level Request Messages",
-      "cancel_historical_data"
+      "req_contract_details"
+    ]
+  },
+  {
+    "objectID": "reference/req_current_time.html",
+    "href": "reference/req_current_time.html",
+    "title": "req_current_time",
+    "section": "",
+    "text": "req_current_time()\nCreate a request string for the current broker time\n\n\nimport shinybroker as sb\nreq_current_time_msg = sb.req_current_time()\nprint(req_current_time_msg)",
+    "crumbs": [
+      "Reference",
+      "Low-Level Request Messages",
+      "req_current_time"
+    ]
+  },
+  {
+    "objectID": "reference/req_current_time.html#examples",
+    "href": "reference/req_current_time.html#examples",
+    "title": "req_current_time",
+    "section": "",
+    "text": "import shinybroker as sb\nreq_current_time_msg = sb.req_current_time()\nprint(req_current_time_msg)",
+    "crumbs": [
+      "Reference",
+      "Low-Level Request Messages",
+      "req_current_time"
+    ]
+  },
+  {
+    "objectID": "reference/req_historical_data.html",
+    "href": "reference/req_historical_data.html",
+    "title": "req_historical_data",
+    "section": "",
+    "text": "req_historical_data(reqId, contract, endDateTime='', durationStr='1 D', barSizeSetting='1 hour', whatToShow='Trades', useRTH=True, formatDate=1, keepUpToDate=False)\nCreate a request for the historical data of a financial instrument\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nreqId\nint\nNumeric identifier of the request\nrequired\n\n\ncontract\nContract\nThe Contract object for which you want data\nrequired\n\n\nendDateTime\n\nEnding datetime string formatted as “YYYYMMDD HH:mm:ss TMZ” specifying the end of the time period for which you want historical data. Leave it as the default “” to get historical data up to the current present moment.\n''\n\n\ndurationStr\n\nA Duration String that specifies how far back in time you want to fetch data.\n'1 D'\n\n\nbarSizeSetting\n\nA Bar Size that specifies how fine-grained you want your historical data to be (daily, weekly, every 30 seconds, etc).\n'1 hour'\n\n\nwhatToShow\n\nYou may select from any of the Historical Data Types but for most cases you’ll probably be happy with one of “BID_ASK”, “MIDPOINT”, or “TRADES”.\n'Trades'\n\n\nuseRTH\n\n“Use Regular Trading Hours”. Set to False if you want the historical data to include after-hours/pre-market trading\nTrue\n\n\nformatDate\n\nNumeric code from the Format Date Received table that specifies how you want your dates formatted in the data.\n1\n\n\nkeepUpToDate\n\nSet to True if you want to keep receiving new bar data as it becomes available. For a barSizeSetting of 5 min, that would mean you receive new data every 5 minutes.\nFalse\n\n\n\n\n\n\nimport shinybroker as sb\n# create a request for historical TRADES of AAPL for the last 30 days,\n#   starting today. Report the data on a daily basis, regular trading\n#   hours only, and format it as \"string time zone date\". Make it a one-time\n#   query; don't keep it up-to-date.\nreq_historical_data_msg = sb.req_historical_data(\n    reqId=1,\n    contract = Contract({\n        'symbol': \"AAPL\",\n        'secType': \"STK\",\n        'exchange': \"SMART\",\n        'currency': \"USD\"\n    }),\n    durationStr='30 D',\n    barSizeSetting='1 day'\n)\nprint(req_historical_data_msg)",
+    "crumbs": [
+      "Reference",
+      "Low-Level Request Messages",
+      "req_historical_data"
+    ]
+  },
+  {
+    "objectID": "reference/req_historical_data.html#parameters",
+    "href": "reference/req_historical_data.html#parameters",
+    "title": "req_historical_data",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nreqId\nint\nNumeric identifier of the request\nrequired\n\n\ncontract\nContract\nThe Contract object for which you want data\nrequired\n\n\nendDateTime\n\nEnding datetime string formatted as “YYYYMMDD HH:mm:ss TMZ” specifying the end of the time period for which you want historical data. Leave it as the default “” to get historical data up to the current present moment.\n''\n\n\ndurationStr\n\nA Duration String that specifies how far back in time you want to fetch data.\n'1 D'\n\n\nbarSizeSetting\n\nA Bar Size that specifies how fine-grained you want your historical data to be (daily, weekly, every 30 seconds, etc).\n'1 hour'\n\n\nwhatToShow\n\nYou may select from any of the Historical Data Types but for most cases you’ll probably be happy with one of “BID_ASK”, “MIDPOINT”, or “TRADES”.\n'Trades'\n\n\nuseRTH\n\n“Use Regular Trading Hours”. Set to False if you want the historical data to include after-hours/pre-market trading\nTrue\n\n\nformatDate\n\nNumeric code from the Format Date Received table that specifies how you want your dates formatted in the data.\n1\n\n\nkeepUpToDate\n\nSet to True if you want to keep receiving new bar data as it becomes available. For a barSizeSetting of 5 min, that would mean you receive new data every 5 minutes.\nFalse",
+    "crumbs": [
+      "Reference",
+      "Low-Level Request Messages",
+      "req_historical_data"
+    ]
+  },
+  {
+    "objectID": "reference/req_historical_data.html#examples",
+    "href": "reference/req_historical_data.html#examples",
+    "title": "req_historical_data",
+    "section": "",
+    "text": "import shinybroker as sb\n# create a request for historical TRADES of AAPL for the last 30 days,\n#   starting today. Report the data on a daily basis, regular trading\n#   hours only, and format it as \"string time zone date\". Make it a one-time\n#   query; don't keep it up-to-date.\nreq_historical_data_msg = sb.req_historical_data(\n    reqId=1,\n    contract = Contract({\n        'symbol': \"AAPL\",\n        'secType': \"STK\",\n        'exchange': \"SMART\",\n        'currency': \"USD\"\n    }),\n    durationStr='30 D',\n    barSizeSetting='1 day'\n)\nprint(req_historical_data_msg)",
+    "crumbs": [
+      "Reference",
+      "Low-Level Request Messages",
+      "req_historical_data"
+    ]
+  },
+  {
+    "objectID": "reference/fetch_historical_data.html",
+    "href": "reference/fetch_historical_data.html",
+    "title": "fetch_historical_data",
+    "section": "",
+    "text": "fetch_historical_data(contract, endDateTime='', durationStr='1 D', barSizeSetting='1 hour', whatToShow='Trades', useRTH=True, host='127.0.0.1', port=7497, client_id=9999)\nFetch historical data for a tradable asset\nCreates a temporary IBKR client socket at the specified host, port, and client_id, then makes a query for the historical data specified by the input parameters, receives the response, closes the socket, formats the response, and returns the result.\nIf timeout number of seconds elapse before receiving historical data, then fetch_historical_data returns None.\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ncontract\nContract\nThe Contract object for which you want data\nrequired\n\n\nendDateTime\n\nEnding datetime string formatted as “YYYYMMDD HH:mm:ss TMZ” specifying the end of the time period for which you want historical data. Leave it as the default “” to get historical data up to the current present moment.\n''\n\n\ndurationStr\n\nA Duration String that specifies how far back in time you want to fetch data.\n'1 D'\n\n\nbarSizeSetting\n\nA Bar Size that specifies how fine-grained you want your historical data to be (daily, weekly, every 30 seconds, etc).\n'1 hour'\n\n\nwhatToShow\n\nYou may select from any of the Historical Data Types but for most cases you’ll probably be happy with one of “BID_ASK”, “MIDPOINT”, or “TRADES”.\n'Trades'\n\n\nuseRTH\n\n“Use Regular Trading Hours”. Set to False if you want the historical data to include after-hours/pre-market trading\nTrue\n\n\nhost\n\nAddress of a running IBKR client (such as TWS or IBG) that has been configured to accept API connections\n'127.0.0.1'\n\n\nport\n\nPort of a running IBKR client\n7497\n\n\nclient_id\n\nClient ID you want to use for the request. If you are connecting to a system that is used by multiple users, then you may wish to set aside an ID for this purpose; if you’re the only one using the account then you probably don’t have to worry about it – just use the default.\n9999\n\n\n\n\n\n\nimport shinybroker as sb\n\nhistorical_data = sb.fetch_historical_data(\n    contract=sb.Contract({\n        'symbol': \"AAPL\",\n        'secType': \"STK\",\n        'exchange': \"SMART\",\n        'currency': \"USD\"\n    })\n)\n\nprint(historical_data)\n\n#### Try an example with a bad barSizeSetting\n#### fetch_historical_data prints an informative error message and returns None\nhistorical_data_bad_barsize = sb.fetch_historical_data(\n    contract=sb.Contract({\n        'symbol': \"AAPL\",\n        'secType': \"STK\",\n        'exchange': \"SMART\",\n        'currency': \"USD\"\n    }),\n    barSizeSetting=\"1 hrs\"\n)\nprint(historical_data_bad_barsize)",
+    "crumbs": [
+      "Reference",
+      "\\\"Fetch\\\" Functions",
+      "fetch_historical_data"
+    ]
+  },
+  {
+    "objectID": "reference/fetch_historical_data.html#parameters",
+    "href": "reference/fetch_historical_data.html#parameters",
+    "title": "fetch_historical_data",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\ncontract\nContract\nThe Contract object for which you want data\nrequired\n\n\nendDateTime\n\nEnding datetime string formatted as “YYYYMMDD HH:mm:ss TMZ” specifying the end of the time period for which you want historical data. Leave it as the default “” to get historical data up to the current present moment.\n''\n\n\ndurationStr\n\nA Duration String that specifies how far back in time you want to fetch data.\n'1 D'\n\n\nbarSizeSetting\n\nA Bar Size that specifies how fine-grained you want your historical data to be (daily, weekly, every 30 seconds, etc).\n'1 hour'\n\n\nwhatToShow\n\nYou may select from any of the Historical Data Types but for most cases you’ll probably be happy with one of “BID_ASK”, “MIDPOINT”, or “TRADES”.\n'Trades'\n\n\nuseRTH\n\n“Use Regular Trading Hours”. Set to False if you want the historical data to include after-hours/pre-market trading\nTrue\n\n\nhost\n\nAddress of a running IBKR client (such as TWS or IBG) that has been configured to accept API connections\n'127.0.0.1'\n\n\nport\n\nPort of a running IBKR client\n7497\n\n\nclient_id\n\nClient ID you want to use for the request. If you are connecting to a system that is used by multiple users, then you may wish to set aside an ID for this purpose; if you’re the only one using the account then you probably don’t have to worry about it – just use the default.\n9999",
+    "crumbs": [
+      "Reference",
+      "\\\"Fetch\\\" Functions",
+      "fetch_historical_data"
+    ]
+  },
+  {
+    "objectID": "reference/fetch_historical_data.html#examples",
+    "href": "reference/fetch_historical_data.html#examples",
+    "title": "fetch_historical_data",
+    "section": "",
+    "text": "import shinybroker as sb\n\nhistorical_data = sb.fetch_historical_data(\n    contract=sb.Contract({\n        'symbol': \"AAPL\",\n        'secType': \"STK\",\n        'exchange': \"SMART\",\n        'currency': \"USD\"\n    })\n)\n\nprint(historical_data)\n\n#### Try an example with a bad barSizeSetting\n#### fetch_historical_data prints an informative error message and returns None\nhistorical_data_bad_barsize = sb.fetch_historical_data(\n    contract=sb.Contract({\n        'symbol': \"AAPL\",\n        'secType': \"STK\",\n        'exchange': \"SMART\",\n        'currency': \"USD\"\n    }),\n    barSizeSetting=\"1 hrs\"\n)\nprint(historical_data_bad_barsize)",
+    "crumbs": [
+      "Reference",
+      "\\\"Fetch\\\" Functions",
+      "fetch_historical_data"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Overview",
+    "section": "",
+    "text": "ShinyBroker current version:   0.6.23\n\n\nThis package is under frequent heavy development, so in order to stay current with the examples and tutorials, you should make sure that your local install of ShinyBroker is up-to-date with the most current version. You can easily check what version of ShinyBroker you have installed via the command:\n\n\npip show shinybroker\n\n\n…and you can update to the latest version with:\n\n\npip install shinybroker --upgrade"
+  },
+  {
+    "objectID": "index.html#welcome",
+    "href": "index.html#welcome",
+    "title": "Overview",
+    "section": "",
+    "text": "ShinyBroker current version:   0.6.23\n\n\nThis package is under frequent heavy development, so in order to stay current with the examples and tutorials, you should make sure that your local install of ShinyBroker is up-to-date with the most current version. You can easily check what version of ShinyBroker you have installed via the command:\n\n\npip show shinybroker\n\n\n…and you can update to the latest version with:\n\n\npip install shinybroker --upgrade"
+  },
+  {
+    "objectID": "index.html#about",
+    "href": "index.html#about",
+    "title": "Overview",
+    "section": "About",
+    "text": "About\nShinyBroker is based on the realization that in trading, everything is a reactive variable. Your orders, the prices of assets you’re tracking, current positions, Greeks, p/l– everything is time-dynamic, and can trigger trade order events according to algorithms written by the user. In ShinyBroker, those dynamic variables are kept updated over a socket connection to your account – live or paper – at Interactive Brokers, and are made accessible within Posit’s Shiny framework – a brilliant piece of coding that provides a natural sandbox for reactive variables and their live visualization as webpages.\nThe ‘hello world’ example below will walk you through a trivial setup case. You do not need an account at Interactive Brokers in order to follow the example, but it is suggested that you set up a free paper trader account with them if you’re interested in keeping track of your trades."
+  },
+  {
+    "objectID": "index.html#hello-world-example",
+    "href": "index.html#hello-world-example",
+    "title": "Overview",
+    "section": "Hello World Example",
+    "text": "Hello World Example\nRun the base ShinyBroker app, and inject a simple bit of UI & server code.\n\nDownload and install TWS Latest for your OS. TWS (TraderWorkstation) is what ShinyBroker connects to in order to communicate with IBKR and the market exchanges. Whenever you use ShinyBroker, you’ll need to have TWS open and running.\nOpen up TWS and sign in to the demo by clicking the link indicated by the yellow rectangle below. You’ll be asked for an email and whether or not you’d like IBKR to contact you. If you have a paper account already then you can certainly use it, so just sign in as usual. \nOnce you’re signed in, familiarize yourself with the system until you’re ready to move on. If you used a demo account, know that any trades you make will be erased when you log out.\nOpen the API Configuration menu using the File dropdown. You can find the menu at File &gt; Global Configuration &gt; API &gt; Settings.\nCheck Enable ActiveX and Socket Clients\nUn-check Read-only API, which will instruct TWS to accept any orders passed to it by ShinyBroker via the API.\nYou can leave the rest of the settings alone. By default, your settings menu should look like the below: \nInstall ShinyBroker with pip install shinybroker\nIn Python, run the following: (make sure TWS is open and running)\n\n\nCode:\n\nimport shinybroker as sb\n\n# Create an instance of a ShinyBroker App object using the default ui and server\napp = sb.sb_app(\n    host='127.0.0.1',  # localhost TWS is being served on your local machine\n    port=7497,         # make this match the port in your API Settings config\n    client_id=10742    # picked at random, choose another Client ID if preferred\n)\n\n# Run the app\napp.run()\n\nThis code performs three main operations:\n\nDefines where ShinyBroker can find a running instance of an IBKR client (TWS) (host and port) and what client ID to use when connecting (client_id)\nCreates a ShinyBroker sb_app object\nRuns the app\n\n\nClick the link in the command line to open up a web browser at localhost and explore the app.\n\nNote that there is nothing in the “home” tab. That space is reserved for you, the user, to inject your own graphics, controls, inputs & outputs, as well as your algorithm logic.\nLet’s demonstrate that functionality by injecting some UI, and the server code to handle the backend, into this base ShinyBroker app.\n\nStop the running instance of the ShinyBroker app and modify your code as shown below:\n\n\n\nCode:\n\nimport shinybroker as sb\nfrom shiny import Inputs, Outputs, Session, ui, render\n\n\n# Some UI to add to the app\na_piece_of_new_ui = ui.div(\n    ui.input_text(\n        id='sb_example_text_in',\n        label='Example Input. Type something!'\n    ),\n    ui.output_code('sb_example_text_out')\n)\n\n\n# Server to support the new UI\n# Signature must always contain the following five parameters:\n#   input, output, session, ib_socket, and sb_rvs\ndef a_server_function(\n        input: Inputs, output: Outputs, session: Session, ib_socket, sb_rvs\n):\n    @render.code\n    def sb_example_text_out():\n        return f\"You entered '{input.sb_example_text_in()}'.\"\n\n\n# Create a ShinyBroker app with the new ui and server\napp = sb.sb_app(\n    a_piece_of_new_ui,\n    a_server_function,\n    host='127.0.0.1',\n    port=7497,\n    client_id=10742\n)\n\napp.run()\n\nHere, we have added two additional elements: a ui and a server(), just like we normally would when building a Shiny app with the Core syntax.\n\nui: We added a text input and a text output contained within a div\nserver: A Shiny server function just like a normal server function except that its signature includes a fourth argument – ib_socket – in addition to the usual three (input, output, session). The simple function in this example reads whatever text has been input by the user into the text_input, appends “You entered” to the beginning of it, and renders the text as output.\n\n\nRun the modified code above. Your app should now look something like the screenshot below: \n\nIf you can get that far, success! From this simple starting point you can build a trading algorithm that does just about anything. More usage examples that cover market data, orders, positions, and other topics will be treated in other tutorials and videos accessible on this site."
+  },
+  {
+    "objectID": "headless_mode_demo.html",
+    "href": "headless_mode_demo.html",
+    "title": "\"Headless Mode\" for In-App Scripting and Development",
+    "section": "",
+    "text": "As you’re developing apps, it’s sometimes useful to just create a scratch file containing a bit of code that grabs some input. You can watch the information get printed by the async reader loop as it becomes available off the socket, and maybe copy-paste it from the terminal printout do perform some of your exploratory development work.\n\n\n\n# import shinybroker as sb\n# import pandas as pd\n#\n#\n# con_id = 265598  # AAPL Stock\n#\n#\n# ib_conn = sb.create_ibkr_socket_conn()\n# ib_socket = ib_conn['ib_socket']\n#\n# sb.send_ib_message(\n#     s=ib_socket,\n#     msg=sb.req_sec_def_opt_params(\n#         reqId=1,\n#         underlyingSymbol=\"AAPL\",\n#         futFopExchange=\"\",\n#         underlyingSecType=\"STK\",\n#         underlyingConId=265598\n#     )\n# )\n#\n# # start_time = datetime.datetime.now()\n# # while (datetime.datetime.now() - start_time).seconds &lt; timeout:\n# incoming_msg = sb.read_ib_msg(sock=ib_socket)\n# sdops = []\n# while incoming_msg[0] != sb.functionary['incoming_msg_codes'][\n#     'SECURITY_DEFINITION_OPTION_PARAMETER_END'\n# ]:\n#     incoming_msg = sb.read_ib_msg(sock=ib_socket)\n#     if incoming_msg[0] == sb.functionary['incoming_msg_codes'][\n#         'SECURITY_DEFINITION_OPTION_PARAMETER'\n#     ]:\n#     sdops.append(sb.format_sec_def_opt_params_input(sdop=incoming_msg[2:]))\n#\n# ib_socket.close()\n#\n#\n# print(\n#     pd.concat(sdops, ignore_index=True)\n#     .sort_values('exchange')\n# )"
+  },
+  {
+    "objectID": "headless_mode_demo.html#somewhat-interactive-development-mode",
+    "href": "headless_mode_demo.html#somewhat-interactive-development-mode",
+    "title": "\"Headless Mode\" for In-App Scripting and Development",
+    "section": "",
+    "text": "As you’re developing apps, it’s sometimes useful to just create a scratch file containing a bit of code that grabs some input. You can watch the information get printed by the async reader loop as it becomes available off the socket, and maybe copy-paste it from the terminal printout do perform some of your exploratory development work.\n\n\n\n# import shinybroker as sb\n# import pandas as pd\n#\n#\n# con_id = 265598  # AAPL Stock\n#\n#\n# ib_conn = sb.create_ibkr_socket_conn()\n# ib_socket = ib_conn['ib_socket']\n#\n# sb.send_ib_message(\n#     s=ib_socket,\n#     msg=sb.req_sec_def_opt_params(\n#         reqId=1,\n#         underlyingSymbol=\"AAPL\",\n#         futFopExchange=\"\",\n#         underlyingSecType=\"STK\",\n#         underlyingConId=265598\n#     )\n# )\n#\n# # start_time = datetime.datetime.now()\n# # while (datetime.datetime.now() - start_time).seconds &lt; timeout:\n# incoming_msg = sb.read_ib_msg(sock=ib_socket)\n# sdops = []\n# while incoming_msg[0] != sb.functionary['incoming_msg_codes'][\n#     'SECURITY_DEFINITION_OPTION_PARAMETER_END'\n# ]:\n#     incoming_msg = sb.read_ib_msg(sock=ib_socket)\n#     if incoming_msg[0] == sb.functionary['incoming_msg_codes'][\n#         'SECURITY_DEFINITION_OPTION_PARAMETER'\n#     ]:\n#     sdops.append(sb.format_sec_def_opt_params_input(sdop=incoming_msg[2:]))\n#\n# ib_socket.close()\n#\n#\n# print(\n#     pd.concat(sdops, ignore_index=True)\n#     .sort_values('exchange')\n# )"
+  },
+  {
+    "objectID": "query_and_display_market_data.html",
+    "href": "query_and_display_market_data.html",
+    "title": "Query and Display Market Data",
+    "section": "",
+    "text": "So you’ve installed Shinybroker and gotten the hello world example to work. Congrats! Now it’s time to actually build an app that uses some of the features.\nThis example will introduce you, in steps, to using ShinyBroker to write an app that will calculate beta between two assets, display that information, and use it to trade. Each step below adds a layer of functionality to the app. You can use this example to learn how to:\n\naccess & use the ShinyBroker reactive variables in sb_rvs\nimplement some initial setup logic to fetch data from IBKR\nprocess your data and display it\n\nComing Soon: live updating data, dynamic contract entry, positions, order placement, and finally– a video walkthrough of all this :)\n\nStep 1: sb_rvs and setup logic\nWe’re interested in calculating beta between two assets, so first we’re going to need to pull price data from IBKR in order to make the calculation. We can accomplish this task by writing a server function that sends the data request query to the IBKR data farms.\n\nThe Design Pattern\nThe server function, appropriately named step_1_server, contains within it a single function named make_historical_data_queries(), which is decorated with reactive effect and reactive event.\n\nWhy sb_rvs['connection_info'] is a good trigger for startup logic\nBecause it is a reactive event that takes sb_rvs['connection_info'], as a dependency, the code in make_historical_data_queries() will only run when the reactive variable sb_rvs['connection_info'] is updated. However, sb_rvs['connection_info'] is only updated once during the running lifetime of a ShinyBroker session. Since the update takes place right after a socket connection has been made to the client (e.g., TWS), you, the trader, can be sure that if sb_rvs['connection_info'] has been successfully set, then the socket connection is connected and ready for use. Therefore, sb_rvs[‘connection_info’] makes a good choice for a trigger for logic that you want to run only once at the beginning of a user session in your app.\n\n\n\nThe Setup Function: make_historical_data_queries\nOnce triggered, make_historical_data_queries makes two calls to start_historical_data_subscription, a function provided by the ShinyBroker library. Even though in this case we’re performing a static, one-time data query, the word “subscription” appears in the function’s name because it can be called by setting the keepUpToDate parameter to True. Doing so results in the historical data being kept up-to-date with live market data as it becomes available, and we’ll do exactly this in a later step.\nFor now, you should understand four things about start_historical_data_subscription:\n\nThe data it fetches is written to the reactive variable named ‘historical_data’. Because this is a native ShinyBroker reactive variable, you can always access it in your code with sb_rvs['historical_data']\nsb_rvs['historical_data']() is a dictionary that contains the data retrieved by each query. That dictionary is keyed by the integer-valued subscription_id you pass to it. If you don’t pass a subscription id, as in the code below, then ShinyBroker will just find the maximum subscription id already used in a historical data query for that session, add 1 to that, and treat the result as the subscription_id, beginning with 1 if no previous subscriptions are found for the current session.\nYou must define the contract for which you want data using the Contract constructor, which is provided by the ShinyBroker package.\nAs currently written, you must tell start_historical_data_subscription which IBKR connection socket you want it to use by defining the hd_socket parameter. In the code below, the default ib_socket provided by the ShinyBroker app is used. This choice was made by the ShinyBroker author in order to allow advanced users to work with more than one socket connection within their apps. Most users of ShinyBroker won’t need that functionality and can just keep passing ib_socket as the socket parameter in their apps without having to think too much about it.\n\n\n\nRun the code below\nRun the code!\n\nView your Shiny app in a browser by clicking the hyperlink that prints in your Python console\nWithin the app, navigate to the Market Data panel\nOpen the “Historical Data” accordion panel… …and you should see an output of the historical data fetched by your query that looks something like the below:  Once you’ve successfully accomplished that, you can move on to the next step!\n\n\n\nCode:\n\nimport shinybroker as sb\nfrom shiny import Inputs, Outputs, Session, reactive\n\n\n# Declare a server function...\n#   ...just like you would when making an ordinary Shiny app.\ndef step_1_server(\n        input: Inputs, output: Outputs, session: Session, ib_socket, sb_rvs\n):\n\n    @reactive.effect\n    @reactive.event(sb_rvs['connection_info'])\n    def make_historical_data_queries():\n\n        # Fetch the hourly trade data for AAPL for the past 3 days.\n        sb.start_historical_data_subscription(\n            historical_data=sb_rvs['historical_data'],\n            hd_socket=ib_socket,\n            contract=sb.Contract({\n                'symbol': \"AAPL\",\n                'secType': \"STK\",\n                'exchange': \"SMART\",\n                'currency': \"USD\",\n            }),\n            durationStr=\"3 D\",\n            barSizeSetting=\"1 hour\"\n        )\n\n        # Do the same, but for the S&P 500 Index\n        sb.start_historical_data_subscription(\n            historical_data=sb_rvs['historical_data'],\n            hd_socket=ib_socket,\n            contract=sb.Contract({\n                'symbol': 'SPX',\n                'secType': 'IND',\n                'currency': 'USD',\n                'exchange': 'CBOE'\n            }),\n            durationStr=\"3 D\",\n            barSizeSetting=\"1 hour\"\n        )\n\n\n# create an app object using your server function\n# Adjust your connection parameters if not using the default TWS paper trader,\n#   or if you want a different client id, etc.\napp = sb.sb_app(\n    server_fn=step_1_server,\n    host='127.0.0.1',\n    port=7497,\n    client_id=10799,\n    verbose=True\n)\n\n# run the app.\napp.run()\n\n\n\n\nStep 2: Calculations and ui\nIn this step we’ll add the calculations of alpha and beta, including the observed historical returns over the time period, plus the necessary pieces of UI to display the calculated information. We’ll be using some additional Python libraries to accomplish this task:\n\nfaicons\nplotly\nsklearn, which is available after installing scikit-learn\n\n…so make sure those libraries are installed.\n\nThe UI\nThe code below follows the same general design pattern of Step 1, but adds in a ui object named step_2_ui. This object contains within it the HTML structure that sb_app() will place in the Home tab of the rendered app. Reference documentation for for these and other webpage-generating ui objects available within Shiny can be found on Shiny’s documentation page.\nExamine the definition of step_2_ui in the code below. You will notice that it contains the four new ui features that have been added in this step:\n\nAn HTML level 5 title tag which reads ‘Calculated Returns’\nA dataframe output that displays the returns calculated for the two assets\nAn info box for calculated alpha value\nAn info box for calculated beta value\n\nAny valid Shiny ui object passed to sb_app() will be rendered in the Home tab.\n\n\nThe Server Function\nIn order to populate the new ui objects with data, we need to add logic to the server function.\n\nThe calculate_log_returns() Function\nThe reactive calculation that operates on the retrieved historical data is named calculate_log_returns(). The function operates as follows:\nFirst, it looks at the data stored in sb_rvs['historical_data'] and assigns it to a new variable hd for the analysis. If hd doesn’t contain TWO entries – one for AAPL and one for SPX – then a KeyError exception gets raised when attempting to declare aapl_rtns and spx_rtns. In that case, calculate_log_returns() exits early and returns None because we need data\nCalculation proceeds otherwise. The period-over-period log returns are calculated for each asset and stored in two dataframes named asset_1 and asset_2 alongside a column named timestamp that contains the date & time at which each return was observed.\nNote that in order to make this datetime conversion easier, the calls to start_historical_data_subscription were made with the formatDate argument set to 2. IBKR’s documentation for historical data requests tells us that datetimes received with this choice of parameter will be in Unix Epoch Date format, which is nice and easy to handle in Python for datetime conversions.\nOnce dataframes for both asset_1 and asset_2 are calculated, they are merged together via an inner join on timestamp. The reason for doing so is because sometimes, one asset might be updated before the other one, meaning that it has one more measured return. By creating a new df using the merge on datetime, we ensure that our returns match up for an equal number of observations of both assets.\nThat merged dataframe is the return value of calculate_log_returns(). Therefore, when calculate_log_returns() is called within any other reactive function in the app, Shiny will ensure that the value returned always contains the most up-to-date calculation, even if the historical data changes.\n\n\nA @render Function: log_returns_df()\nIn the Shiny world, to “render” means “to display the contents of variables as UI objects in an app”. Because it has the [dataframe render decorator] (https://shiny.posit.co/py/api/core/render.data_frame.html), Shiny knows to look for a UI object having the same ID as the name of the function and update that ui object with HTML that displays the returns in the dataframe calculated by calculate_log_returns(). If calculate_log_returns() returns None, then log_returns_df() exits early with a silent exception that does nothing.\nTo summarize: this simple function says the following to Shiny: “whenever the value of ’calculate_log_returns()` changes, render the output as html and insert it into the ui object named having the same name as this function (which in this case is”log_returns_df”)“. Therefore, the data in the datatable display in the UI will always be kept up to date with the historical data calculation.\n\n\nDeclaring alpha and beta as reactive variables\nNext we define two new reactive variables– alpha and beta. Once they are set, follow-on code can call them to perform whatever calculations you like; for for example, you might have some specific trading logic you’d like to trigger if beta moves beyond a threshold that you set. We can calculate values for them by finding the y-intercept and slope of a linear regression fitted through the returns data with SPX on the x-axis as described below.\n\n\nThe update_alpha_beta() Function\nupdate_alpha_beta() is a reactive effect function that uses sklearn to fit a basic linear regression model to the calculated returns, with the benchmark (SPX) on the X axis and the asset (AAPL) on the Y. Beta is defined as the slope of the regression, and alpha is the x-intercept. Each parameter thus obtained is set to its respective reactive variable.\n\n\nRendering the Value Box Text\nFinally, the last two functions place text values in the value boxes for display to the user. They take in alpha and beta, perform some string manipulation, and put the result in the UI text object having the same name as the function definition. Because these UI objects were defined as the value parameter within the value box definition in step_2_ui, the value box’s contents gets updated for the user. The call to req is performed to require that the incoming variable is something other than an empty float.\n\n\nRun & View the App\nWhen you see something like the below when you run your app, you are successful! Move on to the next step when ready :) \n\n\nCode:\n\nimport numpy as np\nimport pandas as pd\nimport shinybroker as sb\n\nfrom datetime import datetime\nfrom faicons import icon_svg\nfrom sklearn import linear_model\nfrom shiny import Inputs, Outputs, Session, reactive, ui, req, render\nfrom shiny.types import SilentException\n\nstep_2_ui = ui.page_fluid(\n    ui.row(\n        ui.h5('Calculated Returns'),\n        ui.column(\n            7,\n            ui.output_data_frame('log_returns_df')\n        ),\n        ui.column(\n            5,\n            ui.value_box(\n                title=\"Alpha\",\n                value=ui.output_ui('alpha_txt'),\n                showcase=icon_svg('chart-line')\n            ),\n            ui.value_box(\n                title=\"Beta\",\n                value=ui.output_ui('beta_txt'),\n                showcase=icon_svg('chart-line')\n            )\n        )\n    )\n)\n\n\n# Declare a server function...\n#   ...just like you would when making an ordinary Shiny app.\ndef step_2_server(\n        input: Inputs, output: Outputs, session: Session, ib_socket, sb_rvs\n):\n\n    @reactive.effect\n    @reactive.event(sb_rvs['connection_info'])\n    def make_historical_data_queries():\n\n        # Fetch the hourly trade data for AAPL for the past 3 days.\n        sb.start_historical_data_subscription(\n            historical_data=sb_rvs['historical_data'],\n            hd_socket=ib_socket,\n            contract=sb.Contract({\n                'symbol': \"AAPL\",\n                'secType': \"STK\",\n                'exchange': \"SMART\",\n                'currency': \"USD\",\n            }),\n            durationStr=\"3 D\",\n            barSizeSetting=\"1 hour\",\n            formatDate=2\n        )\n\n        # Do the same, but for the S&P 500 Index\n        sb.start_historical_data_subscription(\n            historical_data=sb_rvs['historical_data'],\n            hd_socket=ib_socket,\n            contract=sb.Contract({\n                'symbol': 'SPX',\n                'secType': 'IND',\n                'currency': 'USD',\n                'exchange': 'CBOE'\n            }),\n            durationStr=\"3 D\",\n            barSizeSetting=\"1 hour\",\n            formatDate=2\n        )\n\n    @reactive.calc\n    def calculate_log_returns():\n        hd = sb_rvs['historical_data']()\n\n        # Make sure that BOTH assets have been added to historical_data\n        try:\n            aapl_rtns = hd['1']['hst_dta']\n            spx_rtns  = hd['2']['hst_dta']\n        except KeyError:\n            return None\n\n        asset_1 = pd.DataFrame({\n            'timestamp': [\n                datetime.fromtimestamp(int(x)) for\n                x in hd['1']['hst_dta'].loc[1:, 'timestamp']\n            ],\n            'aapl_returns': np.log(\n                aapl_rtns.loc[1:, 'close'].reset_index(drop=True) /\n                aapl_rtns.iloc[:-1]['close'].reset_index(drop=True)\n            )\n        })\n        asset_2 = pd.DataFrame({\n            'timestamp': [\n                datetime.fromtimestamp(int(x)) for\n                x in hd['2']['hst_dta'].loc[1:, 'timestamp']\n            ],\n            'spx_returns': np.log(\n                spx_rtns.loc[1:, 'close'].reset_index(drop=True) /\n                spx_rtns.iloc[:-1]['close'].reset_index(drop=True)\n            )\n        })\n        return pd.merge(asset_1, asset_2, on='timestamp', how='inner')\n\n    @render.data_frame\n    def log_returns_df():\n        if calculate_log_returns() is None:\n            raise SilentException()\n        return render.DataTable(calculate_log_returns())\n\n    alpha = reactive.value(float())\n    beta = reactive.value(float())\n\n    @reactive.effect\n    def update_alpha_beta():\n        log_rtns = calculate_log_returns()\n\n        if log_rtns is None:\n            raise SilentException()\n\n        regr = linear_model.LinearRegression()\n        regr.fit(\n            log_rtns.spx_returns.values.reshape(log_rtns.shape[0], 1),\n            log_rtns.aapl_returns.values.reshape(log_rtns.shape[0], 1)\n        )\n        alpha.set(regr.intercept_[0])\n        beta.set(regr.coef_[0][0])\n\n    @render.text\n    def alpha_txt():\n        a = req(alpha())\n        return f\"{a * 100:.7f} %\"\n\n    @render.text\n    def beta_txt():\n        b = req(beta())\n        return str(round(b, 3))\n\n\n# create an app object using your server function\n# Adjust your connection parameters if not using the default TWS paper trader,\n#   or if you want a different client id, etc.\napp = sb.sb_app(\n    home_ui=step_2_ui,\n    server_fn=step_2_server,\n    host='127.0.0.1',\n    port=7497,\n    client_id=10799,\n    verbose=True\n)\n\n# run the app.\napp.run()\n\n\n\n\n\nStep 3: Add a plot!\nEvery good app needs a plot. In the code below, we add a reactive calc for a plotly scatterplot object named fig within the server code. We also add two render functions. The first one renders the plot object display graphic. Since plotly includes a trendline feature using statsmodels, we make use of that feature by adding an ‘ols’ trendline. We also add a render function that selects and returns the summary property of the ols trendline and renders it as html next to the benchmark plot.\nAnd of course, we add output elements for these new features in to the ui definition where the plot and table output for our alpha & beta calcs will be displayed in the top row of the *Home** section.\nNOTE FOR MAC USERS and anyone else experiencing an ImportError saying something like “symbol not found in flat namespace ’_npy_cabs’“: There is a known bug between statsmodels and SciPy that causes a problem when you try to add trendlines to a Plotly chart in Python running in OSX. Until the bug is fixed, the workaround is to simply revert to numpy version 2. You can do that in one step with the shell command pip install --force-reinstall numpy==2.0.0.\nSuccess means you can get your app to look like this: \n\nCode:\n\nimport numpy as np\nimport pandas as pd\nimport shinybroker as sb\nimport plotly.express as px\n\nfrom datetime import datetime\nfrom faicons import icon_svg\nfrom sklearn import linear_model\nfrom shiny import Inputs, Outputs, Session, reactive, ui, req, render\nfrom shiny.types import SilentException\nfrom shinywidgets import output_widget, render_plotly\n\nstep_3_ui = ui.page_fluid(\n    ui.row(\n        ui.column(\n            6,\n            ui.h5(\"Benchmark Plot\"),\n            output_widget(\"alphabeta_scatter\")\n        ),\n        ui.column(\n            6,\n            ui.h5(\"Statsmodels Results\"),\n            ui.output_ui(\"alphabeta_trendline_summary\")\n        )\n    ),\n    ui.row(\n        ui.h5('Calculated Returns'),\n        ui.column(\n            7,\n            ui.output_data_frame('log_returns_df')\n        ),\n        ui.column(\n            5,\n            ui.value_box(\n                title=\"Alpha\",\n                value=ui.output_ui('alpha_txt'),\n                showcase=icon_svg('chart-line')\n            ),\n            ui.value_box(\n                title=\"Beta\",\n                value=ui.output_ui('beta_txt'),\n                showcase=icon_svg('chart-line')\n            )\n        )\n    )\n)\n\n# Declare a server function...\n#   ...just like you would when making an ordinary Shiny app.\ndef step_3_server(\n        input: Inputs, output: Outputs, session: Session, ib_socket, sb_rvs\n):\n\n    @reactive.effect\n    @reactive.event(sb_rvs['connection_info'])\n    def make_historical_data_queries():\n\n        # Fetch the hourly trade data for AAPL for the past 3 days.\n        sb.start_historical_data_subscription(\n            historical_data=sb_rvs['historical_data'],\n            hd_socket=ib_socket,\n            contract=sb.Contract({\n                'symbol': \"AAPL\",\n                'secType': \"STK\",\n                'exchange': \"SMART\",\n                'currency': \"USD\",\n            }),\n            durationStr=\"3 D\",\n            barSizeSetting=\"1 hour\",\n            formatDate=2\n        )\n\n        # Do the same, but for the S&P 500 Index\n        sb.start_historical_data_subscription(\n            historical_data=sb_rvs['historical_data'],\n            hd_socket=ib_socket,\n            contract=sb.Contract({\n                'symbol': 'SPX',\n                'secType': 'IND',\n                'currency': 'USD',\n                'exchange': 'CBOE'\n            }),\n            durationStr=\"3 D\",\n            barSizeSetting=\"1 hour\",\n            formatDate=2\n        )\n\n    @reactive.calc\n    def calculate_log_returns():\n        hd = sb_rvs['historical_data']()\n\n        # Make sure that BOTH assets have been added to historical_data\n        try:\n            aapl_rtns = hd['1']['hst_dta']\n            spx_rtns = hd['2']['hst_dta']\n        except KeyError:\n            return None\n\n        asset_1 = pd.DataFrame({\n            'timestamp': [\n                datetime.fromtimestamp(int(x)) for\n                x in hd['1']['hst_dta'].loc[1:, 'timestamp']\n            ],\n            'aapl_returns': np.log(\n                aapl_rtns.loc[1:, 'close'].reset_index(drop=True) /\n                aapl_rtns.iloc[:-1]['close'].reset_index(drop=True)\n            )\n        })\n        asset_2 = pd.DataFrame({\n            'timestamp': [\n                datetime.fromtimestamp(int(x)) for\n                x in hd['2']['hst_dta'].loc[1:, 'timestamp']\n            ],\n            'spx_returns': np.log(\n                spx_rtns.loc[1:, 'close'].reset_index(drop=True) /\n                spx_rtns.iloc[:-1]['close'].reset_index(drop=True)\n            )\n        })\n\n        return pd.merge(asset_1, asset_2, on='timestamp', how='inner')\n\n    @render.data_frame\n    def log_returns_df():\n        if calculate_log_returns() is None:\n            raise SilentException()\n        return render.DataTable(calculate_log_returns())\n\n    alpha = reactive.value(float())\n    beta = reactive.value(float())\n\n    @reactive.effect\n    def update_alpha_beta():\n        log_rtns = calculate_log_returns()\n\n        if log_rtns is None:\n            raise SilentException()\n\n        regr = linear_model.LinearRegression()\n        regr.fit(\n            log_rtns.spx_returns.values.reshape(log_rtns.shape[0], 1),\n            log_rtns.aapl_returns.values.reshape(log_rtns.shape[0], 1)\n        )\n        alpha.set(regr.intercept_[0])\n        beta.set(regr.coef_[0][0])\n\n    @render.text\n    def alpha_txt():\n        a = req(alpha())\n        return f\"{a * 100:.7f} %\"\n\n    @render.text\n    def beta_txt():\n        b = req(beta())\n        return str(round(b, 3))\n\n    @reactive.calc\n    def calculate_alphabeta_scatter():\n        log_rtns = calculate_log_returns()\n\n        if log_rtns is None:\n            raise SilentException()\n\n        fig = px.scatter(\n            log_rtns,\n            x='spx_returns',\n            y='aapl_returns',\n            trendline='ols'\n        )\n        fig.layout.xaxis.tickformat = ',.2%'\n        fig.layout.yaxis.tickformat = ',.2%'\n        fig.update_layout(plot_bgcolor='white')\n        return fig\n\n    @render_plotly\n    def alphabeta_scatter():\n        return calculate_alphabeta_scatter()\n\n    @render.ui\n    def alphabeta_trendline_summary():\n        summy = px.get_trendline_results(\n            calculate_alphabeta_scatter()\n        ).px_fit_results.iloc[0].summary().as_html()\n        return ui.HTML(summy)\n\n\n# create an app object using your server function\n# Adjust your connection parameters if not using the default TWS paper trader,\n#   or if you want a different client id, etc.\napp = sb.sb_app(\n    home_ui=step_3_ui,\n    server_fn=step_3_server,\n    host='127.0.0.1',\n    port=7497,\n    client_id=10799,\n    verbose=True\n)\n\n# run the app.\napp.run()"
+  },
+  {
+    "objectID": "reference/req_matching_symbols.html",
+    "href": "reference/req_matching_symbols.html",
+    "title": "req_matching_symbols",
+    "section": "",
+    "text": "req_matching_symbols(reqId, pattern)\nCreate a request string for symbols that loosely match a pattern\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nreqId\nint\nNumeric identifier of the request\nrequired\n\n\npattern\nstr\nA string, like “AAPL”, “S&P 500” or “Vanguard” that you’d like to search for\nrequired\n\n\n\n\n\n\nimport shinybroker as sb\nreq_matching_symbols_msg = sb.req_market_data_type(3)\nprint(req_matching_symbols_msg)",
+    "crumbs": [
+      "Reference",
+      "Low-Level Request Messages",
+      "req_matching_symbols"
+    ]
+  },
+  {
+    "objectID": "reference/req_matching_symbols.html#parameters",
+    "href": "reference/req_matching_symbols.html#parameters",
+    "title": "req_matching_symbols",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nreqId\nint\nNumeric identifier of the request\nrequired\n\n\npattern\nstr\nA string, like “AAPL”, “S&P 500” or “Vanguard” that you’d like to search for\nrequired",
+    "crumbs": [
+      "Reference",
+      "Low-Level Request Messages",
+      "req_matching_symbols"
+    ]
+  },
+  {
+    "objectID": "reference/req_matching_symbols.html#examples",
+    "href": "reference/req_matching_symbols.html#examples",
+    "title": "req_matching_symbols",
+    "section": "",
+    "text": "import shinybroker as sb\nreq_matching_symbols_msg = sb.req_market_data_type(3)\nprint(req_matching_symbols_msg)",
+    "crumbs": [
+      "Reference",
+      "Low-Level Request Messages",
+      "req_matching_symbols"
+    ]
+  },
+  {
+    "objectID": "reference/req_market_data_type.html",
+    "href": "reference/req_market_data_type.html",
+    "title": "req_market_data_type",
+    "section": "",
+    "text": "req_market_data_type(marketDataType)\nCreate a string for setting your session’s market data type\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nmarketDataType\nint\nInteger identifier for the market data type that you want\nrequired\n\n\n\n\n\n\nimport shinybroker as sb\n# create a request string for setting the market data type to \"DELAYED\"\nreq_market_data_type_msg = sb.req_market_data_type(3)\nprint(req_market_data_type_msg)",
+    "crumbs": [
+      "Reference",
+      "Low-Level Request Messages",
+      "req_market_data_type"
+    ]
+  },
+  {
+    "objectID": "reference/req_market_data_type.html#parameters",
+    "href": "reference/req_market_data_type.html#parameters",
+    "title": "req_market_data_type",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nmarketDataType\nint\nInteger identifier for the market data type that you want\nrequired",
+    "crumbs": [
+      "Reference",
+      "Low-Level Request Messages",
+      "req_market_data_type"
+    ]
+  },
+  {
+    "objectID": "reference/req_market_data_type.html#examples",
+    "href": "reference/req_market_data_type.html#examples",
+    "title": "req_market_data_type",
+    "section": "",
+    "text": "import shinybroker as sb\n# create a request string for setting the market data type to \"DELAYED\"\nreq_market_data_type_msg = sb.req_market_data_type(3)\nprint(req_market_data_type_msg)",
+    "crumbs": [
+      "Reference",
+      "Low-Level Request Messages",
+      "req_market_data_type"
+    ]
+  },
+  {
+    "objectID": "reference/fetch_sec_def_opt_params.html",
+    "href": "reference/fetch_sec_def_opt_params.html",
+    "title": "fetch_sec_def_opt_params",
+    "section": "",
+    "text": "fetch_sec_def_opt_params(underlyingConId, underlyingSymbol, underlyingSecType, host='127.0.0.1', port=7497, client_id=9999, futFopExchange='', timeout=3)\nFetch the option parameters for a security.\nCreates a temporary IBKR client socket at the specified host, port, and client_id, then makes a query for the security-defined option parameters for the security defined by underlyingConId, underlyingSymbol, underlyingSecType, and futFopExchange.\nfetch_sec_def_opt_params will collect all SECURITY_DEFINITION_OPTION_PARAMETER messages it receives and return them in a dataframe when it receives a SECURITY_DEFINITION_OPTION_PARAMETER_END message.\nIf timeout number of seconds elapse before receiving SECURITY_DEFINITION_OPTION_PARAMETER_END, then fetch_sec_def_opt_params returns None.\nUpon completion, fetch_sec_def_opt_params closes the socket it opened.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nunderlyingConId\nint\nconId of the underlying security\nrequired\n\n\nunderlyingSymbol\nstr\nSymbol of the underlying security for which you want option parameters.\nrequired\n\n\nunderlyingSecType\nstr\nType of the underlying security; e.g., “STK”\nrequired\n\n\nhost\n\nAddress of a running IBKR client (such as TWS or IBG) that has been configured to accept API connections\n'127.0.0.1'\n\n\nport\n\nPort of a running IBKR client\n7497\n\n\nclient_id\n\nClient ID you want to use for the request. If you are connecting to a system that is used by multiple users, then you may wish to set aside an ID for this purpose; if you’re the only one using the account then you probably don’t have to worry about it – just use the default.\n9999\n\n\nfutFopExchange\n\nOnly set this parameter if the underlying is a futures contract; in other words, don’t change it from the default \"\" if your underlying is a stock. If your underlying is a futures contract, then use futFopExchange to specify the exchange for which you want option parameters. You may still pass in \"\" if you want the results to include all of the exchanges available at IBKR that trade options on your specified underlying.\n''\n\n\ntimeout\n\nTime in seconds to wait for a response.\n3\n\n\n\n\n\n\nimport shinybroker as sb\n\nsec_def_opt_params = sb.fetch_sec_def_opt_params(\n    underlyingConId=265598,\n    underlyingSymbol=\"AAPL\",\n    underlyingSecType=\"STK\"\n)\n\nprint(sec_def_opt_params)",
+    "crumbs": [
+      "Reference",
+      "\\\"Fetch\\\" Functions",
+      "fetch_sec_def_opt_params"
+    ]
+  },
+  {
+    "objectID": "reference/fetch_sec_def_opt_params.html#parameters",
+    "href": "reference/fetch_sec_def_opt_params.html#parameters",
+    "title": "fetch_sec_def_opt_params",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nunderlyingConId\nint\nconId of the underlying security\nrequired\n\n\nunderlyingSymbol\nstr\nSymbol of the underlying security for which you want option parameters.\nrequired\n\n\nunderlyingSecType\nstr\nType of the underlying security; e.g., “STK”\nrequired\n\n\nhost\n\nAddress of a running IBKR client (such as TWS or IBG) that has been configured to accept API connections\n'127.0.0.1'\n\n\nport\n\nPort of a running IBKR client\n7497\n\n\nclient_id\n\nClient ID you want to use for the request. If you are connecting to a system that is used by multiple users, then you may wish to set aside an ID for this purpose; if you’re the only one using the account then you probably don’t have to worry about it – just use the default.\n9999\n\n\nfutFopExchange\n\nOnly set this parameter if the underlying is a futures contract; in other words, don’t change it from the default \"\" if your underlying is a stock. If your underlying is a futures contract, then use futFopExchange to specify the exchange for which you want option parameters. You may still pass in \"\" if you want the results to include all of the exchanges available at IBKR that trade options on your specified underlying.\n''\n\n\ntimeout\n\nTime in seconds to wait for a response.\n3",
+    "crumbs": [
+      "Reference",
+      "\\\"Fetch\\\" Functions",
+      "fetch_sec_def_opt_params"
+    ]
+  },
+  {
+    "objectID": "reference/fetch_sec_def_opt_params.html#examples",
+    "href": "reference/fetch_sec_def_opt_params.html#examples",
+    "title": "fetch_sec_def_opt_params",
+    "section": "",
+    "text": "import shinybroker as sb\n\nsec_def_opt_params = sb.fetch_sec_def_opt_params(\n    underlyingConId=265598,\n    underlyingSymbol=\"AAPL\",\n    underlyingSecType=\"STK\"\n)\n\nprint(sec_def_opt_params)",
+    "crumbs": [
+      "Reference",
+      "\\\"Fetch\\\" Functions",
+      "fetch_sec_def_opt_params"
+    ]
+  },
+  {
+    "objectID": "reference/index.html",
+    "href": "reference/index.html",
+    "title": "Reference",
+    "section": "",
+    "text": "These objects are the building blocks that your application uses to work with important tasks like fetching market data or submitting a trade order.\n\n\n\nContract\nAll tradable assets – even stocks and currencies – are ‘contracts’.\n\n\n\n\n\n\nRequest and receive live market data. Can be kept up-to-date as ongoing subscriptions.\n\n\n\nstart_historical_data_subscription\nReactively get historical data\n\n\n\n\n\n\nUse these functions to quickly query & receive data from IBKR. They create their own sockets, use them for the query, listen for the response to come back in blocking mode, and return the result, which is immediately available for use. Since these functions operate in a “one-off” or “synchronous” manner, they can’t be used to create persistent, continually-updated data subscriptions; in other words, you can’t call fetch_historical_data with keepUpToDate = True.\n\n\n\nfetch_historical_data\nFetch historical data for a tradable asset\n\n\nfetch_matching_symbols\nFetch assets whose symbol loosely matches a pattern\n\n\nfetch_sec_def_opt_params\nFetch the option parameters for a security.\n\n\n\n\n\n\nThese functions process their inputs into packed binary data messages that you can send to a connected IBKR socket to instruct it to do something you’re interested in such as place an order, start or cancel a market data subscription, or simply request the current time.\n\n\n\nreq_contract_details\nCreate a contract details request string\n\n\nreq_current_time\nCreate a request string for the current broker time\n\n\nreq_market_data_type\nCreate a string for setting your session’s market data type\n\n\nreq_matching_symbols\nCreate a request string for symbols that loosely match a pattern\n\n\nreq_mkt_data\nCreate a market data request string\n\n\ncancel_mkt_data\nCreate a message to cancel an existing market data subscription by ID\n\n\nreq_sec_def_opt_params\nCreate a request for the security-defined option parameters of a security\n\n\nreq_ids\nCreate a request for the next valid numeric ID that can be used to\n\n\nreq_historical_data\nCreate a request for the historical data of a financial instrument\n\n\ncancel_historical_data\nCreate a message that will cancel an existing historical data request.",
+    "crumbs": [
+      "Reference"
+    ]
+  },
+  {
+    "objectID": "reference/index.html#shinybroker-objects",
+    "href": "reference/index.html#shinybroker-objects",
+    "title": "Reference",
+    "section": "",
+    "text": "These objects are the building blocks that your application uses to work with important tasks like fetching market data or submitting a trade order.\n\n\n\nContract\nAll tradable assets – even stocks and currencies – are ‘contracts’.",
+    "crumbs": [
+      "Reference"
+    ]
+  },
+  {
+    "objectID": "reference/index.html#market-data-functions",
+    "href": "reference/index.html#market-data-functions",
+    "title": "Reference",
+    "section": "",
+    "text": "Request and receive live market data. Can be kept up-to-date as ongoing subscriptions.\n\n\n\nstart_historical_data_subscription\nReactively get historical data",
+    "crumbs": [
+      "Reference"
+    ]
+  },
+  {
+    "objectID": "reference/index.html#fetch-functions",
+    "href": "reference/index.html#fetch-functions",
+    "title": "Reference",
+    "section": "",
+    "text": "Use these functions to quickly query & receive data from IBKR. They create their own sockets, use them for the query, listen for the response to come back in blocking mode, and return the result, which is immediately available for use. Since these functions operate in a “one-off” or “synchronous” manner, they can’t be used to create persistent, continually-updated data subscriptions; in other words, you can’t call fetch_historical_data with keepUpToDate = True.\n\n\n\nfetch_historical_data\nFetch historical data for a tradable asset\n\n\nfetch_matching_symbols\nFetch assets whose symbol loosely matches a pattern\n\n\nfetch_sec_def_opt_params\nFetch the option parameters for a security.",
+    "crumbs": [
+      "Reference"
+    ]
+  },
+  {
+    "objectID": "reference/index.html#low-level-request-messages",
+    "href": "reference/index.html#low-level-request-messages",
+    "title": "Reference",
+    "section": "",
+    "text": "These functions process their inputs into packed binary data messages that you can send to a connected IBKR socket to instruct it to do something you’re interested in such as place an order, start or cancel a market data subscription, or simply request the current time.\n\n\n\nreq_contract_details\nCreate a contract details request string\n\n\nreq_current_time\nCreate a request string for the current broker time\n\n\nreq_market_data_type\nCreate a string for setting your session’s market data type\n\n\nreq_matching_symbols\nCreate a request string for symbols that loosely match a pattern\n\n\nreq_mkt_data\nCreate a market data request string\n\n\ncancel_mkt_data\nCreate a message to cancel an existing market data subscription by ID\n\n\nreq_sec_def_opt_params\nCreate a request for the security-defined option parameters of a security\n\n\nreq_ids\nCreate a request for the next valid numeric ID that can be used to\n\n\nreq_historical_data\nCreate a request for the historical data of a financial instrument\n\n\ncancel_historical_data\nCreate a message that will cancel an existing historical data request.",
+    "crumbs": [
+      "Reference"
+    ]
+  },
+  {
+    "objectID": "reference/req_mkt_data.html",
+    "href": "reference/req_mkt_data.html",
+    "title": "req_mkt_data",
+    "section": "",
+    "text": "req_mkt_data(reqId, contract, genericTickList='', snapshot=False, regulatorySnapshot=False)\nCreate a market data request string\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nreqId\nint\nNumeric identifier of the request\nrequired\n\n\ncontract\nContract\nA Contract object\nrequired\n\n\ngenericTickList\n\nComma-separated string of the numerical Generic Ticks for which you’d like data\n''\n\n\nsnapshot\n\nSet to True if you want a snapshot\nFalse\n\n\nregulatorySnapshot\n\nSet to True if you want a regulatory snapshot\nFalse\n\n\n\n\n\n\nimport shinybroker as sb\nmkt_data_req_msg = sb.req_mkt_data(\n    reqId=1,\n    contract=sb.Contract({\n        'symbol': 'AAPL',\n        'secType': 'STK',\n        'exchange': 'SMART',\n        'currency': 'USD'\n    }),\n    genericTickList=\"233,236\"  # request for \"RT Volume\" & \"Shortable\"\n)\nprint(mkt_data_req_msg)",
+    "crumbs": [
+      "Reference",
+      "Low-Level Request Messages",
+      "req_mkt_data"
+    ]
+  },
+  {
+    "objectID": "reference/req_mkt_data.html#parameters",
+    "href": "reference/req_mkt_data.html#parameters",
+    "title": "req_mkt_data",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nreqId\nint\nNumeric identifier of the request\nrequired\n\n\ncontract\nContract\nA Contract object\nrequired\n\n\ngenericTickList\n\nComma-separated string of the numerical Generic Ticks for which you’d like data\n''\n\n\nsnapshot\n\nSet to True if you want a snapshot\nFalse\n\n\nregulatorySnapshot\n\nSet to True if you want a regulatory snapshot\nFalse",
+    "crumbs": [
+      "Reference",
+      "Low-Level Request Messages",
+      "req_mkt_data"
+    ]
+  },
+  {
+    "objectID": "reference/req_mkt_data.html#examples",
+    "href": "reference/req_mkt_data.html#examples",
+    "title": "req_mkt_data",
+    "section": "",
+    "text": "import shinybroker as sb\nmkt_data_req_msg = sb.req_mkt_data(\n    reqId=1,\n    contract=sb.Contract({\n        'symbol': 'AAPL',\n        'secType': 'STK',\n        'exchange': 'SMART',\n        'currency': 'USD'\n    }),\n    genericTickList=\"233,236\"  # request for \"RT Volume\" & \"Shortable\"\n)\nprint(mkt_data_req_msg)",
+    "crumbs": [
+      "Reference",
+      "Low-Level Request Messages",
+      "req_mkt_data"
+    ]
+  },
+  {
+    "objectID": "reference/req_sec_def_opt_params.html",
+    "href": "reference/req_sec_def_opt_params.html",
+    "title": "req_sec_def_opt_params",
+    "section": "",
+    "text": "req_sec_def_opt_params(reqId, underlyingConId, underlyingSymbol, underlyingSecType, futFopExchange='')\nCreate a request for the security-defined option parameters of a security\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nreqId\nint\nNumeric identifier of the request\nrequired\n\n\nunderlyingConId\nint\nconId of the underlying security\nrequired\n\n\nunderlyingSymbol\nstr\nSymbol of the underlying security for which you want option parameters.\nrequired\n\n\nunderlyingSecType\nstr\nType of the underlying security; e.g., “STK”\nrequired\n\n\nfutFopExchange\n\nOnly set this parameter if the underlying is a futures contract; in other words, don’t change it from the default \"\" if your underlying is a stock. If your underlying is a futures contract, then use futFopExchange to specify the exchange for which you want option parameters. You may still pass in \"\" if you want the results to include all of the exchanges available at IBKR that trade options on your specified underlying.\n''\n\n\n\n\n\n\nimport shinybroker as sb\n# You can specify contract id only\nreq_sec_def_opt_params_msg = sb.req_sec_def_opt_params(\n    reqId=1,\n    underlyingConId=265598\n)\nprint(req_sec_def_opt_params_msg)\nreq_sec_def_opt_params_msg = sb.req_sec_def_opt_params(\n    reqId=1,\n    underlyingSymbol=\"AAPL\",\n    futFopExchange=\"\",\n    underlyingSecType=\"STK\",\n    underlyingConId=265598\n)\nprint(req_sec_def_opt_params_msg)",
+    "crumbs": [
+      "Reference",
+      "Low-Level Request Messages",
+      "req_sec_def_opt_params"
+    ]
+  },
+  {
+    "objectID": "reference/req_sec_def_opt_params.html#parameters",
+    "href": "reference/req_sec_def_opt_params.html#parameters",
+    "title": "req_sec_def_opt_params",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nreqId\nint\nNumeric identifier of the request\nrequired\n\n\nunderlyingConId\nint\nconId of the underlying security\nrequired\n\n\nunderlyingSymbol\nstr\nSymbol of the underlying security for which you want option parameters.\nrequired\n\n\nunderlyingSecType\nstr\nType of the underlying security; e.g., “STK”\nrequired\n\n\nfutFopExchange\n\nOnly set this parameter if the underlying is a futures contract; in other words, don’t change it from the default \"\" if your underlying is a stock. If your underlying is a futures contract, then use futFopExchange to specify the exchange for which you want option parameters. You may still pass in \"\" if you want the results to include all of the exchanges available at IBKR that trade options on your specified underlying.\n''",
+    "crumbs": [
+      "Reference",
+      "Low-Level Request Messages",
+      "req_sec_def_opt_params"
+    ]
+  },
+  {
+    "objectID": "reference/req_sec_def_opt_params.html#examples",
+    "href": "reference/req_sec_def_opt_params.html#examples",
+    "title": "req_sec_def_opt_params",
+    "section": "",
+    "text": "import shinybroker as sb\n# You can specify contract id only\nreq_sec_def_opt_params_msg = sb.req_sec_def_opt_params(\n    reqId=1,\n    underlyingConId=265598\n)\nprint(req_sec_def_opt_params_msg)\nreq_sec_def_opt_params_msg = sb.req_sec_def_opt_params(\n    reqId=1,\n    underlyingSymbol=\"AAPL\",\n    futFopExchange=\"\",\n    underlyingSecType=\"STK\",\n    underlyingConId=265598\n)\nprint(req_sec_def_opt_params_msg)",
+    "crumbs": [
+      "Reference",
+      "Low-Level Request Messages",
+      "req_sec_def_opt_params"
+    ]
+  },
+  {
+    "objectID": "reference/fetch_matching_symbols.html",
+    "href": "reference/fetch_matching_symbols.html",
+    "title": "fetch_matching_symbols",
+    "section": "",
+    "text": "fetch_matching_symbols(pattern, host='127.0.0.1', port=7497, client_id=9999)\nFetch assets whose symbol loosely matches a pattern\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\npattern\nstr\nA string, like “AAPL”, “S&P 500” or “Vanguard” that you’d like to search for\nrequired\n\n\nhost\n\nAddress of a running IBKR client (such as TWS or IBG) that has been configured to accept API connections\n'127.0.0.1'\n\n\nport\n\nPort of a running IBKR client\n7497\n\n\nclient_id\n\nClient ID you want to use for the request. If you are connecting to a system that is used by multiple users, then you may wish to set aside an ID for this purpose; if you’re the only one using the account then you probably don’t have to worry about it – just use the default.\n9999\n\n\n\n\n\n\nimport shinybroker as sb\n\nmatching_symbols_aapl = sb.fetch_matching_symbols(\"AAPL\")\nprint(\"Stocks matching patterm \\\"AAPL\\\":\")\nprint(matching_symbols_aapl['stocks'])\nprint(\"Bonds matching patterm \\\"AAPL\\\":\")\nprint(matching_symbols_aapl['bonds'])\n\nmatching_symbols_goog = sb.fetch_matching_symbols(\"GOOG\")\nprint(\"Matching Symbols for \\\"GOOG\\\":\")\nprint(matching_symbols_goog)\n\nmatching_symbols_no_match = sb.fetch_matching_symbols(\"string w no matches\")\nprint(\"If nothing matches, then you get a dictionary of empty data frames:\")\nprint(\"returned dict:\")\nprint(matching_symbols_no_match)\nprint(\"no matching stocks:\")\nprint(matching_symbols_no_match)\nprint(\"no matching bonds:\")\nprint(matching_symbols_no_match)",
+    "crumbs": [
+      "Reference",
+      "\\\"Fetch\\\" Functions",
+      "fetch_matching_symbols"
+    ]
+  },
+  {
+    "objectID": "reference/fetch_matching_symbols.html#parameters",
+    "href": "reference/fetch_matching_symbols.html#parameters",
+    "title": "fetch_matching_symbols",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\npattern\nstr\nA string, like “AAPL”, “S&P 500” or “Vanguard” that you’d like to search for\nrequired\n\n\nhost\n\nAddress of a running IBKR client (such as TWS or IBG) that has been configured to accept API connections\n'127.0.0.1'\n\n\nport\n\nPort of a running IBKR client\n7497\n\n\nclient_id\n\nClient ID you want to use for the request. If you are connecting to a system that is used by multiple users, then you may wish to set aside an ID for this purpose; if you’re the only one using the account then you probably don’t have to worry about it – just use the default.\n9999",
+    "crumbs": [
+      "Reference",
+      "\\\"Fetch\\\" Functions",
+      "fetch_matching_symbols"
+    ]
+  },
+  {
+    "objectID": "reference/fetch_matching_symbols.html#examples",
+    "href": "reference/fetch_matching_symbols.html#examples",
+    "title": "fetch_matching_symbols",
+    "section": "",
+    "text": "import shinybroker as sb\n\nmatching_symbols_aapl = sb.fetch_matching_symbols(\"AAPL\")\nprint(\"Stocks matching patterm \\\"AAPL\\\":\")\nprint(matching_symbols_aapl['stocks'])\nprint(\"Bonds matching patterm \\\"AAPL\\\":\")\nprint(matching_symbols_aapl['bonds'])\n\nmatching_symbols_goog = sb.fetch_matching_symbols(\"GOOG\")\nprint(\"Matching Symbols for \\\"GOOG\\\":\")\nprint(matching_symbols_goog)\n\nmatching_symbols_no_match = sb.fetch_matching_symbols(\"string w no matches\")\nprint(\"If nothing matches, then you get a dictionary of empty data frames:\")\nprint(\"returned dict:\")\nprint(matching_symbols_no_match)\nprint(\"no matching stocks:\")\nprint(matching_symbols_no_match)\nprint(\"no matching bonds:\")\nprint(matching_symbols_no_match)",
+    "crumbs": [
+      "Reference",
+      "\\\"Fetch\\\" Functions",
+      "fetch_matching_symbols"
     ]
   },
   {

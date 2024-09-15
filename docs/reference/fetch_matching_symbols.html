@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>req_historical_data – ShinyBroker</title>
+<title>fetch_matching_symbols – ShinyBroker</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -29,8 +29,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../reference/cancel_historical_data.html" rel="next">
-<link href="../reference/req_ids.html" rel="prev">
+<link href="../reference/fetch_sec_def_opt_params.html" rel="next">
+<link href="../reference/fetch_historical_data.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -122,7 +122,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../reference/req_contract_details.html">Low-Level Request Messages</a></li><li class="breadcrumb-item"><a href="../reference/req_historical_data.html">req_historical_data</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../reference/fetch_historical_data.html">\"Fetch\" Functions</a></li><li class="breadcrumb-item"><a href="../reference/fetch_matching_symbols.html">fetch_matching_symbols</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -191,7 +191,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../reference/fetch_matching_symbols.html" class="sidebar-item-text sidebar-link">
+  <a href="../reference/fetch_matching_symbols.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">fetch_matching_symbols</span></a>
   </div>
 </li>
@@ -262,7 +262,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../reference/req_historical_data.html" class="sidebar-item-text sidebar-link active">
+  <a href="../reference/req_historical_data.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">req_historical_data</span></a>
   </div>
 </li>
@@ -284,7 +284,7 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#shinybroker.req_historical_data" id="toc-shinybroker.req_historical_data" class="nav-link active" data-scroll-target="#shinybroker.req_historical_data">req_historical_data</a>
+  <li><a href="#shinybroker.fetch_matching_symbols" id="toc-shinybroker.fetch_matching_symbols" class="nav-link active" data-scroll-target="#shinybroker.fetch_matching_symbols">fetch_matching_symbols</a>
   <ul class="collapse">
   <li><a href="#parameters" id="toc-parameters" class="nav-link" data-scroll-target="#parameters">Parameters</a></li>
   <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a></li>
@@ -298,13 +298,19 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<section id="shinybroker.req_historical_data" class="level1">
-<h1>req_historical_data</h1>
-<p><code>req_historical_data(reqId, contract, endDateTime='', durationStr='1 D', barSizeSetting='1 hour', whatToShow='Trades', useRTH=True, formatDate=1, keepUpToDate=False)</code></p>
-<p>Create a request for the historical data of a financial instrument</p>
+<section id="shinybroker.fetch_matching_symbols" class="level1">
+<h1>fetch_matching_symbols</h1>
+<p><code>fetch_matching_symbols(pattern, host='127.0.0.1', port=7497, client_id=9999)</code></p>
+<p>Fetch assets whose symbol loosely matches a pattern</p>
 <section id="parameters" class="level2">
 <h2 class="anchored" data-anchor-id="parameters">Parameters</h2>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 4%">
+<col style="width: 2%">
+<col style="width: 88%">
+<col style="width: 4%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
@@ -315,58 +321,28 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>reqId</code></td>
-<td>int</td>
-<td>Numeric identifier of the request</td>
+<td><code>pattern</code></td>
+<td>str</td>
+<td>A string, like “AAPL”, “S&amp;P 500” or “Vanguard” that you’d like to search for</td>
 <td><em>required</em></td>
 </tr>
 <tr class="even">
-<td><code>contract</code></td>
-<td>Contract</td>
-<td>The <a href="`shinybroker.Contract`">Contract</a> object for which you want data</td>
-<td><em>required</em></td>
+<td><code>host</code></td>
+<td></td>
+<td>Address of a running IBKR client (such as TWS or IBG) that has been configured to accept API connections</td>
+<td><code>'127.0.0.1'</code></td>
 </tr>
 <tr class="odd">
-<td><code>endDateTime</code></td>
+<td><code>port</code></td>
 <td></td>
-<td>Ending datetime string formatted as “YYYYMMDD HH:mm:ss TMZ” specifying the end of the time period for which you want historical data. Leave it as the default “” to get historical data up to the current present moment.</td>
-<td><code>''</code></td>
+<td>Port of a running IBKR client</td>
+<td><code>7497</code></td>
 </tr>
 <tr class="even">
-<td><code>durationStr</code></td>
+<td><code>client_id</code></td>
 <td></td>
-<td>A <a href="https://www.interactivebrokers.com/campus/ibkr-api-page/twsapi-doc/#hist-duration">Duration String</a> that specifies how far back in time you want to fetch data.</td>
-<td><code>'1 D'</code></td>
-</tr>
-<tr class="odd">
-<td><code>barSizeSetting</code></td>
-<td></td>
-<td>A <a href="https://www.interactivebrokers.com/campus/ibkr-api-page/twsapi-doc/#hist-bar-size">Bar Size</a> that specifies how fine-grained you want your historical data to be (daily, weekly, every 30 seconds, etc).</td>
-<td><code>'1 hour'</code></td>
-</tr>
-<tr class="even">
-<td><code>whatToShow</code></td>
-<td></td>
-<td>You may select from any of the <a href="https://www.interactivebrokers.com/campus/ibkr-api-page/twsapi-doc/#historical-whattoshow">Historical Data Types</a> but for most cases you’ll probably be happy with one of “BID_ASK”, “MIDPOINT”, or “TRADES”.</td>
-<td><code>'Trades'</code></td>
-</tr>
-<tr class="odd">
-<td><code>useRTH</code></td>
-<td></td>
-<td>“Use Regular Trading Hours”. Set to <code>False</code> if you want the historical data to include after-hours/pre-market trading</td>
-<td><code>True</code></td>
-</tr>
-<tr class="even">
-<td><code>formatDate</code></td>
-<td></td>
-<td>Numeric code from the <a href="https://www.interactivebrokers.com/campus/ibkr-api-page/twsapi-doc/#hist-format-date">Format Date Received</a> table that specifies how you want your dates formatted in the data.</td>
-<td><code>1</code></td>
-</tr>
-<tr class="odd">
-<td><code>keepUpToDate</code></td>
-<td></td>
-<td>Set to <code>True</code> if you want to keep receiving new bar data as it becomes available. For a <code>barSizeSetting</code> of <code>5 min</code>, that would mean you receive new data every 5 minutes.</td>
-<td><code>False</code></td>
+<td>Client ID you want to use for the request. If you are connecting to a system that is used by multiple users, then you may wish to set aside an ID for this purpose; if you’re the only one using the account then you probably don’t have to worry about it – just use the default.</td>
+<td><code>9999</code></td>
 </tr>
 </tbody>
 </table>
@@ -374,22 +350,26 @@ ul.task-list li input[type="checkbox"] {
 <section id="examples" class="level2">
 <h2 class="anchored" data-anchor-id="examples">Examples</h2>
 <pre><code>import shinybroker as sb
-# create a request for historical TRADES of AAPL for the last 30 days,
-#   starting today. Report the data on a daily basis, regular trading
-#   hours only, and format it as "string time zone date". Make it a one-time
-#   query; don't keep it up-to-date.
-req_historical_data_msg = sb.req_historical_data(
-    reqId=1,
-    contract = Contract({
-        'symbol': "AAPL",
-        'secType': "STK",
-        'exchange': "SMART",
-        'currency': "USD"
-    }),
-    durationStr='30 D',
-    barSizeSetting='1 day'
-)
-print(req_historical_data_msg)</code></pre>
+
+matching_symbols_aapl = sb.fetch_matching_symbols("AAPL")
+print("Stocks matching patterm \"AAPL\":")
+print(matching_symbols_aapl['stocks'])
+print("Bonds matching patterm \"AAPL\":")
+print(matching_symbols_aapl['bonds'])
+
+matching_symbols_goog = sb.fetch_matching_symbols("GOOG")
+print("Matching Symbols for \"GOOG\":")
+print(matching_symbols_goog)
+
+matching_symbols_no_match = sb.fetch_matching_symbols("string w no matches")
+print("If nothing matches, then you get a dictionary of empty data frames:")
+print("returned dict:")
+print(matching_symbols_no_match)
+print("no matching stocks:")
+print(matching_symbols_no_match)
+print("no matching bonds:")
+print(matching_symbols_no_match)
+</code></pre>
 
 
 </section>
@@ -818,13 +798,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../reference/req_ids.html" class="pagination-link" aria-label="req_ids">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">req_ids</span>
+      <a href="../reference/fetch_historical_data.html" class="pagination-link" aria-label="fetch_historical_data">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">fetch_historical_data</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../reference/cancel_historical_data.html" class="pagination-link" aria-label="cancel_historical_data">
-        <span class="nav-page-text">cancel_historical_data</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../reference/fetch_sec_def_opt_params.html" class="pagination-link" aria-label="fetch_sec_def_opt_params">
+        <span class="nav-page-text">fetch_sec_def_opt_params</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
