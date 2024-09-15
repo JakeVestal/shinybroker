@@ -481,14 +481,13 @@ def req_real_time_bars(
         pack_element("")  # realTimeBarOptions, not yet implemented by IBKR
     )
 
+
 def cancel_real_time_bars(reqId: int):
     return pack_message(
         functionary['outgoing_msg_codes']['CANCEL_REAL_TIME_BARS'] + "\0" +
         "1\0" +  # VERSION
         pack_element(reqId)
     )
-
-
 
 
 def req_scanner_parameters():
