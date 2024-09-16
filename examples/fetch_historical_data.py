@@ -1,5 +1,6 @@
 import shinybroker as sb
 
+
 historical_data = sb.fetch_historical_data(
     contract=sb.Contract({
         'symbol': "AAPL",
@@ -8,8 +9,27 @@ historical_data = sb.fetch_historical_data(
         'currency': "USD"
     })
 )
-
 print(historical_data)
+
+
+# historical Bid/Ask for a Google Call
+historical_data_google_bid_ask = sb.fetch_historical_data(
+    contract=sb.Contract({
+        'symbol': 'GOOG',
+        'secType': 'OPT',
+        'exchange': 'SMART',
+        'currency': 'USD',
+        'lastTradeDateOrContractMonth': '20261218',
+        'strike': 160,
+        'right': 'C',
+        'multiplier': '100'
+    }),
+    durationStr='1 D',
+    barSizeSetting='1 hour',
+    whatToShow='BID_ASK'
+)
+print(historical_data_google_bid_ask)
+
 
 #### Try an example with a bad barSizeSetting
 #### fetch_historical_data prints an informative error message and returns None
