@@ -136,7 +136,8 @@ def fetch_historical_data(
         useRTH=True,
         host='127.0.0.1',
         port=7497,
-        client_id=9999
+        client_id=9999,
+        timeout=3
 ):
     """Fetch historical data for a tradable asset
 
@@ -181,6 +182,8 @@ def fetch_historical_data(
         system that is used by multiple users, then you may wish to set aside an
          ID for this purpose; if you're the only one using the account then
          you probably don't have to worry about it -- just use the default.
+    timeout: 3
+        Time in seconds to wait for a response.
 
     Examples
     --------
@@ -211,7 +214,8 @@ def fetch_historical_data(
 
     historical_data = None
 
-    while True:
+    start_time = datetime.now()
+    while (datetime.now() - start_time).seconds <= timeout:
         incoming_msg = read_ib_msg(sock=ib_socket)
         if incoming_msg[0] == '4' and incoming_msg[3] == '321':
             print(incoming_msg[4])
