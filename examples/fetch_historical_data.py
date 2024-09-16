@@ -24,8 +24,8 @@ historical_data_google_bid_ask = sb.fetch_historical_data(
         'right': 'C',
         'multiplier': '100'
     }),
-    durationStr='1 D',
-    barSizeSetting='1 hour',
+    durationStr='1 W',
+    barSizeSetting='1 day',
     whatToShow='BID_ASK'
 )
 print(historical_data_google_bid_ask)
