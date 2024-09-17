@@ -126,6 +126,7 @@ def shdss_server(
         )
 
     @render.ui
+    @reactive.event(input.fetch_data, ignore_init=True)
     def hd_selector():
         if len(sb_rvs['historical_data']().keys()) > 0:
             return ui.TagList(
@@ -158,8 +159,8 @@ def shdss_server(
         req(selected_hd is not False, cancel_output=True)
         return render.DataTable(selected_hd)
 
-
     @render.ui
+    @reactive.event(input.fetch_data, ignore_init=True)
     def hd_description():
         return ui.TagList(
             ui.br(),
