@@ -1,6 +1,6 @@
 # fetch_historical_data { #shinybroker.fetch_historical_data }
 
-`fetch_historical_data(contract, endDateTime='', durationStr='1 D', barSizeSetting='1 hour', whatToShow='Trades', useRTH=True, host='127.0.0.1', port=7497, client_id=9999)`
+`fetch_historical_data(contract, endDateTime='', durationStr='1 D', barSizeSetting='1 hour', whatToShow='Trades', useRTH=True, host='127.0.0.1', port=7497, client_id=9999, timeout=3)`
 
 Fetch historical data for a tradable asset
 
@@ -25,6 +25,7 @@ then `fetch_historical_data` returns `None`.
 | `host`           |          | Address of a running IBKR client (such as TWS or IBG) that has been configured to accept API connections                                                                                                                                                                               | `'127.0.0.1'` |
 | `port`           |          | Port of a running IBKR client                                                                                                                                                                                                                                                          | `7497`        |
 | `client_id`      |          | Client ID you want to use for the request. If you are connecting to a system that is used by multiple users, then you may wish to set aside an  ID for this purpose; if you're the only one using the account then  you probably don't have to worry about it -- just use the default. | `9999`        |
+| `timeout`        |          | Time in seconds to wait for a response.                                                                                                                                                                                                                                                | `3`           |
 
 ## Examples
 

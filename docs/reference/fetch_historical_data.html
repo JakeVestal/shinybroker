@@ -300,7 +300,7 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="shinybroker.fetch_historical_data" class="level1">
 <h1>fetch_historical_data</h1>
-<p><code>fetch_historical_data(contract, endDateTime='', durationStr='1 D', barSizeSetting='1 hour', whatToShow='Trades', useRTH=True, host='127.0.0.1', port=7497, client_id=9999)</code></p>
+<p><code>fetch_historical_data(contract, endDateTime='', durationStr='1 D', barSizeSetting='1 hour', whatToShow='Trades', useRTH=True, host='127.0.0.1', port=7497, client_id=9999, timeout=3)</code></p>
 <p>Fetch historical data for a tradable asset</p>
 <p>Creates a temporary IBKR client socket at the specified <code>host</code>, <code>port</code>, and <code>client_id</code>, then makes a query for the historical data specified by the input parameters, receives the response, closes the socket, formats the response, and returns the result.</p>
 <p>If <code>timeout</code> number of seconds elapse before receiving historical data, then <code>fetch_historical_data</code> returns <code>None</code>.</p>
@@ -370,12 +370,19 @@ ul.task-list li input[type="checkbox"] {
 <td>Client ID you want to use for the request. If you are connecting to a system that is used by multiple users, then you may wish to set aside an ID for this purpose; if you’re the only one using the account then you probably don’t have to worry about it – just use the default.</td>
 <td><code>9999</code></td>
 </tr>
+<tr class="even">
+<td><code>timeout</code></td>
+<td></td>
+<td>Time in seconds to wait for a response.</td>
+<td><code>3</code></td>
+</tr>
 </tbody>
 </table>
 </section>
 <section id="examples" class="level2">
 <h2 class="anchored" data-anchor-id="examples">Examples</h2>
 <pre><code>import shinybroker as sb
+
 
 historical_data = sb.fetch_historical_data(
     contract=sb.Contract({
@@ -385,8 +392,27 @@ historical_data = sb.fetch_historical_data(
         'currency': "USD"
     })
 )
-
 print(historical_data)
+
+
+# historical Bid/Ask for a Google Call
+historical_data_google_bid_ask = sb.fetch_historical_data(
+    contract=sb.Contract({
+        'symbol': 'GOOG',
+        'secType': 'OPT',
+        'exchange': 'SMART',
+        'currency': 'USD',
+        'lastTradeDateOrContractMonth': '20261218',
+        'strike': 160,
+        'right': 'C',
+        'multiplier': '100'
+    }),
+    durationStr='1 W',
+    barSizeSetting='1 day',
+    whatToShow='BID_ASK'
+)
+print(historical_data_google_bid_ask)
+
 
 #### Try an example with a bad barSizeSetting
 #### fetch_historical_data prints an informative error message and returns None
