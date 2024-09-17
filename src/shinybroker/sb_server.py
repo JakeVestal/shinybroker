@@ -155,7 +155,7 @@ def sb_server(
     @reactive.effect
     @reactive.event(input.error_notification)
     def send_error_message_notification():
-        ui.notification_show(input.error_notification())
+        ui.notification_show(input.error_notification(), 15)
 
     # Current Time
     # Useful mostly just to check if i/o is working.
