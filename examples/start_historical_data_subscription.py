@@ -1,3 +1,5 @@
+import pandas as pd
+
 import shinybroker as sb
 from shiny import Inputs, Outputs, Session, ui, render, reactive, req
 
@@ -6,8 +8,13 @@ shdss_ui = ui.page_fluid(
     ui.p(
         'When you click the "Fetch Historical Data" button, this app ' +
         'feeds each of the labelled inputs to ',
-        ui.code("start_historical_data_subscription"),
-        "which assigns an ID to each query and makes the data request. " +
+        ui.a(
+            ui.code("start_historical_data_subscription"),
+            href='https://shinybroker.com/reference/' +
+                 'start_historical_data_subscription.html#' +
+                 'shinybroker.start_historical_data_subscription'
+        ),
+        ", which assigns an ID to each query and makes the data request. " +
         "ShinyBroker then reactively receives the data as it comes in and " +
         "stores it in the reactive variable ",
         ui.code("sb_rvs['historical_data']"),
@@ -98,8 +105,7 @@ shdss_ui = ui.page_fluid(
         ),
         ui.column(3)
     ),
-    ui.output_ui('hd_selector'),
-    ui.output_ui('hd_output')
+    ui.output_ui('hd_element_selection_section')
 )
 
 
@@ -113,6 +119,8 @@ def shdss_server(
     @reactive.effect
     @reactive.event(input.fetch_data, ignore_init=True)
     def fetch_historical_data():
+        # when the fetch data button is clicked, read the inputs and fetch
+        #   the data historical data!
         sb.start_historical_data_subscription(
             historical_data=sb_rvs['historical_data'],
             hd_socket=ib_socket,
@@ -120,48 +128,77 @@ def shdss_server(
             endDateTime=input.endDateTime(),
             durationStr=input.durationStr(),
             barSizeSetting=input.barSizeSetting(),
+            whatToShow=input.whatToShow(),
             useRTH=input.useRTH(),
             formatDate=input.formatDate(),
             keepUpToDate=input.keepUpToDate()
         )
 
+    # Make a reactive var containing the keys of the historical data object
+    #   that only gets updated when the keys change
+    hd_keys = reactive.value([])
+
+    @reactive.effect
+    def update_hd_keys():
+        hdk = sb_rvs['historical_data']().keys()
+        if hdk != hd_keys() and len(hdk) > 0:
+            hd_keys.set(hdk)
+
     @render.ui
-    @reactive.event(input.fetch_data, ignore_init=True)
-    def hd_selector():
-        if len(sb_rvs['historical_data']().keys()) > 0:
-            return ui.TagList(
-                ui.input_radio_buttons(
-                    id='selected_hd_id',
-                    label='Select an ID to display historical data',
-                    choices=dict(
-                        zip(
-                            sb_rvs['historical_data']().keys(),
-                            sb_rvs['historical_data']().keys()
-                        )
-                    )
-                ),
-                ui.output_ui('hd_description'),
-                ui.output_data_frame('selected_hd_data')
-            )
-        else:
+    @reactive.event(hd_keys)
+    def hd_element_selection_section():
+        # Runs when hd_keys changes or is initialized
+        hdk = hd_keys()
+        if len(hdk) == 0:
+            # If sb_rvs['historical_data'] is empty, it returns a p() tag with a
+            #   helpful message asking the user to make a request.
             return ui.TagList(
                 ui.p(
                     'Please make a historical data request and the results ' +
                     'will appear here.'
                 )
             )
+        elif len(hdk) == 1:
+            # If len(hkd) == 1 then that means the user has added one
+            #   historical data object. In this case, replace the "Please
+            #   make a historical data request..." message with 3 ui objects:
+            # 1) selected_hd_id: a radio buttons input with `choices` populated
+            #      with the id of the data request
+            # 2) hd_description: a ui object, blank for now
+            # 3) selected_hd_data: an empty datatable for tabular data
+            return ui.TagList(
+                ui.input_radio_buttons(
+                    id='selected_hd_id',
+                    label='Select an ID to display historical data',
+                    choices=dict(zip(hdk, hdk))
+                ),
+                ui.output_ui('hd_description'),
+                ui.output_data_frame('selected_hd_data')
+            )
+        else:
+            # If len(hdk) != 0 or 1, then this case occurs, meaning that all the
+            #   function needs to do is update the choices attribute of the
+            #   selected_hd_id radio button input widget:
+            ui.update_radio_buttons(
+                id='selected_hd_id',
+                choices=dict(zip(hdk, hdk)),
+                selected=hdk[len(hdk) - 1]
+            )
 
     @render.data_frame
     def selected_hd_data():
-        selected_hd = sb_rvs['historical_data']().get(
-            input.selected_hd_id(), {}
-        ).get('hst_dta', False)
-        req(selected_hd is not False, cancel_output=True)
-        return render.DataTable(selected_hd)
+        # populate the datatable `selected_hd_data` with the historical data
+        #   element that the user has selected
+        return render.DataTable(
+            sb_rvs['historical_data']().get(
+                input.selected_hd_id(), {}
+            ).get('hst_dta', pd.DataFrame({}))
+        )
 
     @render.ui
-    @reactive.event(input.fetch_data, ignore_init=True)
+    @reactive.event(hd_keys, input.selected_hd_id)
     def hd_description():
+        # render the descriptive text for the selected hd element
         return ui.TagList(
             ui.br(),
             ui.h5(
@@ -190,9 +227,7 @@ def shdss_server(
         )
 
 
-
-
-# Create a ShinyBroker app with the new ui and server
+# Create a ShinyBroker app with the ui and server
 app = sb.sb_app(
     shdss_ui,
     shdss_server,
@@ -201,4 +236,5 @@ app = sb.sb_app(
     client_id=10742
 )
 
+# run it!! :)
 app.run()

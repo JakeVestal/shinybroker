@@ -37,8 +37,8 @@ def start_mkt_data_subscription(
     market_data.set(mkt_dta.copy())
 
 def start_historical_data_subscription(
-        historical_data=None,
-        hd_socket=None,
+        historical_data,
+        hd_socket,
         subscription_id=None,
         contract=Contract({}),
         endDateTime="",
@@ -57,12 +57,12 @@ def start_historical_data_subscription(
 
     Parameters
     ----------
-    historical_data: None
+    historical_data:
         You probably want to pass `sb_rvs['historical_data']` to this parameter
         unless you have declared a different reactive variable for storing your
         historical data queries. Unless you have a very specific use case to
         do otherwise, use `sb_rvs['historical_data']`.
-    hd_socket: None
+    hd_socket:
         The socket on which you want to make the historical data subscription.
         You almost certainly want to pass `ib_socket` as this parameter unless
         you have constructed an app that uses different sockets for different
