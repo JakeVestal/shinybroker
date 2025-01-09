@@ -5,15 +5,29 @@ from datetime import datetime
 
 def format_historical_data_input(hst_dta):
     hd_len = len(hst_dta)
+
+    if len(hst_dta[4]) == 8:
+        timestamps = [
+            datetime(
+                int(hst_dta[i][:4]),
+                int(hst_dta[i][4:6]),
+                int(hst_dta[i][6:8])
+            ).date() for i in range(4, hd_len, 8)
+        ]
+    else:
+        timestamps = [
+            datetime.fromtimestamp(
+                int(hst_dta[i])
+            ) for i in range(4, hd_len, 8)
+        ]
+
+    print(timestamps)
+
     return {
         'startDateStr': hst_dta[1],
         'endDateStr': hst_dta[2],
         'hst_dta': pd.DataFrame({
-            'timestamp': [
-                datetime.fromtimestamp(
-                    int(hst_dta[i])
-                ) for i in range(4, hd_len, 8)
-            ],
+            'timestamp': timestamps,
             'open': [float(hst_dta[i]) for i in range(5, hd_len, 8)],
             'high': [float(hst_dta[i]) for i in range(6, hd_len, 8)],
             'low': [float(hst_dta[i]) for i in range(7, hd_len, 8)],
