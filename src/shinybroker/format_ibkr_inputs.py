@@ -21,8 +21,6 @@ def format_historical_data_input(hst_dta):
             ) for i in range(4, hd_len, 8)
         ]
 
-    print(timestamps)
-
     return {
         'startDateStr': hst_dta[1],
         'endDateStr': hst_dta[2],
