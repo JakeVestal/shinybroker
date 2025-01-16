@@ -44,3 +44,21 @@ historical_data_bad_barsize = sb.fetch_historical_data(
     barSizeSetting="1 hrs"
 )
 print(historical_data_bad_barsize)
+
+#### Try an example with a bad security definition
+#### IBKR doesn't give historical data for SPX on SMART exchange; you must pass
+####   "ARCA" as the exchange to get it to work. If you try the below code,
+####   which does not return historical data, you'll get an informative error
+####   message suggesting that you check the contract definition.
+historical_data_bad_secdef = sb.fetch_historical_data(
+    contract=sb.Contract({
+        'symbol': "SPX",
+        'secType': "STK",
+        'exchange': "SMART",
+        'currency': "USD"
+    }),
+    barSizeSetting="1 day",
+
+
+)
+print(historical_data_bad_secdef)

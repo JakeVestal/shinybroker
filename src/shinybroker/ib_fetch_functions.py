@@ -218,7 +218,7 @@ def fetch_historical_data(
     start_time = datetime.now()
     while (datetime.now() - start_time).seconds <= timeout:
         incoming_msg = read_ib_msg(sock=ib_socket)
-        if incoming_msg[0] == '4' and incoming_msg[3] in ['162', '321']:
+        if incoming_msg[0] == '4' and incoming_msg[3] in ['162', '200', '321']:
             warnings.warn(incoming_msg[4])
             break
         if incoming_msg[0] == functionary['incoming_msg_codes'][
@@ -283,4 +283,3 @@ def fetch_matching_symbols(
     ib_socket.close()
 
     return matching_symbols
-
