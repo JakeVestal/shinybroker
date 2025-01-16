@@ -12,6 +12,8 @@ historical_data = sb.fetch_historical_data(
 print(historical_data)
 
 # historical Bid/Ask for a Google Call
+# the behavior of this one can be spotty if you're running it outside of
+#   normal trading hours
 historical_data_google_bid_ask = sb.fetch_historical_data(
     contract=sb.Contract({
         'symbol': 'GOOG',
