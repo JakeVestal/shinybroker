@@ -289,15 +289,18 @@ def sb_server(
     def request_contract_details():
 
         try:
-            exec(input.cd_contract_definition())
+            namespace = {}
+            exec('from shinybroker import Contract', namespace)
+            exec(input.cd_contract_definition(), namespace)
         except Exception as e:
             print(e)
             return
 
         rcd_contract = None
-        for key, value in locals().items():
+        for key, value in namespace.items():
             if isinstance(value, Contract):
                 rcd_contract = value
+                break
 
         if rcd_contract is None:
             ui.notification_show('No viable contract object found')
