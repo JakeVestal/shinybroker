@@ -1,4 +1,4 @@
-VERSION = '0.6.28'
+VERSION = '0.6.29'
 
 from shinybroker.connection import (
     create_ibkr_socket_conn,

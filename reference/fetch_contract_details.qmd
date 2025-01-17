@@ -1,0 +1,26 @@
+# fetch_contract_details { #shinybroker.fetch_contract_details }
+
+`fetch_contract_details(contract, host='127.0.0.1', port=7497, client_id=9999)`
+
+Fetch contract details
+
+Fetches the contract details returned by IBKR for a specified contract.
+Useful for checking & validating a contract definition. Prints out an
+error message and returns None if no contract is found. Results are
+returned in a dataframe with more than one matching contract if multiple
+matches are found.
+
+## Parameters
+
+| Name        | Type     | Description                                                                                                                                                                                                                                                                           | Default       |
+|-------------|----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
+| `contract`  | Contract | The [Contract](`shinybroker.Contract`) object for which you want data                                                                                                                                                                                                                 | _required_    |
+| `host`      |          | Address of a running IBKR client (such as TWS or IBG) that has been configured to accept API connections                                                                                                                                                                              | `'127.0.0.1'` |
+| `port`      |          | Port of a running IBKR client                                                                                                                                                                                                                                                         | `7497`        |
+| `client_id` |          | Client ID you want to use for the request. If you are connecting to a system that is used by multiple users, then you may wish to set aside an  ID for this purpose; if you're the only one using the account then you probably don't have to worry about it -- just use the default. | `9999`        |
+
+## Examples
+
+```
+{{< include ../examples/fetch_contract_details.py >}}
+```

@@ -8,6 +8,7 @@ from shinybroker.connection import (
     create_ibkr_socket_conn, send_ib_message, read_ib_msg
 )
 from shinybroker.format_ibkr_inputs import (
+    format_contract_details,
     format_historical_data_input,
     format_sec_def_opt_params_input,
     format_symbol_samples_input
@@ -297,7 +298,9 @@ def fetch_contract_details(
 
     Fetches the contract details returned by IBKR for a specified contract.
     Useful for checking & validating a contract definition. Prints out an
-    error message and returns None if no contract is found.
+    error message and returns None if no contract is found. Results are
+    returned in a dataframe with more than one matching contract if multiple
+    matches are found.
 
     Parameters
     ------------
@@ -321,16 +324,6 @@ def fetch_contract_details(
     ```
     """
 
-    host = '127.0.0.1'
-    port = 7497
-    client_id = 9999
-    contract = Contract({
-        'symbol': "AAPL",
-        'secType': "STK",
-        'exchange': "SMART",
-        'currency': "USD"
-    })
-
     ib_conn = create_ibkr_socket_conn(
         host=host, port=port, client_id=client_id
     )
@@ -346,7 +339,6 @@ def fetch_contract_details(
     start_time = datetime.now()
     while (datetime.now() - start_time).seconds <= 10:
         incoming_msg = read_ib_msg(sock=ib_socket)
-        print(incoming_msg)
         if incoming_msg[0] == '4' and incoming_msg[3] in ['162', '200', '321']:
             warnings.warn(incoming_msg[4])
             break
@@ -359,9 +351,11 @@ def fetch_contract_details(
         ]:
             break
 
-    cdeets = tuple(cdeets)
+    if len(cdeets) == 0:
+        return None
 
+    contact_details_df = format_contract_details(tuple(cdeets))
 
     ib_socket.close()
 
-    return contract_details_lst
+    return contact_details_df

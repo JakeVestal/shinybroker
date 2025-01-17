@@ -1,6 +1,7 @@
 import shinybroker as sb
 
 
+# Contract Details for a Stock
 apple_deets = sb.fetch_contract_details(
     contract=sb.Contract({
         'symbol': "AAPL",
@@ -22,40 +23,39 @@ gc_deets = sb.fetch_contract_details(
         'strike': 160,
         'right': 'C',
         'multiplier': '100'
-    }),
-    durationStr='1 D',
-    barSizeSetting='1 hour',
-    whatToShow='BID_ASK'
+    })
 )
 print(gc_deets)
 
 
-#### Try an example with a bad security definition
-#### IBKR doesn't give historical data for SPX on SMART exchange; you must pass
-####   "ARCA" as the exchange to get it to work. If you try the below code,
-####   which does not return historical data, you'll get an informative error
-####   message suggesting that you check the contract definition.
-historical_data_bad_secdef = sb.fetch_historical_data(
+# It's possible to match more than one contract with a call for contract
+#   details as in this example which fetches Contract Details for all strikes
+#   for Google Calls expiring on '20261218'.
+# Note that here, the strike isn't specified, so the contract definition will
+#  match more than one contract.
+gc_deets_multi = sb.fetch_contract_details(
     contract=sb.Contract({
-        'symbol': "SPY",
+        'symbol': 'GOOG',
+        'secType': 'OPT',
+        'exchange': 'SMART',
+        'currency': 'USD',
+        'lastTradeDateOrContractMonth': '20261218',
+        'right': 'C',
+        'multiplier': '100'
+    })
+)
+print(gc_deets_multi)
+
+
+# Try an example with a bad security definition.
+# SPX isn't a stock, it's an Index "IND". The call below will return None and
+#  print out an informative warning message.
+bad_def_details = sb.fetch_contract_details(
+    contract=sb.Contract({
+        'symbol': "SPX",
         'secType': "STK",
         'exchange': "ARCA",
         'currency': "USD"
     })
 )
-print(historical_data_bad_secdef)
-
-#### Try an example with a bad security definition
-#### IBKR doesn't give historical data for SPX on SMART exchange; you must pass
-####   "ARCA" as the exchange to get it to work. If you try the below code,
-####   which does not return historical data, you'll get an informative error
-####   message suggesting that you check the contract definition.
-historical_data_bad_secdef = sb.fetch_historical_data(
-    contract=sb.Contract({
-        'symbol': "SPX",
-        'secType': "STK",
-        'exchange': "SMART",
-        'currency': "USD"
-    })
-)
-print(historical_data_bad_secdef)
+print(bad_def_details)

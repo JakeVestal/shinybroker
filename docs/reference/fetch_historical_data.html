@@ -30,7 +30,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
 <link href="../reference/fetch_matching_symbols.html" rel="next">
-<link href="../reference/start_historical_data_subscription.html" rel="prev">
+<link href="../reference/fetch_contract_details.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -122,7 +122,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../reference/fetch_historical_data.html">\"Fetch\" Functions</a></li><li class="breadcrumb-item"><a href="../reference/fetch_historical_data.html">fetch_historical_data</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../reference/fetch_contract_details.html">\"Fetch\" Functions</a></li><li class="breadcrumb-item"><a href="../reference/fetch_historical_data.html">fetch_historical_data</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -183,6 +183,12 @@ ul.task-list li input[type="checkbox"] {
           </a> 
       </div>
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/fetch_contract_details.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">fetch_contract_details</span></a>
+  </div>
+</li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../reference/fetch_historical_data.html" class="sidebar-item-text sidebar-link active">
@@ -392,7 +398,7 @@ historical_data = sb.fetch_historical_data(
         'currency': "USD"
     })
 )
-print(historical_data)
+print(historical_data['hst_dta'])
 
 # historical Bid/Ask for a Google Call
 # the behavior of this one can be spotty if you're running it outside of
@@ -412,7 +418,7 @@ historical_data_google_bid_ask = sb.fetch_historical_data(
     barSizeSetting='1 hour',
     whatToShow='BID_ASK'
 )
-print(historical_data_google_bid_ask)
+print(historical_data_google_bid_ask['hst_dta'])
 
 
 #### Try an example with a bad barSizeSetting
@@ -429,10 +435,7 @@ historical_data_bad_barsize = sb.fetch_historical_data(
 print(historical_data_bad_barsize)
 
 #### Try an example with a bad security definition
-#### IBKR doesn't give historical data for SPX on SMART exchange; you must pass
-####   "ARCA" as the exchange to get it to work. If you try the below code,
-####   which does not return historical data, you'll get an informative error
-####   message suggesting that you check the contract definition.
+#### IBKR considers "SPX" as an index (type="IND"), not a stock.
 historical_data_bad_secdef = sb.fetch_historical_data(
     contract=sb.Contract({
         'symbol': "SPX",
@@ -440,9 +443,7 @@ historical_data_bad_secdef = sb.fetch_historical_data(
         'exchange': "SMART",
         'currency': "USD"
     }),
-    barSizeSetting="1 day",
-
-
+    barSizeSetting="1 day"
 )
 print(historical_data_bad_secdef)
 </code></pre>
@@ -874,8 +875,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../reference/start_historical_data_subscription.html" class="pagination-link" aria-label="start_historical_data_subscription">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">start_historical_data_subscription</span>
+      <a href="../reference/fetch_contract_details.html" class="pagination-link" aria-label="fetch_contract_details">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">fetch_contract_details</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

@@ -9,6 +9,7 @@ website:
       - reference/start_historical_data_subscription.qmd
       section: Market Data Functions
     - contents:
+      - reference/fetch_contract_details.qmd
       - reference/fetch_historical_data.qmd
       - reference/fetch_matching_symbols.qmd
       - reference/fetch_sec_def_opt_params.qmd

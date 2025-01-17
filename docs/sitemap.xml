@@ -13,60 +13,64 @@
     <lastmod>2024-09-01T22:31:33.207Z</lastmod>
   </url>
   <url>
-    <loc>https://shinybroker.com/reference/Contract.html</loc>
-    <lastmod>2024-09-13T19:41:22.410Z</lastmod>
+    <loc>https://shinybroker.com/reference/fetch_contract_details.html</loc>
+    <lastmod>2025-01-17T16:21:45.076Z</lastmod>
   </url>
   <url>
-    <loc>https://shinybroker.com/reference/create_ibkr_socket_conn.html</loc>
-    <lastmod>2024-09-02T15:35:19.868Z</lastmod>
+    <loc>https://shinybroker.com/reference/req_mkt_data.html</loc>
+    <lastmod>2024-09-01T22:31:33.199Z</lastmod>
   </url>
   <url>
-    <loc>https://shinybroker.com/reference/req_contract_details.html</loc>
-    <lastmod>2024-09-01T22:31:33.194Z</lastmod>
-  </url>
-  <url>
-    <loc>https://shinybroker.com/reference/req_current_time.html</loc>
-    <lastmod>2024-09-01T22:31:33.195Z</lastmod>
-  </url>
-  <url>
-    <loc>https://shinybroker.com/reference/req_historical_data.html</loc>
-    <lastmod>2024-09-01T22:31:33.206Z</lastmod>
-  </url>
-  <url>
-    <loc>https://shinybroker.com/reference/fetch_historical_data.html</loc>
-    <lastmod>2024-09-17T18:58:29.268Z</lastmod>
-  </url>
-  <url>
-    <loc>https://shinybroker.com/index.html</loc>
-    <lastmod>2024-09-06T12:13:04.731Z</lastmod>
-  </url>
-  <url>
-    <loc>https://shinybroker.com/headless_mode_demo.html</loc>
-    <lastmod>2025-01-16T16:38:35.757Z</lastmod>
-  </url>
-  <url>
-    <loc>https://shinybroker.com/query_and_display_market_data.html</loc>
-    <lastmod>2024-08-29T14:54:20.958Z</lastmod>
-  </url>
-  <url>
-    <loc>https://shinybroker.com/reference/req_matching_symbols.html</loc>
-    <lastmod>2024-09-01T22:31:33.197Z</lastmod>
-  </url>
-  <url>
-    <loc>https://shinybroker.com/reference/req_market_data_type.html</loc>
-    <lastmod>2024-09-01T22:31:33.196Z</lastmod>
+    <loc>https://shinybroker.com/reference/index.html</loc>
+    <lastmod>2025-01-17T16:21:45.064Z</lastmod>
   </url>
   <url>
     <loc>https://shinybroker.com/reference/fetch_sec_def_opt_params.html</loc>
     <lastmod>2024-09-13T19:44:35.504Z</lastmod>
   </url>
   <url>
-    <loc>https://shinybroker.com/reference/index.html</loc>
-    <lastmod>2025-01-16T16:36:12.369Z</lastmod>
+    <loc>https://shinybroker.com/reference/req_market_data_type.html</loc>
+    <lastmod>2024-09-01T22:31:33.196Z</lastmod>
   </url>
   <url>
-    <loc>https://shinybroker.com/reference/req_mkt_data.html</loc>
-    <lastmod>2024-09-01T22:31:33.199Z</lastmod>
+    <loc>https://shinybroker.com/reference/req_matching_symbols.html</loc>
+    <lastmod>2024-09-01T22:31:33.197Z</lastmod>
+  </url>
+  <url>
+    <loc>https://shinybroker.com/query_and_display_market_data.html</loc>
+    <lastmod>2024-08-29T14:54:20.958Z</lastmod>
+  </url>
+  <url>
+    <loc>https://shinybroker.com/headless_mode_demo.html</loc>
+    <lastmod>2025-01-16T16:38:35.757Z</lastmod>
+  </url>
+  <url>
+    <loc>https://shinybroker.com/index.html</loc>
+    <lastmod>2024-09-06T12:13:04.731Z</lastmod>
+  </url>
+  <url>
+    <loc>https://shinybroker.com/reference/fetch_historical_data.html</loc>
+    <lastmod>2024-09-17T18:58:29.268Z</lastmod>
+  </url>
+  <url>
+    <loc>https://shinybroker.com/reference/req_historical_data.html</loc>
+    <lastmod>2024-09-01T22:31:33.206Z</lastmod>
+  </url>
+  <url>
+    <loc>https://shinybroker.com/reference/req_current_time.html</loc>
+    <lastmod>2024-09-01T22:31:33.195Z</lastmod>
+  </url>
+  <url>
+    <loc>https://shinybroker.com/reference/req_contract_details.html</loc>
+    <lastmod>2024-09-01T22:31:33.194Z</lastmod>
+  </url>
+  <url>
+    <loc>https://shinybroker.com/reference/create_ibkr_socket_conn.html</loc>
+    <lastmod>2024-09-02T15:35:19.868Z</lastmod>
+  </url>
+  <url>
+    <loc>https://shinybroker.com/reference/Contract.html</loc>
+    <lastmod>2024-09-13T19:41:22.410Z</lastmod>
   </url>
   <url>
     <loc>https://shinybroker.com/reference/req_sec_def_opt_params.html</loc>

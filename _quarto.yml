@@ -68,6 +68,7 @@ quartodoc:
         persistent, continually-updated data subscriptions; in other words, you 
         can't call `fetch_historical_data` with `keepUpToDate = True`.
       contents:
+        - fetch_contract_details
         - fetch_historical_data
         - fetch_matching_symbols
         - fetch_sec_def_opt_params
