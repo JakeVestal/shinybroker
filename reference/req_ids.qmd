@@ -1,16 +1,18 @@
 # req_ids { #shinybroker.req_ids }
 
-`req_ids(numIds)`
+```python
+req_ids(numIds)
+```
 
 Create a request for the next valid numeric ID that can be used to
 create a trade order
 
-## Parameter
+## Parameter {.doc-section .doc-section-parameter}
 
 numIds: int
     Specifies how many valid IDs you want in the result
 
-## Examples
+## Examples {.doc-section .doc-section-examples}
 
 ```
 import shinybroker as sb

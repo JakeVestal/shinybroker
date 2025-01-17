@@ -1,16 +1,18 @@
 # req_market_data_type { #shinybroker.req_market_data_type }
 
-`req_market_data_type(marketDataType)`
+```python
+req_market_data_type(marketDataType)
+```
 
 Create a string for setting your session's market data type
 
-## Parameters
+## Parameters {.doc-section .doc-section-parameters}
 
-| Name             | Type   | Description                                                                                                                                         | Default    |
-|------------------|--------|-----------------------------------------------------------------------------------------------------------------------------------------------------|------------|
-| `marketDataType` | int    | Integer identifier for the [market data type]( https://www.interactivebrokers.com/campus/ibkr-api-page/twsapi-doc/#md-type-behavior ) that you want | _required_ |
+| Name           | Type   | Description                                                                                                                                         | Default    |
+|----------------|--------|-----------------------------------------------------------------------------------------------------------------------------------------------------|------------|
+| marketDataType | int    | Integer identifier for the [market data type]( https://www.interactivebrokers.com/campus/ibkr-api-page/twsapi-doc/#md-type-behavior ) that you want | _required_ |
 
-## Examples
+## Examples {.doc-section .doc-section-examples}
 
 ```
 import shinybroker as sb

@@ -1,10 +1,12 @@
 # req_current_time { #shinybroker.req_current_time }
 
-`req_current_time()`
+```python
+req_current_time()
+```
 
 Create a request string for the current broker time
 
-## Examples
+## Examples {.doc-section .doc-section-examples}
 
 ```
 import shinybroker as sb
