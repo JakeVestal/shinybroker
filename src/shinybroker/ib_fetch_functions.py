@@ -2,6 +2,8 @@ import pandas as pd
 import warnings
 
 from datetime import datetime
+
+from shinybroker import req_contract_details
 from shinybroker.connection import (
     create_ibkr_socket_conn, send_ib_message, read_ib_msg
 )
@@ -283,3 +285,67 @@ def fetch_matching_symbols(
     ib_socket.close()
 
     return matching_symbols
+
+
+def fetch_contract_details(
+        contract: Contract,
+        host='127.0.0.1',
+        port=7497,
+        client_id=9999
+):
+    """Fetch contract details
+
+    Fetches the contract details returned by IBKR for a specified contract.
+    Useful for checking & validating a contract definition. Prints out an
+    error message and returns None if no contract is found.
+
+    Parameters
+    ------------
+    contract: Contract
+        The [Contract](`shinybroker.Contract`) object for which you want data
+
+    Examples
+    --------
+    ```
+    {{< include ../examples/fetch_contract_details.py >}}
+    ```
+    """
+
+    from shinybroker import Contract
+    host = '127.0.0.1',
+    port = 7497,
+    client_id = 9999
+    contract = Contract({
+        'symbol': "AAPL",
+        'secType': "STK",
+        'exchange': "SMART",
+        'currency': "USD"
+    })
+
+    ib_conn = create_ibkr_socket_conn(
+        host=host, port=port, client_id=client_id
+    )
+    ib_socket = ib_conn['ib_socket']
+
+    send_ib_message(
+        s=ib_socket,
+        msg=req_contract_details(reqId=1, contract=contract)
+    )
+
+    contract_details = None
+
+    start_time = datetime.now()
+    while (datetime.now() - start_time).seconds <= 3:
+        incoming_msg = read_ib_msg(sock=ib_socket)
+        if incoming_msg[0] == '4' and incoming_msg[3] in ['162', '200', '321']:
+            warnings.warn(incoming_msg[4])
+            break
+        if incoming_msg[0] == functionary['incoming_msg_codes'][
+            'HISTORICAL_DATA'
+        ]:
+            historical_data = format_historical_data_input(incoming_msg[1:])
+            break
+
+    ib_socket.close()
+
+    return historical_data

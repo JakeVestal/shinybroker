@@ -9,7 +9,7 @@ historical_data = sb.fetch_historical_data(
         'currency': "USD"
     })
 )
-print(historical_data)
+print(historical_data['hst_dta'])
 
 # historical Bid/Ask for a Google Call
 # the behavior of this one can be spotty if you're running it outside of
@@ -29,7 +29,7 @@ historical_data_google_bid_ask = sb.fetch_historical_data(
     barSizeSetting='1 hour',
     whatToShow='BID_ASK'
 )
-print(historical_data_google_bid_ask)
+print(historical_data_google_bid_ask['hst_dta'])
 
 
 #### Try an example with a bad barSizeSetting
@@ -46,10 +46,7 @@ historical_data_bad_barsize = sb.fetch_historical_data(
 print(historical_data_bad_barsize)
 
 #### Try an example with a bad security definition
-#### IBKR doesn't give historical data for SPX on SMART exchange; you must pass
-####   "ARCA" as the exchange to get it to work. If you try the below code,
-####   which does not return historical data, you'll get an informative error
-####   message suggesting that you check the contract definition.
+#### IBKR considers "SPX" as an index (type="IND"), not a stock.
 historical_data_bad_secdef = sb.fetch_historical_data(
     contract=sb.Contract({
         'symbol': "SPX",
@@ -57,8 +54,6 @@ historical_data_bad_secdef = sb.fetch_historical_data(
         'exchange': "SMART",
         'currency': "USD"
     }),
-    barSizeSetting="1 day",
-
-
+    barSizeSetting="1 day"
 )
 print(historical_data_bad_secdef)
