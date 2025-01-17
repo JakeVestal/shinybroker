@@ -104,3 +104,421 @@ def format_symbol_samples_input(symbol_samples):
         stocks = pd.concat(stocks, ignore_index=True)
 
     return {'stocks': stocks, 'bonds': bonds}
+
+
+def format_contract_details(cdeets):
+    contract_details_lst = []
+
+    for i in range(len(cdeets)):
+        if cdeets[i][0] == 'BOND':
+            end_of_sec_id_list_ind = 13 + 2 * int(cdeets[i][12])
+            contract_details_lst.append(
+                pd.DataFrame({
+                    'symbol': [cdeets[i][4]],
+                    'underSymbol': [cdeets[i][6]],
+                    'conId': [cdeets[i][7]],
+                    'minTick': [cdeets[i][8]],
+                    'orderTypes': [cdeets[i][9]],
+                    'validExchanges': [cdeets[i][10]],
+                    'secIdList': ["{" + ",".join([
+                        "'" + "':'".join(cdeets[i][x:(x + 2)]) + "'" for
+                        x in range(13, end_of_sec_id_list_ind, 2)
+                    ]) + "}"],
+                    'aggGroup': [cdeets[i][end_of_sec_id_list_ind]],
+                    'marketRuleIds': [cdeets[i][end_of_sec_id_list_ind + 1]],
+                    'minSize': [cdeets[i][end_of_sec_id_list_ind + 2]],
+                    'sizeIncrement': [
+                        cdeets[i][end_of_sec_id_list_ind + 3]
+                    ],
+                    'suggestedSizeIncrement': [
+                        cdeets[i][end_of_sec_id_list_ind + 4]
+                    ]
+                })
+            )
+            continue
+        match cdeets[i][1]:
+            case 'CASH':
+                contract_details_lst.append(
+                    pd.DataFrame({
+                        'symbol': [cdeets[i][0]],
+                        'secType': [cdeets[i][1]],
+                        'exchange': [cdeets[i][3]],
+                        'currency': [cdeets[i][4]],
+                        'localSymbol': [cdeets[i][5]],
+                        'marketName': [cdeets[i][6]],
+                        'tradingClass': [cdeets[i][7]],
+                        'conId': [cdeets[i][8]],
+                        'minTick': [cdeets[i][9]],
+                        'orderTypes': [cdeets[i][10]],
+                        'validExchanges': [cdeets[i][11]],
+                        'priceMagnifier': [cdeets[i][12]],
+                        'longName': [cdeets[i][14]],
+                        'timeZoneId': [cdeets[i][15]],
+                        'tradingHours': [cdeets[i][16]],
+                        'liquidHours': [cdeets[i][17]],
+                        'aggGroup': [cdeets[i][19]],
+                        'marketRuleIds': [cdeets[i][20]],
+                        'minSize': [cdeets[i][21]],
+                        'sizeIncrement': [cdeets[i][22]],
+                        'suggestedSizeIncrement': [cdeets[i][23]]
+                    })
+                )
+            case 'CMDTY':
+                contract_details_lst.append(
+                    pd.DataFrame({
+                        'symbol': [cdeets[i][0]],
+                        'secType': [cdeets[i][1]],
+                        'exchange': [cdeets[i][3]],
+                        'currency': [cdeets[i][4]],
+                        'localSymbol': [cdeets[i][5]],
+                        'marketName': [cdeets[i][6]],
+                        'tradingClass': [cdeets[i][7]],
+                        'conId': [cdeets[i][8]],
+                        'minTick': [cdeets[i][9]],
+                        'orderTypes': [cdeets[i][10]],
+                        'validExchanges': [cdeets[i][11]],
+                        'priceMagnifier': [cdeets[i][12]],
+                        'longName': [cdeets[i][14]],
+                        'timeZoneId': [cdeets[i][15]],
+                        'tradingHours': [cdeets[i][16]],
+                        'liquidHours': [cdeets[i][17]],
+                        'evMultiplier': [cdeets[i][18]],
+                        'aggGroup': [cdeets[i][19]],
+                        'marketRuleIds': [cdeets[i][20]],
+                        'minSize': [cdeets[i][21]],
+                        'sizeIncrement': [cdeets[i][22]],
+                        'suggestedSizeIncrement': [cdeets[i][23]]
+                    })
+                )
+            case 'FUND':
+                end_of_sec_id_list_ind = 19 + 2 * int(cdeets[i][18])
+                contract_details_lst.append(
+                    pd.DataFrame({
+                        'symbol': [cdeets[i][0]],
+                        'secType': [cdeets[i][1]],
+                        'exchange': [cdeets[i][3]],
+                        'currency': [cdeets[i][4]],
+                        'localSymbol': [cdeets[i][5]],
+                        'marketName': [cdeets[i][6]],
+                        'tradingClass': [cdeets[i][7]],
+                        'conId': [cdeets[i][8]],
+                        'minTick': [cdeets[i][9]],
+                        'orderTypes': [cdeets[i][10]],
+                        'validExchanges': [cdeets[i][11]],
+                        'priceMagnifier': [cdeets[i][12]],
+                        'longName': [cdeets[i][14]],
+                        'timeZoneId': [cdeets[i][15]],
+                        'tradingHours': [cdeets[i][16]],
+                        'liquidHours': [cdeets[i][17]],
+                        'secIdList': ["{" + ",".join([
+                            "'" + "':'".join(cdeets[i][x:(x + 2)]) + "'" for
+                            x in range(19, end_of_sec_id_list_ind, 2)
+                        ]) + "}"],
+                        'marketRuleIds': [
+                            cdeets[i][end_of_sec_id_list_ind + 1]
+                        ],
+                        'minSize': [
+                            cdeets[i][end_of_sec_id_list_ind + 2]
+                        ],
+                        'sizeIncrement': [
+                            cdeets[i][end_of_sec_id_list_ind + 3]
+                        ],
+                        'suggestedSizeIncrement': [
+                            cdeets[i][end_of_sec_id_list_ind + 4]
+                        ],
+                        'fundName': [
+                            cdeets[i][end_of_sec_id_list_ind + 5]
+                        ],
+                        'fundFamily': [
+                            cdeets[i][end_of_sec_id_list_ind + 6]
+                        ],
+                        'fundFrontLoad': [
+                            cdeets[i][end_of_sec_id_list_ind + 7]
+                        ],
+                        'fundBackLoad': [
+                            cdeets[i][end_of_sec_id_list_ind + 8]
+                        ],
+                        'fundBackLoadTimeInterval': [
+                            cdeets[i][end_of_sec_id_list_ind + 9]
+                        ],
+                        'fundManagementFee': [
+                            cdeets[i][end_of_sec_id_list_ind + 10]
+                        ],
+                        'fundClosed': [
+                            cdeets[i][end_of_sec_id_list_ind + 11]
+                        ],
+                        'fundClosedForNewInvestors': [
+                            cdeets[i][end_of_sec_id_list_ind + 12]
+                        ],
+                        'fundClosedForNewMoney': [
+                            cdeets[i][end_of_sec_id_list_ind + 13]
+                        ],
+                        'fundNotifyAmount': [
+                            cdeets[i][end_of_sec_id_list_ind + 14]
+                        ],
+                        'fundMinimumInitialPurchase': [
+                            cdeets[i][end_of_sec_id_list_ind + 15]
+                        ],
+                        'fundSubsequentMinimumPurchase': [
+                            cdeets[i][end_of_sec_id_list_ind + 16]
+                        ],
+                        'fundBlueSkyStates': [
+                            cdeets[i][end_of_sec_id_list_ind + 17]
+                        ],
+                        'fundBlueSkyTerritories': [
+                            cdeets[i][end_of_sec_id_list_ind + 18]
+                        ],
+                        'ineligibilityReasonList': ["{" + ",".join([
+                            "'" + "':'".join(cdeets[i][x:(x + 2)]) + "'" for
+                            x in range(
+                                end_of_sec_id_list_ind + 20,
+                                len(cdeets[i]),
+                                2
+                            )
+                        ]) + "}"]
+                    })
+                )
+            case 'IND':
+                contract_details_lst.append(
+                    pd.DataFrame({
+                        'symbol': [cdeets[i][0]],
+                        'secType': [cdeets[i][1]],
+                        'exchange': [cdeets[i][3]],
+                        'currency': [cdeets[i][4]],
+                        'localSymbol': [cdeets[i][5]],
+                        'conId': [cdeets[i][6]],
+                        'minTick': [cdeets[i][7]],
+                        'orderTypes': [cdeets[i][8]],
+                        'validExchanges': [cdeets[i][9]],
+                        'priceMagnifier': [cdeets[i][10]],
+                        'longName': [cdeets[i][12]],
+                        'timeZoneId': [cdeets[i][13]],
+                        'tradingHours': [cdeets[i][14]],
+                        'liquidHours': [cdeets[i][15]],
+                        'aggGroup': [cdeets[i][16]],
+                        'underSymbol': [cdeets[i][17]],
+                        'marketRuleIds': [cdeets[i][18]],
+                        'minSize': [cdeets[i][19]],
+                        'sizeIncrement': [cdeets[i][20]],
+                        'suggestedSizeIncrement': [cdeets[i][21]]
+                    })
+                )
+            case 'OPT':
+                match len(cdeets[i]):
+                    case 36:
+                        contract_details_lst.append(
+                            pd.DataFrame({
+                                'symbol': [cdeets[i][0]],
+                                'secType': [cdeets[i][1]],
+                                'lastTradeDate': [cdeets[i][2]],
+                                'strike': [cdeets[i][4]],
+                                'right': [cdeets[i][5]],
+                                'exchange': [cdeets[i][6]],
+                                'currency': [cdeets[i][7]],
+                                'localSymbol': [cdeets[i][8]],
+                                'marketName': [cdeets[i][9]],
+                                'tradingClass': [cdeets[i][10]],
+                                'conId': [cdeets[i][11]],
+                                'minTick': [cdeets[i][12]],
+                                'multiplier': [cdeets[i][13]],
+                                'orderTypes': [cdeets[i][14]],
+                                'validExchanges': [cdeets[i][15]],
+                                'priceMagnifier': [cdeets[i][16]],
+                                'underConID': [cdeets[i][17]],
+                                'longName': [cdeets[i][18]],
+                                'contractMonth': [cdeets[i][19]],
+                                'industry': [cdeets[i][20]],
+                                'category': [cdeets[i][21]],
+                                'subcategory': [cdeets[i][22]],
+                                'timeZoneId': [cdeets[i][23]],
+                                'tradingHours': [cdeets[i][24]],
+                                'liquidHours': [cdeets[i][25]],
+                                'aggGroup': [cdeets[i][26]],
+                                'underSymbol': [cdeets[i][28]],
+                                'underSecType': [cdeets[i][29]],
+                                'marketRuleIds': [cdeets[i][30]],
+                                'realExpirationDate': [cdeets[i][31]],
+                                'minSize': [cdeets[i][32]],
+                                'sizeIncrement': [cdeets[i][33]],
+                                'suggestedSizeIncrement': [cdeets[i][34]]
+                            })
+                        )
+                    case 34:
+                        contract_details_lst.append(
+                            pd.DataFrame({
+                                'symbol': [cdeets[i][0]],
+                                'secType': [cdeets[i][1]],
+                                'lastTradeDate': [cdeets[i][2]],
+                                'strike': [cdeets[i][3]],
+                                'right': [cdeets[i][4]],
+                                'exchange': [cdeets[i][5]],
+                                'currency': [cdeets[i][6]],
+                                'localSymbol': [cdeets[i][7]],
+                                'marketName': [cdeets[i][8]],
+                                'tradingClass': [cdeets[i][9]],
+                                'conId': [cdeets[i][10]],
+                                'minTick': [cdeets[i][11]],
+                                'multiplier': [cdeets[i][12]],
+                                'orderTypes': [cdeets[i][13]],
+                                'validExchanges': [cdeets[i][14]],
+                                'priceMagnifier': [cdeets[i][15]],
+                                'underConID': [cdeets[i][16]],
+                                'longName': [cdeets[i][17]],
+                                'contractMonth': [cdeets[i][18]],
+                                'industry': [cdeets[i][19]],
+                                'category': [cdeets[i][20]],
+                                'subcategory': [cdeets[i][21]],
+                                'timeZoneId': [cdeets[i][22]],
+                                'tradingHours': [cdeets[i][23]],
+                                'liquidHours': [cdeets[i][24]],
+                                'aggGroup': [cdeets[i][26]],
+                                'underSymbol': [cdeets[i][27]],
+                                'underSecType': [cdeets[i][28]],
+                                'marketRuleIds': [cdeets[i][29]],
+                                'realExpirationDate': [cdeets[i][30]],
+                                'minSize': [cdeets[i][31]],
+                                'sizeIncrement': [cdeets[i][32]],
+                                'suggestedSizeIncrement': [cdeets[i][33]]
+                            })
+                        )
+                    case 31:
+                        contract_details_lst.append(
+                            pd.DataFrame({
+                                'symbol': [cdeets[i][0]],
+                                'secType': [cdeets[i][1]],
+                                'lastTradeDate': [cdeets[i][2]],
+                                'strike': [cdeets[i][3]],
+                                'right': [cdeets[i][4]],
+                                'exchange': [cdeets[i][5]],
+                                'currency': [cdeets[i][6]],
+                                'localSymbol': [cdeets[i][7]],
+                                'marketName': [cdeets[i][8]],
+                                'tradingClass': [cdeets[i][9]],
+                                'conId': [cdeets[i][10]],
+                                'minTick': [cdeets[i][11]],
+                                'multiplier': [cdeets[i][12]],
+                                'orderTypes': [cdeets[i][13]],
+                                'validExchanges': [cdeets[i][14]],
+                                'priceMagnifier': [cdeets[i][15]],
+                                'underConID': [cdeets[i][16]],
+                                'longName': [cdeets[i][17]],
+                                'contractMonth': [cdeets[i][18]],
+                                'industry': [cdeets[i][19]],
+                                'category': [cdeets[i][20]],
+                                'subcategory': [cdeets[i][21]],
+                                'aggGroup': [cdeets[i][23]],
+                                'underSymbol': [cdeets[i][24]],
+                                'underSecType': [cdeets[i][25]],
+                                'marketRuleIds': [cdeets[i][26]],
+                                'realExpirationDate': [cdeets[i][27]],
+                                'minSize': [cdeets[i][28]],
+                                'sizeIncrement': [cdeets[i][29]],
+                                'suggestedSizeIncrement': [cdeets[i][30]]
+                            })
+                        )
+                    case _:
+                        contract_details_lst.append(
+                            pd.DataFrame({cdeets[i]})
+                        )
+            case 'STK':
+                match len(cdeets[i]):
+                    case 29:
+                        end_of_sec_id_list_ind = 20 + 2 * int(cdeets[i][19])
+                        contract_details_lst.append(
+                            pd.DataFrame({
+                                'symbol': [cdeets[i][0]],
+                                'secType': [cdeets[i][1]],
+                                'exchange': [cdeets[i][3]],
+                                'currency': [cdeets[i][4]],
+                                'localSymbol': [cdeets[i][5]],
+                                'marketName': [cdeets[i][6]],
+                                'tradingClass': [cdeets[i][7]],
+                                'conId': [cdeets[i][8]],
+                                'minTick': [cdeets[i][9]],
+                                'orderTypes': [cdeets[i][10]],
+                                'validExchanges': [cdeets[i][11]],
+                                'priceMagnifier': [cdeets[i][12]],
+                                'longName': [cdeets[i][14]],
+                                'primaryExchange': [cdeets[i][15]],
+                                'timeZoneId': [cdeets[i][16]],
+                                'tradingHours': [cdeets[i][17]],
+                                'liquidHours': [cdeets[i][18]],
+                                'secIdList': ["{" + ",".join([
+                                    "'" +
+                                    "':'".join(cdeets[i][x:(x + 2)]) +
+                                    "'" for x in range(
+                                        20, end_of_sec_id_list_ind, 2
+                                    )
+                                ]) + "}"],
+                                'aggGroup': [
+                                    cdeets[i][end_of_sec_id_list_ind]
+                                ],
+                                'marketRuleIds': [
+                                    cdeets[i][end_of_sec_id_list_ind + 1]
+                                ],
+                                'stockType': [
+                                    cdeets[i][end_of_sec_id_list_ind + 2]
+                                ],
+                                'minSize': [
+                                    cdeets[i][end_of_sec_id_list_ind + 3]
+                                ],
+                                'sizeIncrement': [
+                                    cdeets[i][end_of_sec_id_list_ind + 4]
+                                ],
+                                'suggestedSizeIncrement': [
+                                    cdeets[i][end_of_sec_id_list_ind + 5]
+                                ]
+                            })
+                        )
+                    case _:
+                        end_of_sec_id_list_ind = 23 + 2 * int(cdeets[i][22])
+                        contract_details_lst.append(
+                            pd.DataFrame({
+                                'symbol': [cdeets[i][0]],
+                                'secType': [cdeets[i][1]],
+                                'exchange': [cdeets[i][3]],
+                                'currency': [cdeets[i][4]],
+                                'localSymbol': [cdeets[i][5]],
+                                'marketName': [cdeets[i][6]],
+                                'tradingClass': [cdeets[i][7]],
+                                'conId': [cdeets[i][8]],
+                                'minTick': [cdeets[i][9]],
+                                'orderTypes': [cdeets[i][10]],
+                                'validExchanges': [cdeets[i][11]],
+                                'priceMagnifier': [cdeets[i][12]],
+                                'longName': [cdeets[i][14]],
+                                'primaryExchange': [cdeets[i][15]],
+                                'industry': [cdeets[i][16]],
+                                'category': [cdeets[i][17]],
+                                'subcategory': [cdeets[i][18]],
+                                'timeZoneId': [cdeets[i][19]],
+                                'tradingHours': [cdeets[i][20]],
+                                'liquidHours': [cdeets[i][21]],
+                                'secIdList': ["{" + ",".join([
+                                    "'" + "':'".join(cdeets[i][x:(x + 2)]) + "'"
+                                    for
+                                    x in range(23, end_of_sec_id_list_ind, 2)
+                                ]) + "}"],
+                                'aggGroup': [cdeets[i][end_of_sec_id_list_ind]],
+                                'marketRuleIds': [
+                                    cdeets[i][end_of_sec_id_list_ind + 1]
+                                ],
+                                'stockType': [
+                                    cdeets[i][end_of_sec_id_list_ind + 2]],
+                                'minSize': [
+                                    cdeets[i][end_of_sec_id_list_ind + 3]],
+                                'sizeIncrement': [
+                                    cdeets[i][end_of_sec_id_list_ind + 4]
+                                ],
+                                'suggestedSizeIncrement': [
+                                    cdeets[i][end_of_sec_id_list_ind + 5]
+                                ]
+                            })
+                        )
+            case _:
+                contract_details_lst.append(pd.DataFrame({cdeets}))
+
+    cdeets_df = pd.concat(contract_details_lst, ignore_index=True)
+
+    return cdeets_df
+

@@ -303,6 +303,16 @@ def fetch_contract_details(
     ------------
     contract: Contract
         The [Contract](`shinybroker.Contract`) object for which you want data
+    host: '127.0.0.1'
+        Address of a running IBKR client (such as TWS or IBG) that has been
+        configured to accept API connections
+    port: 7497
+        Port of a running IBKR client
+    client_id: 9999
+        Client ID you want to use for the request. If you are connecting to a
+        system that is used by multiple users, then you may wish to set aside an
+         ID for this purpose; if you're the only one using the account then
+        you probably don't have to worry about it -- just use the default.
 
     Examples
     --------
@@ -311,9 +321,8 @@ def fetch_contract_details(
     ```
     """
 
-    from shinybroker import Contract
-    host = '127.0.0.1',
-    port = 7497,
+    host = '127.0.0.1'
+    port = 7497
     client_id = 9999
     contract = Contract({
         'symbol': "AAPL",
@@ -332,20 +341,27 @@ def fetch_contract_details(
         msg=req_contract_details(reqId=1, contract=contract)
     )
 
-    contract_details = None
+    cdeets = []
 
     start_time = datetime.now()
-    while (datetime.now() - start_time).seconds <= 3:
+    while (datetime.now() - start_time).seconds <= 10:
         incoming_msg = read_ib_msg(sock=ib_socket)
+        print(incoming_msg)
         if incoming_msg[0] == '4' and incoming_msg[3] in ['162', '200', '321']:
             warnings.warn(incoming_msg[4])
             break
         if incoming_msg[0] == functionary['incoming_msg_codes'][
-            'HISTORICAL_DATA'
+            'CONTRACT_DATA'
         ]:
-            historical_data = format_historical_data_input(incoming_msg[1:])
+            cdeets.append(tuple(incoming_msg[2:]))
+        if incoming_msg[0] == functionary['incoming_msg_codes'][
+            'CONTRACT_DATA_END'
+        ]:
             break
+
+    cdeets = tuple(cdeets)
+
 
     ib_socket.close()
 
-    return historical_data
+    return contract_details_lst
