@@ -11,6 +11,8 @@ apple_deets = sb.fetch_contract_details(
     })
 )
 print(apple_deets)
+#print the hours that AAPL is liquid this week:
+print(apple_deets['liquidHours'][0])
 
 # Contract Details for a Google Call
 gc_deets = sb.fetch_contract_details(

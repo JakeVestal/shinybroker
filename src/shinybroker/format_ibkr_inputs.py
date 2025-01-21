@@ -520,5 +520,26 @@ def format_contract_details(cdeets):
 
     cdeets_df = pd.concat(contract_details_lst, ignore_index=True)
 
+    def hours_str_to_df(hrs_str):
+        hours_df = pd.DataFrame(
+            [lil_str.split("-") for lil_str in hrs_str.split(';')],
+            columns=['from', 'to']
+        )
+
+        def format_hours(hours):
+            return datetime.strptime(hours, "%Y%m%d:%H%M")
+
+        return hours_df.map(format_hours)
+
+    cdeets_df['liquidHours']=[
+        hours_str_to_df(x) for x in cdeets_df['liquidHours']
+    ]
+    cdeets_df['tradingHours'] = [
+        hours_str_to_df(x) for x in cdeets_df['tradingHours']
+    ]
+
     return cdeets_df
+
+
+
 
