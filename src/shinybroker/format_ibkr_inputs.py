@@ -521,17 +521,64 @@ def format_contract_details(cdeets):
     cdeets_df = pd.concat(contract_details_lst, ignore_index=True)
 
     def hours_str_to_df(hrs_str):
-        hours_df = pd.DataFrame(
-            [lil_str.split("-") for lil_str in hrs_str.split(';')],
-            columns=['from', 'to']
-        )
+        hrs_str_splt = hrs_str.split(';')
 
-        def format_hours(hours):
-            return datetime.strptime(hours, "%Y%m%d:%H%M")
+        def format_splt_hrs(splt_hrs):
 
-        return hours_df.map(format_hours)
+            hrs_dash_split = splt_hrs.split('-')
 
-    cdeets_df['liquidHours']=[
+            if len(hrs_dash_split) == 1:
+                if hrs_dash_split[0].split(":")[1] != 'CLOSED':
+                    print("Strange hrs_dash_split string detected:")
+                    print(hrs_dash_split)
+                    raise NotImplementedError("Unhandled hrs_dash_split")
+                return pd.DataFrame(
+                    data = {
+                        'start_time': None,
+                        'end_time': None,
+                        'closed': True
+                    },
+                    index = [
+                        datetime.strptime(
+                            hrs_dash_split[0].split(":")[0],
+                            "%Y%m%d"
+                        ).date()
+                    ]
+                )
+
+            hrs_date = list(set([
+                datetime.strptime(
+                    x.split(":")[0],'%Y%m%d'
+                ).date() for x in hrs_dash_split
+            ]))
+
+            if len(hrs_date) != 1:
+                print("Strange hrs_date string detected:")
+                print(hrs_str)
+                raise NotImplementedError("Unhandled hrs_date string")
+
+            return pd.DataFrame(
+                data = {
+                    'start_time': [
+                        datetime.strptime(
+                            splt_hrs.split("-")[0].split(":")[1],
+                            "%H%M"
+                        ).time()
+                    ],
+                    'end_time': [
+                        datetime.strptime(
+                            splt_hrs.split("-")[1].split(":")[1],
+                            "%H%M"
+                        ).time()
+                    ],
+                    'closed': [False]
+                },
+                index = [hrs_date[0]]
+            )
+
+        return pd.concat([format_splt_hrs(x) for x in hrs_str_splt])
+
+    cdeets_df['liquidHours'] = [
         hours_str_to_df(x) for x in cdeets_df['liquidHours']
     ]
     cdeets_df['tradingHours'] = [
@@ -539,6 +586,9 @@ def format_contract_details(cdeets):
     ]
 
     return cdeets_df
+
+
+
 
 
 
