@@ -524,7 +524,6 @@ def format_contract_details(cdeets):
         hrs_str_splt = hrs_str.split(';')
 
         def format_splt_hrs(splt_hrs):
-
             hrs_dash_split = splt_hrs.split('-')
 
             if len(hrs_dash_split) == 1:
@@ -578,18 +577,15 @@ def format_contract_details(cdeets):
 
         return pd.concat([format_splt_hrs(x) for x in hrs_str_splt])
 
-    cdeets_df['liquidHours'] = [
-        hours_str_to_df(x) for x in cdeets_df['liquidHours']
-    ]
-    cdeets_df['tradingHours'] = [
-        hours_str_to_df(x) for x in cdeets_df['tradingHours']
-    ]
+
+    try:
+        cdeets_df['liquidHours'] = [
+            hours_str_to_df(x) for x in cdeets_df['liquidHours']
+        ]
+        cdeets_df['tradingHours'] = [
+            hours_str_to_df(x) for x in cdeets_df['tradingHours']
+        ]
+    except IndexError:
+        pass
 
     return cdeets_df
-
-
-
-
-
-
-
