@@ -21,6 +21,13 @@ def format_historical_data_input(hst_dta):
             ) for i in range(4, hd_len, 8)
         ]
 
+    def vem_try():
+        try:
+            volume = [int(hst_dta[i]) for i in range(9, hd_len, 8)]
+        except ValueError:
+            volume = [float(hst_dta[i]) for i in range(9, hd_len, 8)]
+        return volume
+
     return {
         'startDateStr': hst_dta[1],
         'endDateStr': hst_dta[2],
@@ -30,7 +37,7 @@ def format_historical_data_input(hst_dta):
             'high': [float(hst_dta[i]) for i in range(6, hd_len, 8)],
             'low': [float(hst_dta[i]) for i in range(7, hd_len, 8)],
             'close': [float(hst_dta[i]) for i in range(8, hd_len, 8)],
-            'volume': [int(hst_dta[i]) for i in range(9, hd_len, 8)],
+            'volume': vem_try(),
             'wap': [
                 round(float(hst_dta[i]), 3) for i in range(10, hd_len, 8)
             ],
