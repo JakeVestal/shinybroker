@@ -1,44 +1,74 @@
-YEAR: 2024
-COPYRIGHT HOLDER: Jacob M. Vestal
+ShinyBroker Software License Agreement
 
-ShinyBroker Public License:
+Copyright (c) 2025 Jacob Vestal
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+This Software License Agreement (the "License") governs the use of ShinyBroker
+(the "Software"), a platform integrating with Posit’s Shiny framework and
+Interactive Brokers’ API for developing trading applications, provided by Jacob
+Vestal (the "Licensor"). By installing, copying, or otherwise using the
+Software, you (the "Licensee") agree to be bound by the terms of this License.
 
-Any person excepting the copyright holder (the "licensor") and
-excepting those persons granted explicit exceptions to this licence by the
-copyright holder ("licensee") obtaining a copy of this software and associated
-documentation files (the "Software") is not granted permission and is in
-violation of this License if the software or any work deriving from the
-software is used to generate, transmit, or inform live trades.
+Definitions
 
-"Live trades" means instructions pertaining to the sale, purchase, or exercise
-of ownership or other rights that are communicated or intended to be
-communicated to a broker, service, or agent for execution resulting in any
-change of ownership of financial assets.
+"Paper Account" refers to a simulated, non-live, or demo trading account
+provided by Interactive Brokers or similar platforms, where no real funds or
+assets are transacted or at risk. "Live Account" refers to an account involving
+real funds or assets used for actual trading or transactions through Interactive
+ Brokers or similar platforms.
 
-Live trades are distinct from paper trades.
+License Grant for Paper Account Usage
+Subject to the terms of this License, the Licensor grants the Licensee a
+worldwide, non-exclusive, royalty-free, revocable license to use, copy, modify,
+merge, publish, distribute, sublicense, and/or sell copies of the Software,
+solely when the Software is used with a Paper Account, under the following MIT
+License terms:
 
-A "paper trade" means instructions pertaining to the sale, purchase, or exercise
-of ownership or other rights that may be transmitted or intended to be
-transmitted to a broker, service, or agent, but which are not executed or
-intended for execution in way that results in the change of ownership of
-financial assets, being instead used and interpreted for purposes including
-research, education, or testing.
-
-Any person using this software to generate, transmit, or inform paper trades
-is hereby granted permission to use, copy, modify, merge, and/or publish, copies
- of the Software, and to permit persons to whom the Software is furnished to do
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this Software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
 so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 
-ShinyBroker Full Use License:
-To obtain a full license that will allow you to use ShinyBroker to make live
-trades, contact the copyright holder.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM,
+OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+Restriction on Live Account Usage
+The Licensee is expressly prohibited from using the Software with a Live
+Account unless the Licensee has obtained prior written permission from the
+Licensor. Any use of the Software with a Live Account without such permission
+is unauthorized and constitutes a material breach of this License. The Licensor
+reserves all rights not expressly granted, including the exclusive right to
+authorize use of the Software with Live Accounts.
+
+Compliance and Verification
+The Licensee agrees to configure the Software in accordance with the provided
+documentation, including proper setup of the Interactive Brokers Trader
+Workstation (TWS) API settings (e.g., enabling socket connections on port 7497
+for paper accounts or 7496 for live accounts). The Licensor may require
+verification of compliance with the Paper Account restriction, and the Licensee
+agrees to provide reasonable evidence of such compliance upon request.
+
+Termination
+This License is effective until terminated. The License will terminate
+immediately without notice from the Licensor if the Licensee breaches any
+provision, including unauthorized use with a Live Account. Upon termination,
+the Licensee must cease all use of the Software, delete all copies in their
+possession or control, and certify such deletion if requested by the Licensor.
+
+Governing Law
+This License shall be governed by and construed in accordance with the laws of
+the State of Delaware, United States, without regard to its conflict of law
+principles.
+
+Contact Information
+For requests to use the Software with a Live Account or for inquiries regarding
+this License, contact the Licensor at license@shinybroker.com.
