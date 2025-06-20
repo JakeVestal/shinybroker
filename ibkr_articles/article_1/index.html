@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShinyBroker 1: Hello World</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        .collapsible {
+            color: black;
+            cursor: pointer;
+            padding: 12px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 16px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .content {
+            padding: 0 18px;
+            display: none;
+            overflow: hidden;
+            background-color: #f1f1f1;
+        }
+        .code-container {
+            max-width: 700px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .code-block {
+            position: relative;
+            background: #f8f8f8;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-family: 'Courier New', monospace;
+        }
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 5px 10px;
+            background: #2c3e50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .copy-button:hover {
+            background: #34495e;
+        }
+        .indicator::after {
+            content: '+';
+            font-size: 20px;
+        }
+        .active .indicator::after {
+            content: '−';
+        }
+    </style>
+</head>
+<body>
+
+<section>
+    <h3>ShinyBroker lets you build the trading system you want,
+        including charting, visualizations, calculations, and models.
+        If you can build it in Python, you can connect and use it
+        with IBKR with ShinyBroker.</h3>
+</section>
+
+<section>
+    <p>
+        This 'hello world' walkthrough shows you how to setup a good
+        development environment, install the <strong>ShinyBroker
+    </strong> package, connect it to a running instance of
+        TraderWorkstation (TWS) or IB Gateway (IBG), explore a few of
+        the default market data features, and use
+        <a href="https://shiny.posit.co/">Shiny</a> to create a very basic user
+        interface component.
+    </p>
+    <p>The next article in this series will explain how to fetch,
+        process, and graphically display market data from IBKR.</p>
+</section>
+
+<section>
+    <button type="button" class="collapsible">Step 0: Project Setup
+        (click to expand/collapse)<span class="indicator"></span></button>
+    <div class="content">
+        <p>
+            <strong>PyCharm is recommended but not required.</strong>
+            The ShinyBroker package, and the examples in the
+            documentation, were created with
+            <a href="https://www.jetbrains.com/pycharm/download/">
+                PyCharm</a>.
+            You certainly <strong>do not</strong> have to use PyCharm,
+            but it is used in this article series to make the material
+            accessible to readers who aren't old hands at dealing with
+            environments, versions, and packages. If you follow this
+            tutorial and use PyCharm, you will not have to worry about any of
+            that; if you don't, then it's assumed you know what you're
+            doing and are comfortable with your own setup.
+        </p>
+        <p>
+            <strong>
+                Use TWS unless you're already comfortable with IBG.
+            </strong>
+            ShinyBroker will work fine with IB Gateway, but it's
+            recommended to start out with TraderWorkstation so that you
+            can use its UI and menus to verify/follow along with
+            whatever you're building in ShinyBroker.
+        </p>
+        <p><strong>Install the following</strong>:</p>
+        <ul>
+            <li>
+                <strong>Trader Workstation (TWS)</strong>
+                You probably already have TWS installed if you're reading
+                this article but if not, install it from IBKR's website. You may
+                use the Demo account if you don't own an account at IBKR.
+            </li>
+            <li>
+                <strong>Python</strong>: You'll need Python, of course.
+                Install the <a href="https://www.python.org/downloads/">
+                latest stable version</a>.
+            </li>
+            <li><strong>PyCharm</strong>: Download & install from
+                <a href="https://www.jetbrains.com/pycharm/download/">
+                    JetBrains</a>.
+            </li>
+        </ul>
+
+        <p><strong>Create a new PyCharm Project</strong>: Set up a PyCharm
+            project for this tutorial and instruct it to use one and only one
+            dedicated installation of Python. This way, you don't have to
+            deal with all sorts of compatability problems that arise
+            between different Python versions, package clashes, and so on.
+        </p>
+
+        <ol>
+            <li><strong>Open up PyCharm</strong> and create a new
+                project. The "project" is simply a folder that stores
+                all files related to this tutorial. You can name it
+                whatever you want and store it in a convenient place on
+                your computer. Give it a good, informative name that
+                you like -- it's helpful.</li>
+            <li>
+                <p>
+                    <strong>Configure an Interpreter</strong>. You want to
+                    tell PyCharm to create a dedicated installation of Python
+                    only for use by this project, and you can do that by
+                    <em>configuring an interpreter</em>.
+                    You might have already created an environment for this
+                    project when you created a new project; if you did, then
+                    you'll see a little red folder named ".venv" in your
+                    project directory, like in the screenshot below:
+                </p>
+                <img src="venv_success.jpg" alt="venv success"
+                     style="display:inline-block;">
+                <p>
+                    If your PyCharm project does <em>not</em> have an
+                    interpreter configured, then you will probably be
+                    prompted to create one by a clickable banner within
+                    Pycharm. If you can't find the banner or if you closed it,
+                    you can use the <strong>interpreter settings</strong> menu
+                    under File > Settings. From the interpreter settings
+                    window, <strong>add a new local interpreter</strong> in
+                    your project folder. You should now see the little red
+                    ".venv" folder in your project directory like the one in
+                    the screenshot above. <strong>.venv</strong> is the
+                    installation of Python that your project will use.
+            </li>
+            <li>
+                <strong>Verify that your project is using the correct
+                    interpreter</strong>. Do that by glancing at the bottom
+                right-hand corner of the PyCharm window and checking that
+                the file path points to the .venv folder in your project
+                directory. As an example, in the screen snip below (taken from
+                the lower right-hand side of the PyCharm window), it's clear
+                that the project is using the interpreter it sees in the
+                <em>shinybroker</em> folder on the Desktop (which is the
+                correct one for that project to be using).
+            </li>
+        </ol>
+    </div>
+</section>
+
+<section>
+    <p>
+        Once your development environment is set up, either by completing
+        <strong>Step 0</strong> or your own project setup, you may proceed.
+    </p>
+</section>
+
+<section>
+    <button type="button" class="collapsible">Step 1: Install ShinyBroker<span
+            class="indicator"></span></button>
+    <div class="content">
+        <p>
+            Run the command <code>pip install shinybroker</code> in your
+            project's terminal.
+        </p>
+        <img src="install_sb.jpg" alt="install shinybroker"
+             style="display:inline-block;">
+        <p>
+            You'll know it installed correctly and in the right place when you
+            see it in your .venv folder:
+        </p>
+        <img src="sb_success.jpg" alt="sb success"
+             style="display:inline-block;">
+    </div>
+</section>
+
+<section>
+    <p>
+        Now that ShinyBroker is installed, make sure your TWS is set up to
+        accept data connections from APIs.
+    </p>
+</section>
+
+<section>
+    <button type="button" class="collapsible">Step 2: Configure TWS<span
+            class="indicator"></span></button>
+    <div class="content">
+        <p>
+            You need to check a few settings in TWS to make sure it will
+            permit a data connection with ShinyBroker.
+        </p>
+        <ol>
+            <li>
+                Launch TWS and sign in to your paper account (or use the demo)
+            </li>
+            <li>
+                Open the API Configuration menu found at File > Global
+                Configuration > API > Settings.
+            </li>
+            <li>
+                Check <strong>Enable ActiveX and Socket Clients</strong>
+            </li>
+            <li>
+                Un-check <strong>Read-only API</strong> to allow ShinyBroker to
+                send orders to TWS. We won't be using this in the current
+                tutorial but subsequent articles will need it. Your settings menu
+                should now look like the below:
+                <div>
+                    <img src="api_config.jpg" alt="api config"
+                         style="display:inline-block;">
+                </div>
+            </li>
+            <li>Click "Apply" and "OK"</li>
+            <li><strong>Don't close TWS</strong>. You'll need it open and
+                running or else ShinyBroker won't have an IBKR connection to
+                connect to!</li>
+        </ol>
+    </div>
+</section>
+
+<section>
+    <p>
+        Next we'll run a bare-bones ShinyBroker app to check that it
+        runs and can connect with TWS. Reminder that <strong>TWS needs
+        to be running</strong> in order for ShinyBroker to work, so if you
+        shut it down after the previous step, you'll need to launch it again
+        before going on to the next.
+    </p>
+</section>
+
+<section>
+    <button type="button" class="collapsible">Step 3: ShinyBroker Test<span
+            class="indicator"></span></button>
+    <div class="content">
+        <ol>
+            <li>
+                Create a new Python script in PyCharm with File > New,
+                then select "Python File" and give it an informative name
+                (the example uses "hello_world_1.py").
+            </li>
+            <li>
+                Paste the code below into your script:
+                <div class="code-container">
+                    <div class="code-block">
+                    <pre><code id="hello_sb">
+import shinybroker as sb
+
+# Create an instance of a ShinyBroker App object using the default ui and server
+app = sb.sb_app(
+    host='127.0.0.1',  # localhost TWS is being served on your local machine
+    port=7497,         # make this match the port in your API Settings config
+    client_id=10742    # picked at random, choose another Client ID if preferred
+)
+
+# Run the app
+app.run()</code></pre>
+                        <button class="copy-button" onclick="copyCode()">
+                            Copy Code
+                        </button>
+                    </div>
+                </div>
+            </li>
+            <li>
+                Run your Python script. There are many ways to do so but the
+                easiest is probably to highlight all of the code in your script
+                with "select all", right-click the selection, and choose
+                "Execute Selection in Python Console". It's even faster with
+                keyboard shortcuts, e.g., for a Mac: command-A to select all,
+                then alt-shift-E to execute.
+            </li>
+            <li>
+                After you execute the code, your screen should look something
+                like the below. You can see what the code you ran did: it
+                created a ShinyBroker app object, told it where to find an
+                IBKR connection, by specifying <code>host</code>, <code>port
+            </code>, and  <code>client_id</code>. Finally, it ran the app by
+                calling <code>app.run()</code>, which starts a
+                continuously-running Python process that serves the app at
+                the blue hyperlink appearing in the command line output. The
+                app will continue to run until you tell it to stop (e.g., by
+                clicking the red square in the Python Console in Pycharm).
+                <div>
+                    <img src="code_execution_success.jpg"
+                         alt="code execution success"
+                         style="display:inline-block;">
+                </div>
+            </li>
+            <li>
+                To view your app, <strong>click the hyperlink in the command
+                line output</strong>. Doing so will open your first
+                ShinyBroker App in your default browser! You can also
+                copy-paste the url into a browser of your choice. (And if
+                you're thinking <em>can I serve the app on one computer and
+                access the app via browser from another computer/phone in a
+                different location</em> the answer is "yes, you can", but
+                that's a later topic)
+            </li>
+        </ol>
+    </div>
+</section>
+
+<section>
+    <p>
+        Interact with the app and make note of a few important points.
+    </p>
+</section>
+
+<section>
+    <button type="button" class="collapsible">Step 4: Explore the App<span
+            class="indicator"></span></button>
+    <div class="content">
+        <p>
+            Take a few minutes to poke around in the app and try out some of the
+            defulat tabs & tools provided for tasks involving market data,
+            contract matching, socket messages from IBKR, and so on.
+        </p>
+        <p>
+            <strong>Especially important to note</strong> is the section on
+            the home page, which currently reads <code>no ui passed to sb_ui()
+            .</code>. That space is special -- it is reserved for you, the user,
+            to put UI elements and controls for your trading system. Since no ui
+            was specified when we created this simple app object in this
+            hello world example, ShinyBroker is telling you that it's empty.
+        </p>
+        <p>
+            We'll conclude this tutorial in the next step by injecting a little
+            bit of ui into that space.
+        </p>
+    </div>
+</section>
+
+<section>
+    <p>
+        When you're finished exploring the app and ready to move on, <strong>
+        stop</strong> the app from running by clicking the red square button in
+        the console tab in PyCharm.
+    </p>
+    <p>
+        You're now ready for the final step in this tutorial in which you'll
+        add a bit of live, functional UI to your ShinyBroker app.
+    </p>
+    <p>
+        If you're new to Shiny and reactive programming it is very highly
+        recommended that you brush up on the basics by reviewing some of
+        the very accessible and informative videos that the team at Posit has
+        created to teach this topic. The video tutorial below, by Winston Chang
+        of Posit, is an excellent place to start. As you watch, remember that
+        <em>anything you can build in Shiny, you can use in ShinyBroker</em>.
+        <iframe
+                width="560"
+                height="315"
+                src="https://www.youtube.com/embed/sG2dWWothoM?si=-ax0F5CtW-AQ7W2S"
+                title="Intro to Shiny"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen
+        ></iframe>
+    </p>
+    <p>
+        Now let's take a minute to understand and appreciate that all user
+        interfaces must necessarily operate on the same basic principle:
+    <ol>
+        <li>
+            Some kind of new information becomes available as
+            <strong>input</strong>; for example: user keystrokes, the market
+            price of an asset changes, an order fills, etc. No matter what
+            its form or purpose, the point is that some kind of <em>change
+        </em> has taken place meaning that there is <em>new</em>, or,
+            equivalently, <em>updated</em> data available that is of
+            importance to you, the trader.
+        </li>
+        <li>
+            Incoming data is collected by a <strong>server function</strong>,
+            whose job it is to process the data into a useful return value
+            and pass that value to the appropriate place in your app. For
+            example, the input data might be a time-indexed list containing the
+            past hour's prices for a stock at 1-minute intervals, and a server
+            function's job might be to accept that list as input and return the
+            timestamp of the highest (or lowest, etc.) price during the period.
+        </li>
+        <li>
+            The server function may pass its return value to just about
+            anything the trader can dream up but ultimately it will reach an
+            <strong>endpoint</strong>; for example, a text output box on the
+            trader's screen that the trader can read.
+        </li>
+    </ol>
+
+    <p>
+        This tutorial concludes in the next step, which will show you how to
+        implement this process using the magic of Shiny, which was written to
+        <em>greatly</em> simplify the entire <strong>input</strong> ->
+        <strong>processing</strong> -> <strong>output</strong> loop, making
+        these kinds of systems much easier for the trader to build.
+    </p>
+
+    <p>
+        Our newly added ui will cause the ShinyBroker app operate as follows:
+    <ol>
+        <li>The user inputs a string to an input text box</li>
+        <li>
+            A server function watches the contents of the text box and when it
+            changes, it appends the string "You entered '" to the beginning of
+            the input's text, and appends "'." to the end.
+        </li>
+        <li>
+            The return string, which now reads "You entered '{string you
+            entered'", is passed to an output text box where you, the trader,
+            can read it.
+        </li>
+    </ol>
+    <p>
+        To accomplish this feat we'll need to add 3 new elements to our
+        ShinyBroker app:
+    </p>
+    <ol>
+        <li>A text input box, for the user to type into</li>
+        <li>
+            A server function that appends the "You entered '" and "'." strings
+        </li>
+        <li>
+            A text output that displays the final string
+        </li>
+    </ol>
+    <p>
+        You can build just about anything you want starting from this humble
+        example by following the "input -> processing -> output" data flow.
+        Please try the next step now.
+    </p>
+</section>
+
+<section>
+    <button type="button" class="collapsible">Step 5: Add some UI to the
+        app<span class="indicator"></span></button>
+    <div class="content">
+<div class="code-container">
+                    <div class="code-block">
+                    <pre><code id="hello_sb_2">
+# Some UI to add to the app
+a_piece_of_new_ui = ui.div(
+    ui.input_text(
+        id='sb_example_text_in',
+        label='Example Input. Type something!'
+    ),
+    ui.output_code('sb_example_text_out')
+)</code></pre>
+                        <button class="copy-button" onclick="copyCode()">
+                            Copy Code
+                        </button>
+                    </div>
+                </div>
+    </div>
+</section>
+
+<script>
+    const coll = document.getElementsByClassName("collapsible");
+    for (let i = 0; i < coll.length; i++) {
+        coll[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            const content = this.nextElementSibling;
+            if (content.style.display === "block") {
+                content.style.display = "none";
+            } else {
+                content.style.display = "block";
+            }
+        });
+    }
+</script>
+
+<script>
+    function copyCode() {
+        const code = document.getElementById("hello_sb").textContent;
+        navigator.clipboard.writeText(code).then(() => {
+            alert('Code copied to clipboard!');
+        }).catch(err => {
+            console.error('Failed to copy: ', err);
+        });
+    }
+</script>
+
+</body>
+</html>
