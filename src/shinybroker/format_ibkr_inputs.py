@@ -28,6 +28,14 @@ def format_historical_data_input(hst_dta):
             volume = [float(hst_dta[i]) for i in range(9, hd_len, 8)]
         return volume
 
+    def bc_try(x):
+        try:
+            bc = int(x)
+        except ValueError:
+            bc = 0
+        return bc
+
+
     return {
         'startDateStr': hst_dta[1],
         'endDateStr': hst_dta[2],
@@ -41,7 +49,7 @@ def format_historical_data_input(hst_dta):
             'wap': [
                 round(float(hst_dta[i]), 3) for i in range(10, hd_len, 8)
             ],
-            'barCount': [int(hst_dta[i]) for i in range(11, hd_len, 8)]
+            'barCount': [bc_try(hst_dta[i]) for i in range(11, hd_len, 8)]
         })
     }
 

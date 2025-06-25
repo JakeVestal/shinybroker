@@ -163,3 +163,4 @@ cython_debug/
 
 /.quarto/
 /.pypirc
+/old envs/

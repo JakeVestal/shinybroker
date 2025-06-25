@@ -20,6 +20,7 @@ dependencies = [
     "faicons",
     "jinja2",
     "pandas",
+    "rich",
     "shiny",
     "shinywidgets"
 ]
