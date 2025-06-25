@@ -3,6 +3,7 @@ import os
 from faicons import icon_svg
 from shiny import ui
 from shinybroker.contract_samples import contract_samples
+from shinybroker import VERSION
 
 
 def sb_ui(home_ui = ui.p('no ui passed to sb_ui().')):
@@ -302,7 +303,7 @@ def sb_ui(home_ui = ui.p('no ui passed to sb_ui().')):
                 id="main_tab"
             )
         ),
-        title="ShinyBroker",
+        title="ShinyBroker " + str(VERSION),
         fillable=True,
         window_title="ShinyBroker",
         class_="bslib-page-dashboard"

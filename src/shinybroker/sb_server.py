@@ -2,7 +2,9 @@ import datetime, select, threading, os, re
 
 import numpy as np
 import pandas as pd
+import requests
 
+from shinybroker import VERSION
 from shinybroker.connection import (
     create_ibkr_socket_conn,
     ib_msg_reader_run_loop
@@ -42,6 +44,40 @@ def sb_server(
                     "a detailed setup example."
                 ),
                 title="Can't connect to IBKR",
+                easy_close=True
+            )
+        )
+
+    def version_to_int_list(version_str):
+        return list(map(int, version_str.split(".")))
+
+    latest_version = requests.get(
+            "https://pypi.org/pypi/shinybroker/json",
+            timeout=5
+        ).json()['info']['version']
+
+    if any(
+            [remote > local for remote, local in zip(
+                version_to_int_list(latest_version),
+                version_to_int_list(VERSION)
+            )]
+    ):
+        ui.modal_show(
+            ui.modal(
+                ui.HTML(
+                    "You are using ShinyBroker Version <strong>" +
+                    VERSION +
+                    "</strong> but Version <strong>" +
+                    latest_version +
+                    "</strong> is available.<br><br>"
+                    "Because ShinyBroker is under frequent development, it "
+                    "is highly recommended that you update to the latest "
+                    "version by running <code>pip install shinybroker "
+                    "--upgrade</code> in your terminal. Taking this quick "
+                    "step will make sure you have access to the latest bug "
+                    "fixes and features."
+                ),
+                title="Please Update ShinyBroker",
                 easy_close=True
             )
         )
