@@ -302,7 +302,8 @@ def sb_ui(home_ui = ui.p('no ui passed to sb_ui().')):
                 id="main_tab"
             )
         ),
-        title="ShinyBroker: Visual Reactive Trading with IBKR",
+        title="ShinyBroker",
         fillable=True,
+        window_title="ShinyBroker",
         class_="bslib-page-dashboard"
     )

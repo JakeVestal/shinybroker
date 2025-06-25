@@ -1,5 +1,17 @@
 VERSION = '0.6.35'
 
+from rich import print as rprint
+from rich.panel import Panel as rPanel
+rprint(
+    rPanel(
+        "ShinyBroker is an ongoing project that is developed and maintained "
+        "by the FinTech Master's Program at Duke University and is freely "
+        "available to the public for use on paper trading accounts." ,
+        title="Welcome to ShinyBroker",
+        subtitle="https://shinybroker.com"
+    )
+)
+
 from shinybroker.connection import (
     create_ibkr_socket_conn,
     read_ib_msg,
