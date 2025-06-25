@@ -19,11 +19,36 @@ def sb_server(
         host, port, client_id, verbose
 ):
 
-    ib_conn = create_ibkr_socket_conn(
-        host=host, port=port, client_id=client_id
-    )
+    # host='127.0.0.1'
+    # port=7497
+    # client_id=10742
+
+    try:
+        ib_conn = create_ibkr_socket_conn(
+            host=host, port=port, client_id=client_id
+        )
+    except ConnectionRefusedError:
+        ui.modal_show(
+            ui.modal(
+                ui.HTML(
+                    "ShinyBroker tried to connect to an IBKR client on <br>"
+                    "<br><strong>host</strong>: " + str(host) + "<br>" +
+                    "<strong>port</strong>: " + str(port) + "<br>" +
+                    "<strong>client_id</strong>: " + str(client_id) + "<br>" +
+                    "<br>...but connection was refused. Please make sure that "
+                    "an IBKR client such as TWS or IBKG is running and "
+                    "configured to accept API connections. See the <a href = "
+                    "'https://shinybroker.com'>ShinyBroker website</a> for "
+                    "a detailed setup example."
+                ),
+                title="Can't connect to IBKR",
+                easy_close=True
+            )
+        )
+
     ib_socket = ib_conn['ib_socket']
     session.on_ended(ib_socket.close)
+
 
     print(
         'Connected to IBKR at ' + ib_conn['CONNECTION_TIME'] +
