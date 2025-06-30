@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,7 +11,7 @@
             line-height: 1.6;
         }
         .collapsible {
-            color: black;
+            color: white;
             cursor: pointer;
             padding: 12px;
             width: 100%;
@@ -19,10 +19,10 @@
             text-align: left;
             outline: none;
             font-size: 16px;
-            font-weight: bold;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            background-color: rgb(1, 34, 105);
         }
         .content {
             padding: 0 18px;
@@ -69,15 +69,41 @@
         .active .indicator::after {
             content: '−';
         }
+        #sb-banner {
+            display: flex;
+            align-items: center;
+            background-color: rgb(1, 34, 105);
+        }
+        .sb-text-block {
+            background-color: rgb(191, 191, 191);
+            padding-left: 10px;
+        }
     </style>
 </head>
 <body>
 
+<div id="sb-banner">
+        <a href="https://shinybroker.com">
+            <img src="banner.png" alt="shinybroker banner"
+                 width="350px"></a>
+        <div class="sb-text-block">
+            <p>
+                <a href="https://shinybroker.com">ShinyBroker</a> is an ongoing
+                development project at the <a
+                    href="https://masters.pratt.duke.edu/fintech/">Duke
+                University FinTech Masters Program</a> and is available for
+                public use on paper accounts. Feature requests and bug
+                reports are welcome on our <a
+                    href="https://github.com/JakeVestal/shinybroker/issues">Issues page
+            </a> as we continue to grow and develop.
+            </p>
+        </div>
+</div>
+
+
 <section>
-    <h3>ShinyBroker lets you build the trading system you want,
-        including charting, visualizations, calculations, and models.
-        If you can build it in Python, you can connect and use it
-        with IBKR with ShinyBroker.</h3>
+    <h3>ShinyBroker lets you build the trading system you want in Shiny and
+        connect it with Interactive Brokers.</h3>
 </section>
 
 <section>
@@ -96,7 +122,8 @@
 
 <section>
     <button type="button" class="collapsible">Step 0: Project Setup
-        (click to expand/collapse)<span class="indicator"></span></button>
+        (click to expand/collapse)<span class="indicator"></span>
+    </button>
     <div class="content">
         <p>
             <strong>PyCharm is recommended but not required.</strong>
@@ -301,7 +328,8 @@ app = sb.sb_app(
 
 # Run the app
 app.run()</code></pre>
-                        <button class="copy-button" onclick="copyCode()">
+                        <button class="copy-button"
+                                onclick="copyCode('hello_sb')">
                             Copy Code
                         </button>
                     </div>
@@ -393,16 +421,16 @@ app.run()</code></pre>
         created to teach this topic. The video tutorial below, by Winston Chang
         of Posit, is an excellent place to start. As you watch, remember that
         <em>anything you can build in Shiny, you can use in ShinyBroker</em>.
-        <iframe
-                width="560"
-                height="315"
-                src="https://www.youtube.com/embed/sG2dWWothoM?si=-ax0F5CtW-AQ7W2S"
-                title="Intro to Shiny"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                referrerpolicy="strict-origin-when-cross-origin"
-                allowfullscreen
-        ></iframe>
     </p>
+    <iframe
+            width="560"
+            height="315"
+            src="https://www.youtube.com/embed/sG2dWWothoM?si=-ax0F5CtW-AQ7W2S"
+            title="Intro to Shiny"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen
+    ></iframe>
     <p>
         Now let's take a minute to understand and appreciate that all user
         interfaces must necessarily operate on the same basic principle:
@@ -480,9 +508,17 @@ app.run()</code></pre>
     <button type="button" class="collapsible">Step 5: Add some UI to the
         app<span class="indicator"></span></button>
     <div class="content">
-<div class="code-container">
-                    <div class="code-block">
-                    <pre><code id="hello_sb_2">
+        <p>
+            First, we'll need the two pieces of UI that will appear on the
+            web page: an input for the user to type into, and an output to
+            see the result. We'll use the <code>input_text</code> and
+            <code>output_code</code> objects made available by the
+            <code>ui</code> object in Shiny, and store them together in a
+            <code>div</code>, with the input on top of the output:
+        </p>
+        <pre><code>
+from shiny import ui
+
 # Some UI to add to the app
 a_piece_of_new_ui = ui.div(
     ui.input_text(
@@ -490,13 +526,138 @@ a_piece_of_new_ui = ui.div(
         label='Example Input. Type something!'
     ),
     ui.output_code('sb_example_text_out')
-)</code></pre>
-                        <button class="copy-button" onclick="copyCode()">
-                            Copy Code
-                        </button>
-                    </div>
-                </div>
+)
+</code></pre>
+        <p>
+            Now we need some logic -- a Shiny-like server function that
+            recognizes the input text box -- which we named <code>
+            sb_example_text_in</code>  above -- as an input that it needs to
+            watch. Whenever the text in the input changes, the function
+            `sb_example_text_out()` will execute and modify the string that
+            it sees in the text input.
+        </p>
+        <p>
+            ShinyBroker uses the Shiny framework (see the video above), so
+            because we want this function use its return value to
+            continuously re-render the ui element that we named <code>
+            sb_example_text_in</code> above, we give the function the name of
+            the thing we want it to render, and decorate it with an
+            <code>@render</code>. The <code>.code</code> is there so that the
+            output text looks cool and monospaced formatted like computer
+            code. Try it with <code>@render.text</code> and see what happens.
+        </p>
+        <p>
+            In ShinyBroker, you will probably have tons of different server
+            functions, stored in different files, that calculate your models,
+            update your charts, outputs, and so on. When building your
+            <code>app</code>, just neatly wrap all of them in some kind of
+            server function whose signature has the five parameters you
+            see in the block below. The part of your app that you write won't
+            always, or even usually, use all five parameters, but they need
+            to be there so that ShinyBroker recognizes that you're giving it
+            a well-formed server function.
+        </p>
+        <p>
+            All of the server logic we need for the current example app is
+            taken care of in a single reactive function and the whole thing
+            appears in the block below.
+        </p>
+        <pre><code>
+from shiny import Inputs, Outputs, Session, ui, render
+
+# Server to support the new UI
+# Signature must always contain the following five parameters:
+#   input, output, session, ib_socket, and sb_rvs
+def a_server_function(
+        input: Inputs, output: Outputs, session: Session, ib_socket, sb_rvs
+):
+    @render.code
+    def sb_example_text_out():
+        return f"You entered '{input.sb_example_text_in()}'."
+</code></pre>
+
+        <p>
+            Here comes the magic of ShinyBroker. All you need to do is take
+            your Shiny app -- which consists of a UI and a server function --
+            and pass it to the <code>sb_app</code>:
+        </p>
+
+        <pre><code>
+import shinybroker as sb
+
+# Create a ShinyBroker app with the new ui and server
+app = sb.sb_app(
+    a_piece_of_new_ui,
+    a_server_function,
+    host='127.0.0.1',
+    port=7497,
+    client_id=10742
+)
+</code></pre>
+        <p>
+            And that's it! The completed code, including <code>app.run()</code>,
+            can be found below:
+        </p>
+
+        <div class="code-container">
+            <div class="code-block">
+                    <pre><code id="hello_sb_2">
+import shinybroker as sb
+from shiny import Inputs, Outputs, Session, ui, render
+
+
+# Some UI to add to the app
+a_piece_of_new_ui = ui.div(
+    ui.input_text(
+        id='sb_example_text_in',
+        label='Example Input. Type something!'
+    ),
+    ui.output_code('sb_example_text_out')
+)
+
+
+# Server to support the new UI
+# Signature must always contain the following five parameters:
+#   input, output, session, ib_socket, and sb_rvs
+def a_server_function(
+        input: Inputs, output: Outputs, session: Session, ib_socket, sb_rvs
+):
+    @render.code
+    def sb_example_text_out():
+        return f"You entered '{input.sb_example_text_in()}'."
+
+
+# Create a ShinyBroker app with the new ui and server
+app = sb.sb_app(
+    a_piece_of_new_ui,
+    a_server_function,
+    host='127.0.0.1',
+    port=7497,
+    client_id=10742
+)
+
+app.run()
+                        </code></pre>
+                <button class="copy-button"
+                        onclick="copyCode('hello_sb_2')">
+                    Copy Code
+                </button>
+            </div>
+        </div>
     </div>
+</section>
+
+<section>
+    <p>
+        This concludes the first ShinyBroker Tutorial! To recap, we performed
+        our installation and setup, ran a test app, and then demonstrated how
+        the UI and Server functions that you write in your Shiny apps can be
+        very easily integrated into IBKR's trading system with ShinyBroker.
+    </p>
+    <p>
+        In the next installment, we'll be fetching, analyzing, and charting
+        market data.
+    </p>
 </section>
 
 <script>
@@ -515,8 +676,8 @@ a_piece_of_new_ui = ui.div(
 </script>
 
 <script>
-    function copyCode() {
-        const code = document.getElementById("hello_sb").textContent;
+    function copyCode(clicked_id) {
+        const code = document.getElementById(clicked_id).textContent;
         navigator.clipboard.writeText(code).then(() => {
             alert('Code copied to clipboard!');
         }).catch(err => {
