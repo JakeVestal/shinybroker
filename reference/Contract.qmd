@@ -1,7 +1,7 @@
 # Contract { #shinybroker.Contract }
 
 ```python
-Contract(self, contract_params=None)
+Contract(contract_params=None)
 ```
 
 All tradable assets -- even stocks and currencies -- are 'contracts'.
