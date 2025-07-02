@@ -30,9 +30,6 @@ def sb_ui(home_ui = ui.p('no ui passed to sb_ui().')):
             ui.input_dark_mode(mode="dark"),
         ),
         ui.page_fluid(
-            ui.include_css(
-                os.path.join(os.path.dirname(__file__), 'www', 'custom.css')
-            ),
             ui.include_js(
                 os.path.join(
                     os.path.dirname(__file__), 'www',

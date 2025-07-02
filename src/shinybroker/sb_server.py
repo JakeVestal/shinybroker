@@ -14,12 +14,50 @@ from shinybroker.msgs_to_ibkr import *
 from shinybroker.format_ibkr_inputs import format_contract_details
 from shinybroker.functionary import functionary
 from shiny import Inputs, Outputs, Session, reactive, render, ui
+from sys import exit
 
 
 def sb_server(
         input: Inputs, output: Outputs, session: Session,
         host, port, client_id, verbose
 ):
+
+    def version_to_int_list(version_str):
+        return list(map(int, version_str.split(".")))
+
+    latest_version = requests.get(
+            "https://pypi.org/pypi/shinybroker/json",
+            timeout=5
+        ).json()['info']['version']
+
+    if any(
+            [remote > local for remote, local in zip(
+                version_to_int_list(latest_version),
+                version_to_int_list(VERSION)
+            )]
+    ):
+        ui.modal_show(
+            ui.modal(
+                ui.HTML(
+                    "You are using ShinyBroker Version <strong>" +
+                    VERSION +
+                    "</strong> but Version <strong>" +
+                    latest_version +
+                    "</strong> is available.<br><br>"
+                    "Because ShinyBroker is under frequent development, it "
+                    "is highly recommended that you update to the latest "
+                    "version. To do so, please: <ol>"
+                    "<li>Stop your ShinyBroker app</li>"
+                    "<li>Run <code>pip install shinybroker --upgrade</code> " 
+                    "in your terminal</li> "
+                    "<li> Restart your ShinyBroker app</li>"
+                    "</ol> Doing so will ensure that you have access to the "
+                    "latest features and bug fixes."
+                ),
+                title="Please Update ShinyBroker",
+                easy_close=True
+            )
+        )
 
     # host='127.0.0.1'
     # port=7497
@@ -47,40 +85,8 @@ def sb_server(
                 easy_close=True
             )
         )
-
-    def version_to_int_list(version_str):
-        return list(map(int, version_str.split(".")))
-
-    latest_version = requests.get(
-            "https://pypi.org/pypi/shinybroker/json",
-            timeout=5
-        ).json()['info']['version']
-
-    if any(
-            [remote > local for remote, local in zip(
-                version_to_int_list(latest_version),
-                version_to_int_list(VERSION)
-            )]
-    ):
-        ui.modal_show(
-            ui.modal(
-                ui.HTML(
-                    "You are using ShinyBroker Version <strong>" +
-                    VERSION +
-                    "</strong> but Version <strong>" +
-                    latest_version +
-                    "</strong> is available.<br><br>"
-                    "Because ShinyBroker is under frequent development, it "
-                    "is highly recommended that you update to the latest "
-                    "version by running <code>pip install shinybroker "
-                    "--upgrade</code> in your terminal. Taking this quick "
-                    "step will make sure you have access to the latest bug "
-                    "fixes and features."
-                ),
-                title="Please Update ShinyBroker",
-                easy_close=True
-            )
-        )
+        exit(0)
+        return None
 
     ib_socket = ib_conn['ib_socket']
     session.on_ended(ib_socket.close)
