@@ -20,9 +20,12 @@ dependencies = [
     "faicons",
     "jinja2",
     "pandas",
+    "plotly",
     "rich",
+    "scipy<=1.15.3",
     "shiny",
-    "shinywidgets"
+    "shinywidgets",
+    "statsmodels==0.14.4"
 ]
 
 [project.optional-dependencies]
@@ -32,11 +35,6 @@ dev = [
     "hatch",
     "twine",
     "build"
-]
-examples = [
-    "plotly",
-    "scikit-learn",
-    "statsmodels"
 ]
 
 [project.urls]
