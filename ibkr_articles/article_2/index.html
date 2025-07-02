@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        ShinyBroker 2: Fetch, Process, and Plot Historical Market Data
+    </title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        .collapsible {
+            color: rgb(191, 191, 191);
+            cursor: pointer;
+            padding: 5px 12px 5px 12px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 20px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgb(1, 28, 105);
+        }
+        .content {
+            padding: 0 18px;
+            display: none;
+            overflow: hidden;
+            background-color: #f1f1f1;
+        }
+        .code-container {
+            max-width: 700px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .code-block {
+            position: relative;
+            background: #f8f8f8;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-family: 'Courier New', monospace;
+        }
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 5px 10px;
+            background: #2c3e50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .copy-button:hover {
+            background: #34495e;
+        }
+        .indicator::after {
+            content: '+';
+            font-size: 25px;
+            color: greenyellow;
+        }
+        .active .indicator::after {
+            content: '−';
+            color: orangered;
+        }
+        .sb-banner {
+            display: flex;
+            align-items: center;
+            background-color: rgb(1, 28, 105);
+        }
+        .sb-text-block {
+            background-color: rgb(191, 191, 191);
+            padding-left: 10px;
+        }
+        .step-span {
+            color: rgb(238, 186, 43);
+            font-weight:bold;
+        }
+        .dropdown-text {
+            color: white;
+            font-weight: normal;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="sb-banner">
+    <a href="https://shinybroker.com">
+        <img src="banner_350.png" alt="shinybroker banner"></a>
+    <div class="sb-text-block">
+        <p>
+            <a href="https://shinybroker.com">ShinyBroker</a> is an ongoing
+            development project at the <a
+                href="https://masters.pratt.duke.edu/fintech/">Duke
+            University FinTech Masters Program</a> and is available for
+            public use on paper accounts. Feature requests and bug
+            reports are welcome on our <a
+                href="https://github.com/JakeVestal/shinybroker/issues">
+            GitHub page
+        </a> as we continue build up a full-featured platform for use in and
+            outside the classroom.
+        </p>
+    </div>
+</div>
+
+
+<section>
+    <h3>ShinyBroker lets you build the trading system you want in Shiny and
+        connect it with Interactive Brokers.</h3>
+</section>
+
+<section>
+    <p>This article will demonstrate how to </p>
+</section>
+
+<section>
+    <button type="button" class="collapsible">
+        <span>
+            <span class="step-span">Step 1</span>:
+            <span class="dropdown-text">
+
+            </span>
+        </span>
+        <span class="indicator"></span>
+    </button>
+    <div class="content">
+        <ol>
+            <li>
+                Create a new Python script in PyCharm with File > New,
+                then select "Python File" and give it an informative name
+                (the example uses "hello_world_1.py").
+            </li>
+            <li>
+                Paste the code below into your script:
+                <div class="code-container">
+                    <div class="code-block">
+                    <pre><code id="hello_sb">
+import shinybroker as sb
+
+# Create an instance of a ShinyBroker App object using the default ui and server
+app = sb.sb_app(
+    host='127.0.0.1',  # localhost TWS is being served on your local machine
+    port=7497,         # make this match the port in your API Settings config
+    client_id=10742    # picked at random, choose another Client ID if preferred
+)
+
+# Run the app
+app.run()</code></pre>
+                        <button class="copy-button"
+                                onclick="copyCode('hello_sb')">
+                            Copy Code
+                        </button>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <strong>Run your Python script</strong>. There are many ways
+                to do so, but one quick and easy way is to highlight all of the
+                code in your script with "select all", right-click the
+                selection, and choose "Execute Selection in Python Console".
+                It's even faster with keyboard shortcuts, e.g., for a Mac:
+                command-A to select all, then alt-shift-E to execute. You can
+                find those commands, and their shortcuts, by right-clicking
+                on highlighted code in PyCharm.
+            </li>
+            <li>
+                After you execute the code PyCharm will launch a new Python
+                console to run the code you told it to run. Your screen
+                should look something like the below. You can see what the
+                code you ran did: it created a ShinyBroker app object and told
+                it where to find an IBKR connection by specifying
+                <code>host</code>, <code>port</code>, and
+                <code>client_id</code>. By itself, that <code>app</code>
+                object does nothing but sit there in variable space; to make
+                it run, you have to call its <code>run</code> method, which
+                we did in the final line of the sample code when we called
+                <code>app.run()</code>. That command is the one that started the
+                continuously-running Python process that you see in your
+                Console. That process serves your ShinyBroker app at the blue
+                hyperlink appearing in the command line output. The app will
+                continue to run until you tell it to stop (e.g., by clicking
+                the red square in the Python Console in PyCharm).
+                <div>
+                    <img src="code_execution_success.jpg"
+                         alt="code execution success">
+                </div>
+            </li>
+            <li>
+                To view your app, <strong>click the hyperlink in the command
+                line output</strong>. Doing so will open your first
+                ShinyBroker App in your default browser! You can also
+                copy-paste the url into a browser of your choice. (And if
+                you're thinking <em>can I serve the app on one computer and
+                access the app via browser from another computer/phone in a
+                different location</em> the answer is "yes, you can", but
+                that's a later topic)
+            </li>
+        </ol>
+    </div>
+</section>
+
+<section>
+    <p>
+        Interact with the app and make note of a few important points.
+    </p>
+</section>
+
+<section>
+    <button type="button" class="collapsible">
+        <span>
+            <span class="step-span">Step 4</span>:
+            <span class="dropdown-text">
+                Explore the App
+            </span>
+        </span>
+        <span class="indicator"></span>
+    </button>
+    <div class="content">
+        <p>
+            When you navigate a browser to the url at which your app is being
+            served, you should be greeted with an app that looks something
+            like the screen snip below.
+        </p>
+        <img src="sb_app_running.jpg" alt="app is running">
+        <p>
+            Take a few minutes to poke around in the app and try out some of the
+            default tabs & tools provided for tasks involving market data,
+            contract matching, socket messages from IBKR, and so on.
+        </p>
+        <p>
+            <strong>Especially important to note</strong> is the section on
+            the home page, which currently reads <code>
+            no ui passed to sb_ui()</code>. That space is special -- it is
+            reserved for you, the trader, to put UI elements and controls for
+            your trading system. Since no ui was specified when we created
+            this simple app object in this hello world example, ShinyBroker
+            is telling you that it's empty.
+        </p>
+        <p>
+            We'll conclude this tutorial in the next step by injecting a little
+            bit of ui into that space.
+        </p>
+    </div>
+</section>
+
+<section>
+    <p>
+        When you're finished exploring the app and ready to move on, <strong>
+        stop</strong> the app from running by clicking the red square button in
+        the console tab in PyCharm.
+    </p>
+    <p>
+        You're now ready for the final step in this tutorial in which you'll
+        add a bit of live, functional UI to your ShinyBroker app.
+    </p>
+    <p>
+        If you're new to Shiny and reactive programming it is very highly
+        recommended that you brush up on the basics by reviewing some of
+        the very accessible and informative videos that the team at Posit has
+        created to teach this topic. The video tutorial below, by <a
+            href="https://www.linkedin.com/in/winstonchang1/">Winston Chang</a>
+        of <a href="https://posit.co/">Posit</a>, is an excellent place to
+        start. As you watch, remember that <em>anything you can build in
+        Shiny, you can use in ShinyBroker</em>.
+    </p>
+    <iframe
+            width="560"
+            height="315"
+            src="https://www.youtube.com/embed/sG2dWWothoM?si=-ax0F5CtW-AQ7W2S"
+            title="Intro to Shiny"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen
+    ></iframe>
+    <p>
+        Now it's time for the real learning & takeaway part of this
+        turtorial. Let's take a minute to understand and appreciate that all
+        user interfaces must necessarily operate on the same basic principle:
+    <ol>
+        <li>
+            Some kind of new information becomes available as
+            <strong>input</strong>; for example: user keystrokes, the market
+            price of an asset changes, an order fills, etc. No matter what
+            its form or purpose, the point is that some kind of <em>change
+        </em> has taken place meaning that there is <em>new</em>, or,
+            equivalently, <em>updated</em> data available that is of
+            importance to you, the trader. Information like this shows up
+            <em>asynchronously</em>, meaning that there is no way to tell
+            when or if it will become available. Therefore a system like
+            ShinyBroker must always be on the ball and ready to handle
+            incoming data as it comes in from the brokerage connection.
+        </li>
+        <li>
+            Incoming data is collected by a server function, whose job it is
+            to <strong>process</strong> the data into a useful return value
+            and pass that value to the appropriate place in your app. For
+            example, the input data might be a time-indexed list containing the
+            past hour's prices for a stock at 1-minute intervals, and a server
+            function's job might be to accept that list as input and return the
+            timestamp of the highest (or lowest, etc.) price during the period.
+        </li>
+        <li>
+            The server function may pass its return value to just about
+            anything the trader can dream up but its ultimate fate is
+            to be displayed to the trader as some sort of <strong>
+            output</strong> that is understandable to the trader; for
+            example: a plot, an updated forecast calculation, or a text box.
+        </li>
+    </ol>
+
+    <p>
+        This tutorial culminates in the next step, which will show you how to
+        implement this process using the magic of Shiny, which was written to
+        <em>greatly</em> simplify the entire <strong>input</strong> ->
+        <strong>processing</strong> -> <strong>output</strong> loop, making
+        these kinds of systems much easier for the trader to build.
+    </p>
+
+    <p>
+        Our newly added ui will cause the ShinyBroker app to operate as follows:
+    <ol>
+        <li>The user inputs a string to an input text box</li>
+        <li>
+            A server function watches the contents of the text box and when it
+            changes, it appends the string "<strong>You entered '</strong>" to the
+            beginning of the input's text, and appends "<strong>'.</strong>"
+            to the end; therefore, the resulting string is "<strong>You
+            entered '{string that you entered}'.</strong>".
+        </li>
+        <li>
+            The return string is passed to an output text box where you, the
+            trader, can read it.
+        </li>
+    </ol>
+    <p>
+        To accomplish this feat we'll need to add 3 new elements to our
+        ShinyBroker app:
+    </p>
+    <ol>
+        <li>A <strong>text input box</strong> so that the user has
+            something to type into</li>
+        <li>
+            A <strong>server function</strong> that performs the string
+            appending steps
+        </li>
+        <li>
+            A <strong>text output</strong> that displays the final string
+        </li>
+    </ol>
+    <p>
+        <strong><u>You can build just about anything you want starting from
+            this humble example</u></strong> simply by keeping the "input ->
+        processing -> output" data flow in your mind and making intellegent
+        use of the buttons, widgets, plots, and other Python tools that are
+        readily available in Shiny and other Python packages.
+    </p>
+    <p>Please try the next step now.</p>
+</section>
+
+<section>
+    <button type="button" class="collapsible">
+        <span>
+            <span class="step-span">Step 5</span>:
+            <span class="dropdown-text">
+                Add some UI to the app
+            </span>
+        </span>
+        <span class="indicator"></span>
+    </button>
+    <div class="content">
+        <p>
+            First, we'll need the two pieces of UI that will appear on the
+            web page: an input for the user to type into, and an output to
+            see the result. We'll use the <code>input_text</code> and
+            <code>output_code</code> objects made available by the
+            <code>ui</code> object in Shiny, and store them together in a
+            <code>div</code>, with the input on top of the output. <a
+                href="https://shiny.posit.co/py/components/">All sorts of
+            different components are available</a> both in Shiny and in
+            other packages like <a
+                href="https://shiny.posit.co/py/docs/jupyter-widgets.html">
+            shinywidgets</a>, or you can <a
+                href="https://shiny.posit.co/py/docs/custom-components-pkg.html">
+            build your own</a>. In this example, however, we'll only need two
+            components: <code>input_text</code> and <code>output_code</code>.
+            In the code below we use these components to create a new piece of
+            ui and assign to it the appropriate name <code>
+            a_piece_of_new_ui</code>.
+        </p>
+        <pre><code>
+from shiny import ui
+
+# Some UI to add to the app
+a_piece_of_new_ui = ui.div(
+    ui.input_text(
+        id='sb_example_text_in',
+        label='Example Input. Type something!'
+    ),
+    ui.output_code('sb_example_text_out')
+)
+</code></pre>
+        <p>Now we need some logic: a function that recognizes the input text
+            box (which we named <code>sb_example_text_in</code> above) as an
+            input that it needs to watch. It should also possess the
+            additional properties such that, whenever the text in the input
+            changes, the function executes, calculates the new string that we
+            want for the text output, and sends that value to the output
+            object that we named <code>sb_example_text_out</code>.
+            ShinyBroker uses the Shiny framework (see the video above) to
+            simplify all of the 'watching and updating' tasks in order to
+            make it easy to write a function that does the job.</p>
+        <p>In Shiny-speak, what we want to write is called a <strong>rendering
+            function</strong>, a special type of function that was created
+            for exactly the kind of 'watching and updating' functionality
+            that we need. A suitable rendering function is provided below but
+            if you're new to Shiny, consider the following bullet points
+            to help you understand rendering functions and why the code is
+            written the way it is so that you can be better equipped to write
+            your own.</p>
+        <ul>
+            <li>Shiny takes into consideration the names you give to your
+                server functions and uses them to figure out where the
+                return values should be passed. In most use cases, including
+                the current tutorial, that's a lot simpler than it sounds
+                because it boils down to: <em>when you write your function,
+                <strong>just give it the same name as the output
+                    you want it to update</strong></em>. That simple 'rule'
+                will get you through 95% of your use cases. In our case, we
+                want to update the output object named <code>
+                    sb_example_text_out</code>, so that's the name we'll assign
+                to our function.</li>
+            <li>We want the function to run every time the value of the input
+                box <code>sb_example_text_in</code> changes, so somewhere
+                within the function's body we'll need to call
+                <code>input.sb_example_text_in()</code> to fetch the contents
+                of the input box. Shiny handles the rest, which is extremely
+                convenient because it allows you to treat <code>input
+                    .sb_example_text_in()</code> almost like a variable that
+                you can always trust to contain "whatever is currently in the
+                input box". Note that calling an input function to get its
+                value carries with it a computational expense, so if you find
+                yourself making calls to the same input more than once within
+                the same render function, it's probably bad code. You're most
+                likely better off if you just make the call <em>once</em>,
+                store the input's value as a local variable, and then use
+                that variable in the rest of your function code.
+            </li>
+            <li>Finally, we want to communicate to Shiny that our function is
+                indeed a <a href="https://shiny.posit.co/r/getstarted/build-an-app/reactive-flow/render-functions.html">
+                    rendering function</a>, which we can do by decorating it
+                with a <code>@render</code> decorator. All sorts of render
+                decorators are available, and of course you can <a
+                        href="https://shiny.posit.co/py/api/core/Renderer.html"
+                >write your own</a>, but we'll be using <code>
+                    @render.code</code> so that the output text looks cool and
+                monospaced-formatted like computer code. You can try stopping
+                and re-running your app with other decorators like <code>
+                    @render.text</code> to see what happens with other sorts
+                of decorators.
+            </li>
+        </ul>
+        <p>Taking all that into account, a render function that suits our
+            purposes might look like the one below:</p>
+        <pre><code>
+    @render.code
+    def sb_example_text_out():
+        return f"You entered '{input.sb_example_text_in()}'."
+</code></pre>
+        <p>All that's left is to put that function into an app! Fortunately,
+            ShinyBroker makes that easy. In practice, when making a real
+            trading app, you will probably have tons of different functions
+            required to make the app work, perhaps stored in different files,
+            doing tasks like calculating your models, updating your charts,
+            outputs, and so on. No matter how many you have, you can include
+            all your functions in your <code>app</code> simply by wrapping
+            them into one overall <strong>server function</strong> that you
+            can pass to <code>sb.sb_app()</code> when you build your
+            ShinyBroker app. It does not matter what you name your server
+            function; the only requirement is that its signature contains the
+            five parameters <code>input: Inputs, output: Outputs, session:
+                Session, ib_socket, sb_rvs</code>. The part of your app that
+            you, the the trader, will write will not always, or even usually,
+            make use all five parameters explicitly, but they need to be
+            there in your server function so that ShinyBroker can keep track
+            of session information in its internals.
+        </p>
+        <p>Below, we do exactly that: wrap the render function we just wrote
+        into a new server function named <code>a_server_function</code>.</p>
+        <pre><code>
+from shiny import Inputs, Outputs, Session, ui, render
+
+# Server to support the new UI
+# Signature must always contain the following five parameters:
+#   input, output, session, ib_socket, and sb_rvs
+def a_server_function(
+        input: Inputs, output: Outputs, session: Session, ib_socket, sb_rvs
+):
+    @render.code
+    def sb_example_text_out():
+        return f"You entered '{input.sb_example_text_in()}'."
+</code></pre>
+
+        <p>And finally... <strong>here comes the magic of
+            ShinyBroker</strong>. We can create a new ShinyBroker app by passing
+            our ui and server functions as arguments to <code>sb_app</code>:</p>
+
+        <pre><code>
+import shinybroker as sb
+
+# Create a ShinyBroker app with the new ui and server
+app = sb.sb_app(
+    a_piece_of_new_ui,
+    a_server_function,
+    host='127.0.0.1',
+    port=7497,
+    client_id=10742
+)
+</code></pre>
+        <p>And that's it! Altogether, the fully completed code example,
+            including <code>app.run()</code>, can be found below:</p>
+
+        <div class="code-container">
+            <div class="code-block">
+                    <pre><code id="hello_sb_2">
+import shinybroker as sb
+from shiny import Inputs, Outputs, Session, ui, render
+
+
+# Some UI to add to the app
+a_piece_of_new_ui = ui.div(
+    ui.input_text(
+        id='sb_example_text_in',
+        label='Example Input. Type something!'
+    ),
+    ui.output_code('sb_example_text_out')
+)
+
+
+# Server to support the new UI
+# Signature must always contain the following five parameters:
+#   input, output, session, ib_socket, and sb_rvs
+def a_server_function(
+        input: Inputs, output: Outputs, session: Session, ib_socket, sb_rvs
+):
+    @render.code
+    def sb_example_text_out():
+        return f"You entered '{input.sb_example_text_in()}'."
+
+
+# Create a ShinyBroker app with the new ui and server
+app = sb.sb_app(
+    a_piece_of_new_ui,
+    a_server_function,
+    host='127.0.0.1',
+    port=7497,
+    client_id=10742
+)
+
+app.run()
+                        </code></pre>
+                <button class="copy-button"
+                        onclick="copyCode('hello_sb_2')">
+                    Copy Code
+                </button>
+            </div>
+        </div>
+        <p>Run your app and view it in a browser like you did in Step 4. You
+        should see something like the below in your Home tab, and the
+            output should update with whatever you type into the input:</p>
+        <img src="hello_world_2.jpg" alt="hello world 2">
+    </div>
+</section>
+
+<section>
+    <p>This concludes the first ShinyBroker Tutorial! To recap, we:</p>
+    <ol>
+        <li>Performed our installation and setup</li>
+        <li>Ran a test app</li>
+        <li>Demonstrated how the UI and Server functions that you write in your
+            Shiny apps can be very easily integrated into IBKR's trading system
+            with ShinyBroker</li>
+    </ol>
+    <p>In the next installment, we'll be fetching, analyzing, and charting
+        market data.</p>
+</section>
+
+<script>
+    const coll = document.getElementsByClassName("collapsible");
+    for (let i = 0; i < coll.length; i++) {
+        coll[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            const content = this.nextElementSibling;
+            if (content.style.display === "block") {
+                content.style.display = "none";
+            } else {
+                content.style.display = "block";
+            }
+        });
+    }
+</script>
+
+<script>
+    function copyCode(clicked_id) {
+        const code = document.getElementById(clicked_id).textContent;
+        navigator.clipboard.writeText(code).then(() => {
+            alert('Code copied to clipboard!');
+        }).catch(err => {
+            console.error('Failed to copy: ', err);
+        });
+    }
+</script>
+
+</body>
+</html>

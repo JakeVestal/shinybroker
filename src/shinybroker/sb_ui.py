@@ -1,6 +1,5 @@
-import os
-
 from faicons import icon_svg
+from pathlib import Path
 from shiny import ui
 from shinybroker.contract_samples import contract_samples
 from shinybroker import VERSION
@@ -31,10 +30,7 @@ def sb_ui(home_ui = ui.p('no ui passed to sb_ui().')):
         ),
         ui.page_fluid(
             ui.include_js(
-                os.path.join(
-                    os.path.dirname(__file__), 'www',
-                    'ib_message_handler.js'
-                )
+                Path(__file__).parent / "js" / "ib_message_handler.js"
             ),
             ui.navset_pill(
                 ui.nav_panel(
