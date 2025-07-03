@@ -42,3 +42,7 @@ url="https://github.com/JakeVestal/shinybroker"
 
 [tool.hatch.version]
 path = "src/shinybroker/__init__.py"
+
+[tool.hatch.envs.default.scripts]
+run-python = "PYTHONPATH=%PYTHONPATH%;./src python {args}"
+build-docs = "PYTHONPATH=$PYTHONPATH:./src quartodoc build"
