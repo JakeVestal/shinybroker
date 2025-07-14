@@ -3,11 +3,13 @@ from shinybroker.functionary import functionary
 
 class Contract:
     """
-    All tradable assets -- even stocks and currencies -- are 'contracts'.
-    Whether you're placing a trade order, requesting market data,
-    or searching for details about a particular financial instrument,
-    the `Contract` object is how you specify to Interactive Brokers exactly
-    *which* asset you're referring to.
+    All tradable assets -- even stocks and currencies -- are considered
+    'contracts' within IBKR's ecosystem. Whether you're placing a trade
+    order, requesting market data, or searching for details about a
+    particular financial instrument on a particular exchange, contracts are the
+    tool you use to specify to Interactive Brokers exactly *which* tradable
+    asset you're referring to. The `Contract` class simplifies the task of
+    creating usable contract objects in ShinyBroker.
 
     Parameters
     ----------
@@ -24,21 +26,15 @@ class Contract:
         instance of the `Contract` object class that you can manipulate by
         setting attributes directly.
 
-    Returns
-    -------
-    Contract
-        A Contract object that IBKR will understand to mean the tradable
-        asset you are referring to.
-
     "Why not just use ticker"?
     ----------
     To see why we use a `Contract` object system instead of just referring to an
      asset by its symbol, pick a common ticker like "AAPL" and search for it
-    using the "Matching Symbols" tool in ShinyBroker. You will quickly note
-    that there are many contracts matching that description available for
-    trading. The `Contract` object system lets you specify which asset you're
-    interested in by allowing you to pass in additional parameters like
-    *secType*, *currency*, *exchange*.
+    using the "Matching Symbols" tool in ShinyBroker, or via the command line
+    with `fetch_matching_symbols`. You will quickly note that there are many
+    contracts matching that description available for trading, meaning that
+    you must specify the one asset you're interested in by additional
+    parameters for *secType*, *currency*, *exchange*, etc.
 
     Writing & Checking Contract Definitions
     ----------

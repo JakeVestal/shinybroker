@@ -45,6 +45,7 @@ resources:
 quartodoc:
   title: Reference
   package: shinybroker
+  render_interlinks: true
   # write sidebar data to this file
   sidebar: _sidebar.yml
   sections:

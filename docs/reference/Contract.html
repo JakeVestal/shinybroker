@@ -327,7 +327,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#shinybroker.Contract" id="toc-shinybroker.Contract" class="nav-link active" data-scroll-target="#shinybroker.Contract">Contract</a>
   <ul class="collapse">
   <li><a href="#parameters" id="toc-parameters" class="nav-link" data-scroll-target="#parameters">Parameters</a></li>
-  <li><a href="#returns" id="toc-returns" class="nav-link" data-scroll-target="#returns">Returns</a></li>
   <li><a href="#why-not-just-use-ticker" id="toc-why-not-just-use-ticker" class="nav-link" data-scroll-target="#why-not-just-use-ticker">“Why not just use ticker”?</a></li>
   <li><a href="#writing-checking-contract-definitions" id="toc-writing-checking-contract-definitions" class="nav-link" data-scroll-target="#writing-checking-contract-definitions">Writing &amp; Checking Contract Definitions</a></li>
   <li><a href="#contract-id-is-sufficient-on-its-own" id="toc-contract-id-is-sufficient-on-its-own" class="nav-link" data-scroll-target="#contract-id-is-sufficient-on-its-own">Contract ID is Sufficient On its Own</a></li>
@@ -348,7 +347,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="shinybroker.Contract" class="level1">
 <h1>Contract</h1>
 <div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>Contract(contract_params<span class="op">=</span><span class="va">None</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>All tradable assets – even stocks and currencies – are ‘contracts’. Whether you’re placing a trade order, requesting market data, or searching for details about a particular financial instrument, the <code>Contract</code> object is how you specify to Interactive Brokers exactly <em>which</em> asset you’re referring to.</p>
+<p>All tradable assets – even stocks and currencies – are considered ‘contracts’ within IBKR’s ecosystem. Whether you’re placing a trade order, requesting market data, or searching for details about a particular financial instrument on a particular exchange, contracts are the tool you use to specify to Interactive Brokers exactly <em>which</em> tradable asset you’re referring to. The <code>Contract</code> class simplifies the task of creating usable contract objects in ShinyBroker.</p>
 <section id="parameters" class="level2 doc-section doc-section-parameters">
 <h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters">Parameters</h2>
 <table class="caption-top table">
@@ -363,13 +362,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td>contract_params</td>
-<td>dict</td>
+<td><a href="`dict`">dict</a></td>
 <td>Dictionary for which each named element defines a contract property. See IBKR’s <a href="https://www.interactivebrokers.com/campus/ibkr-api-page/contracts/#contract-management">Contract Management</a> documentation for more examples.</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>contract_params</td>
-<td>str or int</td>
+<td><a href="`str`">str</a> or <a href="`int`">int</a></td>
 <td>If you pass a single string or an integer, it will be interpreted as <code>conId</code> in the resultant <code>Contract</code> object.</td>
 <td><code>None</code></td>
 </tr>
@@ -382,33 +381,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tbody>
 </table>
 </section>
-<section id="returns" class="level2 doc-section doc-section-returns">
-<h2 class="doc-section doc-section-returns anchored" data-anchor-id="returns">Returns</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 7%">
-<col style="width: 8%">
-<col style="width: 83%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td></td>
-<td>Contract</td>
-<td>A Contract object that IBKR will understand to mean the tradable asset you are referring to.</td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="why-not-just-use-ticker" class="level2 doc-section doc-section-why-not-just-use-ticker">
 <h2 class="doc-section doc-section-why-not-just-use-ticker anchored" data-anchor-id="why-not-just-use-ticker">“Why not just use ticker”?</h2>
-<p>To see why we use a <code>Contract</code> object system instead of just referring to an asset by its symbol, pick a common ticker like “AAPL” and search for it using the “Matching Symbols” tool in ShinyBroker. You will quickly note that there are many contracts matching that description available for trading. The <code>Contract</code> object system lets you specify which asset you’re interested in by allowing you to pass in additional parameters like <em>secType</em>, <em>currency</em>, <em>exchange</em>.</p>
+<p>To see why we use a <code>Contract</code> object system instead of just referring to an asset by its symbol, pick a common ticker like “AAPL” and search for it using the “Matching Symbols” tool in ShinyBroker, or via the command line with <code>fetch_matching_symbols</code>. You will quickly note that there are many contracts matching that description available for trading, meaning that you must specify the one asset you’re interested in by additional parameters for <em>secType</em>, <em>currency</em>, <em>exchange</em>, etc.</p>
 </section>
 <section id="writing-checking-contract-definitions" class="level2 doc-section doc-section-writing--checking-contract-definitions">
 <h2 class="doc-section doc-section-writing--checking-contract-definitions anchored" data-anchor-id="writing-checking-contract-definitions">Writing &amp; Checking Contract Definitions</h2>

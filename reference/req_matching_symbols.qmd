@@ -8,10 +8,10 @@ Create a request string for symbols that loosely match a pattern
 
 ## Parameters {.doc-section .doc-section-parameters}
 
-| Name    | Type   | Description                                                                  | Default    |
-|---------|--------|------------------------------------------------------------------------------|------------|
-| reqId   | int    | Numeric identifier of the request                                            | _required_ |
-| pattern | str    | A string, like "AAPL", "S&P 500" or "Vanguard" that you'd like to search for | _required_ |
+| Name    | Type         | Description                                                                  | Default    |
+|---------|--------------|------------------------------------------------------------------------------|------------|
+| reqId   | [int](`int`) | Numeric identifier of the request                                            | _required_ |
+| pattern | [str](`str`) | A string, like "AAPL", "S&P 500" or "Vanguard" that you'd like to search for | _required_ |
 
 ## Examples {.doc-section .doc-section-examples}
 

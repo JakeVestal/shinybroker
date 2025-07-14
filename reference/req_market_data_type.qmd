@@ -8,9 +8,9 @@ Create a string for setting your session's market data type
 
 ## Parameters {.doc-section .doc-section-parameters}
 
-| Name           | Type   | Description                                                                                                                                         | Default    |
-|----------------|--------|-----------------------------------------------------------------------------------------------------------------------------------------------------|------------|
-| marketDataType | int    | Integer identifier for the [market data type]( https://www.interactivebrokers.com/campus/ibkr-api-page/twsapi-doc/#md-type-behavior ) that you want | _required_ |
+| Name           | Type         | Description                                                                                                                                         | Default    |
+|----------------|--------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|------------|
+| marketDataType | [int](`int`) | Integer identifier for the [market data type]( https://www.interactivebrokers.com/campus/ibkr-api-page/twsapi-doc/#md-type-behavior ) that you want | _required_ |
 
 ## Examples {.doc-section .doc-section-examples}
 

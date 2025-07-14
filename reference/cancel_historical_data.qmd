@@ -8,9 +8,9 @@ Create a message that will cancel an existing historical data request.
 
 ## Parameters {.doc-section .doc-section-parameters}
 
-| Name   | Type   | Description                                                         | Default    |
-|--------|--------|---------------------------------------------------------------------|------------|
-| reqId  | int    | The numerical ID of the historical data request you want to cancel. | _required_ |
+| Name   | Type         | Description                                                         | Default    |
+|--------|--------------|---------------------------------------------------------------------|------------|
+| reqId  | [int](`int`) | The numerical ID of the historical data request you want to cancel. | _required_ |
 
 ## Examples {.doc-section .doc-section-examples}
 

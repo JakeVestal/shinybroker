@@ -8,9 +8,9 @@ Create a message to cancel an existing market data subscription by ID
 
 ## Parameters {.doc-section .doc-section-parameters}
 
-| Name   | Type   | Description                                                      | Default    |
-|--------|--------|------------------------------------------------------------------|------------|
-| reqId  | int    | Numeric identifier of the market data request you want to cancel | _required_ |
+| Name   | Type         | Description                                                      | Default    |
+|--------|--------------|------------------------------------------------------------------|------------|
+| reqId  | [int](`int`) | Numeric identifier of the market data request you want to cancel | _required_ |
 
 ## Examples {.doc-section .doc-section-examples}
 

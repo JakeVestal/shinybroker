@@ -14,13 +14,13 @@ Create a market data request string
 
 ## Parameters {.doc-section .doc-section-parameters}
 
-| Name               | Type     | Description                                                                                                                                                                 | Default    |
-|--------------------|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------|
-| reqId              | int      | Numeric identifier of the request                                                                                                                                           | _required_ |
-| contract           | Contract | A [Contract](`shinybroker.Contract`) object                                                                                                                                 | _required_ |
-| genericTickList    |          | Comma-separated string of the numerical [Generic Ticks](https://www.interactivebrokers.com/campus/ibkr-api-page/twsapi-doc/#available-tick-types) for which you'd like data | `''`       |
-| snapshot           |          | Set to `True` if you want a [snapshot](https://www.interactivebrokers.com/campus/ibkr-api-page/twsapi-doc/#streaming-data-snapshot)                                         | `False`    |
-| regulatorySnapshot |          | Set to `True` if you want a [regulatory snapshot](https://www.interactivebrokers.com/campus/ibkr-api-page/twsapi-doc/#regulatory-snapshot)                                  | `False`    |
+| Name               | Type                                        | Description                                                                                                                                                                 | Default    |
+|--------------------|---------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------|
+| reqId              | [int](`int`)                                | Numeric identifier of the request                                                                                                                                           | _required_ |
+| contract           | [Contract](`shinybroker.obj_defs.Contract`) | A [Contract](`shinybroker.Contract`) object                                                                                                                                 | _required_ |
+| genericTickList    |                                             | Comma-separated string of the numerical [Generic Ticks](https://www.interactivebrokers.com/campus/ibkr-api-page/twsapi-doc/#available-tick-types) for which you'd like data | `''`       |
+| snapshot           |                                             | Set to `True` if you want a [snapshot](https://www.interactivebrokers.com/campus/ibkr-api-page/twsapi-doc/#streaming-data-snapshot)                                         | `False`    |
+| regulatorySnapshot |                                             | Set to `True` if you want a [regulatory snapshot](https://www.interactivebrokers.com/campus/ibkr-api-page/twsapi-doc/#regulatory-snapshot)                                  | `False`    |
 
 ## Examples {.doc-section .doc-section-examples}
 
