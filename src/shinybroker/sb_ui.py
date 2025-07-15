@@ -1,5 +1,5 @@
 from faicons import icon_svg
-from pathlib import Path
+from importlib.resources import files
 from shiny import ui
 from shinybroker.contract_samples import contract_samples
 from shinybroker import VERSION
@@ -29,8 +29,22 @@ def sb_ui(home_ui = ui.p('no ui passed to sb_ui().')):
             ui.input_dark_mode(mode="dark"),
         ),
         ui.page_fluid(
+            ui.head_content(
+                ui.include_css(
+                    str(
+                        files(__package__).joinpath(
+                            "css", "styles.css"
+                        )
+                    ),
+                    method='inline'
+                )
+            ),
             ui.include_js(
-                Path(__file__).parent / "js" / "ib_message_handler.js"
+                str(
+                    files(__package__).joinpath(
+                        "js", "ib_message_handler.js"
+                    )
+                )
             ),
             ui.navset_pill(
                 ui.nav_panel(
@@ -161,34 +175,39 @@ def sb_ui(home_ui = ui.p('no ui passed to sb_ui().')):
                     ),
                     ui.accordion(
                         ui.accordion_panel(
-                            'Matching Symbols',
-                            ui.p(
-                                'Fetch all symbols at IBKR that ' +
-                                'approximately match your search ' +
-                                'parameters. Results are separated into ' +
-                                '"stocks" and "bonds". "Stocks" includes ' +
-                                '"stock-like" contracts such as ETFs.'
-                            ),
-                            ui.a(
-                                'IBKR Documentation',
-                                href='https://ibkrcampus.com/ibkr-api-page' +
-                                     '/twsapi-doc/#stock-symbol-search'
-                            ),
+                            "Matching Symbols",
+                            ui.br(),
                             ui.row(
                                 ui.column(
-                                    6,
+                                    3,
                                     ui.input_text(
                                         id="requested_symbol",
-                                        label="Enter symbol",
-                                        value='AAPL'
-                                    )
-                                ),
-                                ui.column(
-                                    6,
+                                        label="Enter search string:",
+                                        value="AAPL"
+                                    ),
                                     ui.input_action_button(
                                         id="req_matching_symbols",
                                         label="Request Matching Symbols"
-                                    ).add_style('display:block;')
+                                    )
+                                ),
+                                ui.column(
+                                    9,
+                                    ui.p(
+                                        files(__package__).joinpath(
+                                            "txt_matching_symbols.txt"
+                                        ).read_text(encoding="utf-8")
+                                    ),
+                                    ui.p(
+                                        "See ",
+                                        ui.a(
+                                            'Matching Symbols: ' +
+                                            'IBKR Documentation',
+                                            href='https://ibkrcampus.com/' +
+                                                 'ibkr-api-page/twsapi-doc/' +
+                                                 '#stock-symbol-search'
+                                        ),
+                                        " for more information."
+                                    )
                                 )
                             ),
                             ui.input_switch(
@@ -198,11 +217,14 @@ def sb_ui(home_ui = ui.p('no ui passed to sb_ui().')):
                             ).add_style("display:none;"),
                             ui.panel_conditional(
                                 "input.show_matching_stocks",
-                                ui.h6('Matching Stocks:'),
+                                ui.h6(
+                                    'Matching Stocks:',
+                                    style='margin-top:10px;'
+                                ),
                                 ui.output_data_frame(
                                     "matching_stock_symbols_df"
                                 )
-                            ),
+                            ).add_style("display:inline-block;"),
                             ui.input_switch(
                                 id="show_matching_bonds",
                                 label="Show Matching Bonds",
@@ -210,9 +232,13 @@ def sb_ui(home_ui = ui.p('no ui passed to sb_ui().')):
                             ).add_style("display:none;"),
                             ui.panel_conditional(
                                 "input.show_matching_bonds",
-                                ui.br(),
-                                ui.h6('Matching bonds:'),
+                                ui.h6(
+                                    'Matching bonds:',
+                                    style='margin-top:10px;'
+                                ),
                                 ui.output_data_frame("matching_bond_symbols_df")
+                            ).add_style(
+                                "display:inline-block; margin-left:25px;"
                             )
                         ),
                         ui.accordion_panel(
