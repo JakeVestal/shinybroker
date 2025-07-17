@@ -1,16 +1,21 @@
 from shiny import module, ui, render, reactive, event
+from shiny.express import output, session
 
 @module.ui
-def contract_wizard(label: str = "Increment counter"):
+def contract_wizard_ui(label: str = "Increment counter"):
     return ui.card(
         ui.card_header("This is " + label),
         ui.input_action_button(id="button", label=label),
         ui.output_code(id="out"),
+        ui.input_text(
+            id="requested_symbol",
+            label="Enter search string:",
+            width="400px"
+        ).add_style("display:flex;flex-direction:row;align-items: center;")
     )
 
-
 @module.server
-def contract_wizard(input, output, session, starting_value = 0):
+def contract_wizard_server(input, output, session, starting_value):
     count =  reactive.value(starting_value)
 
     @reactive.effect

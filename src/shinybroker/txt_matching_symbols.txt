@@ -1,7 +1,8 @@
 Looks up the assets at IBKR whose names or symbols approximately match a search
 string. The search string can be the name or part of the name of an asset (e.g.,
  "Apple"), or it can be a ticker (e.g., "AAPL"). Results are separated into
- "stocks" and "bonds". "Stocks" includes "stock-like" contracts such as ETFs.
- This tool is useful if you know the name or ticker symbol of an asset you're
- interested in and would like to know its Contract ID, or check the exchanges on
-  which it's traded.
+ "stocks" and "bonds". The "stocks" category in this context really means "not
+ a bond", and includes contracts such as ETFs, crypto, and futures. The
+ "Matching Symbols" tool is useful if you know the name or ticker symbol of an
+ asset you're interested in and would like to know its Contract ID, or check the
+  exchanges on which it's traded.
