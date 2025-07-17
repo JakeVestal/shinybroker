@@ -11,6 +11,7 @@ rprint(
         subtitle="https://shinybroker.com"
     )
 )
+print('')
 
 from shinybroker.connection import (
     create_ibkr_socket_conn,

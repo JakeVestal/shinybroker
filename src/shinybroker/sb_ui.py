@@ -27,6 +27,7 @@ def sb_ui(home_ui = ui.p('no ui passed to sb_ui().')):
                 label="Request Current Time"
             ),
             ui.input_dark_mode(mode="dark"),
+            open = 'closed'
         ),
         ui.page_fluid(
             ui.head_content(
