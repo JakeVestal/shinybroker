@@ -22,10 +22,10 @@ dependencies = [
     "pandas",
     "plotly",
     "rich",
-    "scipy<=1.15.3",
+    "scipy",
     "shiny",
     "shinywidgets",
-    "statsmodels==0.14.4"
+    "statsmodels"
 ]
 
 [project.optional-dependencies]
