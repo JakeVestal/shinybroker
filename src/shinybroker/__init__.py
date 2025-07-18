@@ -27,5 +27,4 @@ from shinybroker.msgs_to_ibkr import *
 from shinybroker.obj_defs import Contract, ComboLeg, DeltaNeutralContract
 from shinybroker.sb_app import sb_app
 from shinybroker.ib_fetch_functions import *
-from shinybroker.contract_wizard import (contract_wizard_ui,
-                                         contract_wizard_server)
+from shinybroker.get_contract import get_contract_ui, get_contract_server
