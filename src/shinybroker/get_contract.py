@@ -1,5 +1,8 @@
+import pandas as pd
+
 from shiny import module, ui, render, reactive
 from shinybroker import fetch_matching_symbols
+
 
 @module.ui
 def get_contract_ui(
@@ -24,20 +27,34 @@ def get_contract_ui(
             id="button",
             label='Search for Matching Contracts'
         ),
-        ui.output_data_frame("matching_contracts")
+        ui.output_ui("matching_contracts")
     )
 
 @module.server
 def get_contract_server(input, output, session, starting_value):
-    count =  reactive.value(0)
 
-    @reactive.effect
+    @render.ui
     @reactive.event(input.button)
-    def get_contract_button_clicked():
-        count.set(count() + 1)
-        wut = fetch_matching_symbols(input.search_string())
-        print(wut)
+    def matching_contracts():
+        cm_df = fetch_matching_symbols(input.search_string())
+        print(cm_df)
 
-    @render.code
-    def contract_definition():
-        return f"Click count is {count()}"
+        if cm_df['stocks'].shape[0] == 0:
+            if cm_df['bonds'].shape[0] == 0:
+                return f"No matches found for: {input.search_string()}"
+
+
+    # @render.data_frame
+    # def matching_contracts():
+    #     return render.DataTable(
+    #         df(),
+    #         width=width,
+    #         height=height,
+    #         filters=input.filters(),
+    #         editable=input.editable(),
+    #         selection_mode=input.selection_mode(),
+    #     )
+
+    # @render.code
+    # def contract_definition():
+    #     return f"Click count is {count()}"
