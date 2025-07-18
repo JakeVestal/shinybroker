@@ -1,4 +1,5 @@
 from shiny import module, ui, render, reactive
+from shinybroker import fetch_matching_symbols
 
 @module.ui
 def get_contract_ui(
@@ -6,7 +7,7 @@ def get_contract_ui(
         value: str = ""
 ):
     text_input = ui.input_text(
-        id="requested_symbol",
+        id="search_string",
         label="Enter search string:",
         width="400px",
         value=value
@@ -34,6 +35,8 @@ def get_contract_server(input, output, session, starting_value):
     @reactive.event(input.button)
     def get_contract_button_clicked():
         count.set(count() + 1)
+        wut = fetch_matching_symbols(input.search_string())
+        print(wut)
 
     @render.code
     def contract_definition():
