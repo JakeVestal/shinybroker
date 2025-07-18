@@ -21,7 +21,7 @@ def get_contract_ui(
 
     return ui.card(
         ui.card_header(label),
-        ui.output_code(id="contract_definition"),
+        ui.output_ui("contract_definition"),
         text_input,
         ui.input_action_button(
             id="button",
@@ -76,6 +76,10 @@ def get_contract_server(input, output, session, starting_value):
             selection_mode="rows"
         )
 
-    # @render.code
-    # def contract_definition():
-    #     return f"Click count is {count()}"
+    @render.code
+    def contract_definition():
+        rows = matching_stocks.cell_selection()["rows"]
+        print(rows)
+        print(matching_bonds.cell_selection()["rows"])
+        selected = ", ".join(str(i) for i in sorted(rows)) if rows else "None"
+        return f"Rows selected: {selected}"
