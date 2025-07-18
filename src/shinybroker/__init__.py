@@ -1,4 +1,4 @@
-VERSION = '0.6.38'
+VERSION = '0.6.39'
 
 from rich import print as rprint
 from rich.panel import Panel as rPanel
