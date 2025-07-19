@@ -1,7 +1,7 @@
 import pandas as pd
 
 from shiny import module, ui, render, reactive, req
-from shinybroker import fetch_matching_symbols, Contract
+from shinybroker import fetch_matching_symbols, Contract, fetch_contract_details
 
 
 @module.ui
@@ -83,24 +83,33 @@ def get_contract_server(input, output, session, starting_value):
     @reactive.event(matching_stocks.cell_selection)
     def a_stock_row_has_just_been_selected():
         req(len(matching_stocks.cell_selection()['rows']) > 0)
+        contract_row = contract_matches()['stocks'].iloc[
+            matching_stocks.cell_selection()['rows'][0]
+        ]
         selected_contract.set(
-            Contract(
-                contract_matches()['stocks'].iloc[
-                    matching_stocks.cell_selection()['rows'][0]
-                ]['con_id']
-            )
+            Contract({
+                'conId': contract_row['con_id'],
+                'symbol': contract_row['symbol'],
+                'secType': contract_row['sec_type'],
+                'exchange': contract_row['primary_exchange'],
+                'currency': contract_row['currency'],
+                'description': contract_row['description']
+            })
         )
 
     @reactive.effect
     @reactive.event(matching_bonds.cell_selection)
     def a_bond_row_has_just_been_selected():
         req(len(matching_bonds.cell_selection()['rows']) > 0)
+        contract_row = contract_matches()['bonds'].iloc[
+            matching_bonds.cell_selection()['rows'][0]
+        ]
         selected_contract.set(
-            Contract(
-                contract_matches()['bonds'].iloc[
-                    matching_bonds.cell_selection()['rows'][0]
-                ]['con_id']
-            )
+            Contract({
+                'issuerId': contract_row['issuer_id'],
+                'issuer': contract_row['issuer'],
+                'exchange': ''
+            })
         )
 
 
@@ -118,6 +127,11 @@ def get_contract_server(input, output, session, starting_value):
     @render.ui
     @reactive.event(input.verify_contract_btn)
     def contract_verification():
-        print('hello')
-        print(input.verify_contract_btn())
-        return 'lelidk wuttt ' + str(input.verify_contract_btn())
+        try:
+            contract_details = fetch_contract_details(selected_contract())
+            print('hello')
+            print(contract_details)
+        except UserWarning as uw:
+            contract_details = "This definition does not match a contract."
+
+        return contract_details
