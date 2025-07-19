@@ -1,4 +1,5 @@
 from shinybroker.functionary import functionary
+from typing import Union, Dict, Any
 
 
 class Contract:
@@ -189,7 +190,10 @@ class Contract:
             your_super_clever_trading_logic(goog_call, goog_put)
     ```
     """
-    def __init__(self, contract_params=None):
+    def __init__(
+            self,
+            contract_params: Union[str, int, Dict[Any, Any], None] = None
+    ):
         if contract_params is None:
             for key, value in functionary['contract'].items():
                 setattr(self, key, value)

@@ -5,8 +5,8 @@ from rich.panel import Panel as rPanel
 rprint(
     rPanel(
         "ShinyBroker is an ongoing project that is developed and maintained "
-        "by the FinTech Master's Program at Duke University and is freely "
-        "available to the public for use on paper trading accounts." ,
+        "by volunteers at the FinTech Master's Program at Duke University and "
+        "is freely available to the public for use on paper trading accounts.",
         title="Welcome to ShinyBroker",
         subtitle="https://shinybroker.com"
     )

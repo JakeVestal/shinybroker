@@ -2,8 +2,8 @@ import shinybroker as sb
 from shiny import Inputs, Outputs, Session, ui
 
 gc_ui = ui.page_fluid(
-    sb.get_contract_ui("contract1", "Asset (y-axis)", "MSTR"),
-    sb.get_contract_ui("contract2", "Benchmark (x-axis)", "bitcoin")
+    sb.get_contract_ui("contract1", "Asset", "MSTR"),
+    sb.get_contract_ui("contract2", "Benchmark", "bitcoin")
 )
 
 def gc_server_function(

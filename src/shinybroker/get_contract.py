@@ -1,7 +1,7 @@
 import pandas as pd
 
-from shiny import module, ui, render, reactive
-from shinybroker import fetch_matching_symbols
+from shiny import module, ui, render, reactive, req
+from shinybroker import fetch_matching_symbols, Contract
 
 
 @module.ui
@@ -76,10 +76,44 @@ def get_contract_server(input, output, session, starting_value):
             selection_mode="rows"
         )
 
-    @render.code
+    selected_contract = reactive.value()
+
+    @reactive.effect
+    @reactive.event(matching_stocks.cell_selection)
+    def a_stock_row_has_just_been_selected():
+        req(len(matching_stocks.cell_selection()['rows']) > 0)
+        selected_contract.set(
+            Contract(
+                contract_matches()['stocks'].iloc[
+                    matching_stocks.cell_selection()['rows'][0]
+                ]['con_id']
+            )
+        )
+
+    @reactive.effect
+    @reactive.event(matching_bonds.cell_selection)
+    def a_bond_row_has_just_been_selected():
+        req(len(matching_bonds.cell_selection()['rows']) > 0)
+        selected_contract.set(
+            Contract(
+                contract_matches()['bonds'].iloc[
+                    matching_bonds.cell_selection()['rows'][0]
+                ]['con_id']
+            )
+        )
+
+
+    @render.ui
+    @reactive.event(selected_contract)
     def contract_definition():
-        rows = matching_stocks.cell_selection()["rows"]
-        print(rows)
-        print(matching_bonds.cell_selection()["rows"])
-        selected = ", ".join(str(i) for i in sorted(rows)) if rows else "None"
-        return f"Rows selected: {selected}"
+        return ui.card(
+            str(selected_contract()),
+            ui.input_action_button(
+                "verify_contract_btn",
+                "Verify Contract?"
+            ),
+            ui.input_action_button(
+                "accept_contract_btn",
+                "Accept Contract"
+            )
+        )
