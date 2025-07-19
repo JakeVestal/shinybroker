@@ -22,6 +22,7 @@ def get_contract_ui(
     return ui.card(
         ui.card_header(label),
         ui.output_ui("contract_definition"),
+        ui.output_ui("contract_verification"),
         text_input,
         ui.input_action_button(
             id="button",
@@ -53,7 +54,7 @@ def get_contract_server(input, output, session, starting_value):
             else:
                 return ui.navset_card_tab(
                     ui.nav_panel(
-                        "Stocks",
+                        "Not Bonds",
                         ui.output_data_frame("matching_stocks")
                     ),
                     ui.nav_panel(
@@ -111,9 +112,12 @@ def get_contract_server(input, output, session, starting_value):
             ui.input_action_button(
                 "verify_contract_btn",
                 "Verify Contract?"
-            ),
-            ui.input_action_button(
-                "accept_contract_btn",
-                "Accept Contract"
             )
         )
+
+    @render.ui
+    @reactive.event(input.verify_contract_btn)
+    def contract_verification():
+        print('hello')
+        print(input.verify_contract_btn())
+        return 'lelidk wuttt ' + str(input.verify_contract_btn())
