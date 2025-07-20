@@ -32,7 +32,7 @@ def contractinator_ui(
     )
 
 @module.server
-def contractinator_server(input, output, session, starting_value):
+def contractinator_server(input, output, session):
 
     # contains formatted results from
     contract_matches = reactive.value(

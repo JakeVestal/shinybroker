@@ -2,15 +2,19 @@ import shinybroker as sb
 from shiny import Inputs, Outputs, Session, ui
 
 ui_ = ui.page_fluid(
-    sb.contractinator_ui("contract1", "Asset", "MSTR"),
-    sb.contractinator_ui("contract2", "Benchmark", "bitcoin")
+    ui.row(
+        sb.contractinator_ui("contract1", "Asset", "MSTR"),
+        sb.contractinator_ui("contract2", "Benchmark_1", "bitcoin"),
+        sb.contractinator_ui("contract3", "Benchmark_2", "SP500")
+    )
 )
 
 def server_function_(
-    input: Inputs, output: Outputs, session: Session, ib_socket, sb_rvs
+        input: Inputs, output: Outputs, session: Session, ib_socket, sb_rvs
 ):
-    sb.contractinator_server("contract1", starting_value=5)
-    sb.contractinator_server("contract2", starting_value=3)
+    sb.contractinator_server("contract1")
+    sb.contractinator_server("contract2")
+    sb.contractinator_server("contract3")
 
 # Create an instance of a ShinyBroker App object using the default ui and server
 app = sb.sb_app(
