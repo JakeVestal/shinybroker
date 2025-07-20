@@ -1,21 +1,21 @@
 import shinybroker as sb
 from shiny import Inputs, Outputs, Session, ui
 
-gc_ui = ui.page_fluid(
-    sb.get_contract_ui("contract1", "Asset", "MSTR"),
-    sb.get_contract_ui("contract2", "Benchmark", "bitcoin")
+ui_ = ui.page_fluid(
+    sb.contractinator_ui("contract1", "Asset", "MSTR"),
+    sb.contractinator_ui("contract2", "Benchmark", "bitcoin")
 )
 
-def gc_server_function(
+def server_function_(
     input: Inputs, output: Outputs, session: Session, ib_socket, sb_rvs
 ):
-    sb.get_contract_server("contract1", starting_value=5)
-    sb.get_contract_server("contract2", starting_value=3)
+    sb.contractinator_server("contract1", starting_value=5)
+    sb.contractinator_server("contract2", starting_value=3)
 
 # Create an instance of a ShinyBroker App object using the default ui and server
 app = sb.sb_app(
-    gc_ui,
-    gc_server_function,
+    ui_,
+    server_function_,
     host='127.0.0.1',  # localhost TWS is being served on your local machine
     port=7497,         # make this match the port in your API Settings config
     client_id=10742    # picked at random, choose another Client ID if preferred

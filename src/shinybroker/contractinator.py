@@ -5,7 +5,7 @@ from shinybroker import fetch_matching_symbols, Contract, fetch_contract_details
 
 
 @module.ui
-def get_contract_ui(
+def contractinator_ui(
         label: str = "Increment counter",
         value: str = ""
 ):
@@ -21,7 +21,7 @@ def get_contract_ui(
 
     return ui.card(
         ui.card_header(label),
-        ui.output_ui("contract_definition"),
+        ui.input_text_area("contract_definition"),
         ui.output_ui("contract_verification"),
         text_input,
         ui.input_action_button(
@@ -32,7 +32,9 @@ def get_contract_ui(
     )
 
 @module.server
-def get_contract_server(input, output, session, starting_value):
+def contractinator_server(input, output, session, starting_value):
+
+    # contains formatted results from
     contract_matches = reactive.value(
         {'stocks': pd.DataFrame({}), 'bonds': pd.DataFrame({})}
     )
@@ -41,17 +43,19 @@ def get_contract_server(input, output, session, starting_value):
     @reactive.event(input.button)
     def matching_contracts():
         cm_df = fetch_matching_symbols(input.search_string())
-        contract_matches.set(cm_df)
 
         if cm_df['stocks'].shape[0] == 0:
             if cm_df['bonds'].shape[0] == 0:
                 return f"No matches found for: {input.search_string()}"
             else:
+                contract_matches.set(cm_df)
                 return ui.output_data_frame("matching_bonds")
         else:
             if cm_df['bonds'].shape[0] == 0:
+                contract_matches.set(cm_df)
                 return ui.output_data_frame("matching_stocks")
             else:
+                contract_matches.set(cm_df)
                 return ui.navset_card_tab(
                     ui.nav_panel(
                         "Not Bonds",
@@ -59,6 +63,11 @@ def get_contract_server(input, output, session, starting_value):
                     ),
                     ui.nav_panel(
                         "Bonds",
+                        ui.p(
+                            "Your ability to trade and fetch information for " +
+                            "bonds depends upon your IBKR " +
+                            "trading permissions and data subscriptions."
+                        ),
                         ui.output_data_frame("matching_bonds")
                     )
                 )
@@ -67,14 +76,14 @@ def get_contract_server(input, output, session, starting_value):
     def matching_stocks():
         return render.DataTable(
             contract_matches()['stocks'],
-            selection_mode="rows"
+            selection_mode="row"
         )
 
     @render.data_frame
     def matching_bonds():
         return render.DataTable(
             contract_matches()['bonds'],
-            selection_mode="rows"
+            selection_mode="row"
         )
 
     selected_contract = reactive.value()
