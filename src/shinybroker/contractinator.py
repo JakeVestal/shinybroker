@@ -1,4 +1,5 @@
 import pandas as pd
+import re
 
 from shiny import module, ui, render, reactive, req
 from shinybroker import fetch_matching_symbols, Contract, fetch_contract_details
@@ -21,7 +22,16 @@ def contractinator_ui(
 
     return ui.card(
         ui.card_header(label),
-        ui.input_text_area("contract_definition"),
+        ui.input_text_area(
+            id="contract_definition",
+            label="Contract Definition",
+            width="100%"
+        ),
+        ui.input_action_button(
+            'validate_contract',
+            "Validate Contract"
+
+        ),
         ui.output_ui("contract_verification"),
         text_input,
         ui.input_action_button(
@@ -95,16 +105,16 @@ def contractinator_server(input, output, session):
         contract_row = contract_matches()['stocks'].iloc[
             matching_stocks.cell_selection()['rows'][0]
         ]
-        selected_contract.set(
-            Contract({
-                'conId': contract_row['con_id'],
-                'symbol': contract_row['symbol'],
-                'secType': contract_row['sec_type'],
-                'exchange': contract_row['primary_exchange'],
-                'currency': contract_row['currency'],
-                'description': contract_row['description']
-            })
-        )
+        sc = Contract({
+            'conId': contract_row['con_id'],
+            'symbol': contract_row['symbol'],
+            'secType': contract_row['sec_type'],
+            'exchange': contract_row['primary_exchange'],
+            'currency': contract_row['currency'],
+            'description': contract_row['description']
+        })
+        cdef_string = re.sub(r", ", ",\\n", str(sc))
+        ui.update_text_area('contract_definition', value =cdef_string)
 
     @reactive.effect
     @reactive.event(matching_bonds.cell_selection)
@@ -113,18 +123,25 @@ def contractinator_server(input, output, session):
         contract_row = contract_matches()['bonds'].iloc[
             matching_bonds.cell_selection()['rows'][0]
         ]
-        selected_contract.set(
-            Contract({
-                'issuerId': contract_row['issuer_id'],
-                'issuer': contract_row['issuer'],
-                'exchange': ''
-            })
-        )
+        sc = Contract({
+            'issuerId': contract_row['issuer_id'],
+            'issuer': contract_row['issuer'],
+            'exchange': ''
+        })
+        print('hello')
+        idk = str(sc)
+        print(idk)
+        wut = eval('Contract(idk)')
+        print(wut)
+        selected_contract.set(sc)
 
 
     @render.ui
     @reactive.event(selected_contract)
     def contract_definition():
+        print(str(selected_contract()))
+        asdf = eval('Contract(str(selected_contract()))')
+        print(asdf)
         return ui.card(
             str(selected_contract()),
             ui.input_action_button(

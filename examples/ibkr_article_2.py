@@ -3,9 +3,18 @@ from shiny import Inputs, Outputs, Session, ui
 
 ui_ = ui.page_fluid(
     ui.row(
-        sb.contractinator_ui("contract1", "Asset", "MSTR"),
-        sb.contractinator_ui("contract2", "Benchmark_1", "bitcoin"),
-        sb.contractinator_ui("contract3", "Benchmark_2", "SP500")
+        ui.column(
+            4,
+            sb.contractinator_ui("contract1", "Asset", "MSTR")
+        ),
+        ui.column(
+            4,
+            sb.contractinator_ui("contract2", "Benchmark_1", "bitcoin")
+        ),
+        ui.column(
+            4,
+            sb.contractinator_ui("contract3", "Benchmark_2", "SP500")
+        )
     )
 )
 
