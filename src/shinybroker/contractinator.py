@@ -127,7 +127,7 @@ def contractinator_server(input, output, session):
         m = ui.modal(
             cdeet_tables,
             title="Accept this contract??",
-            size='l',
+            size='m',
             easy_close=True,
             footer=ui.div(
                 ui.input_action_button("accept_contract","OK"),
