@@ -28,9 +28,8 @@ def contractinator_ui(
             width="100%"
         ),
         ui.input_action_button(
-            'validate_contract',
-            "Validate Contract"
-
+            id='validate_contract_btn',
+            label="Validate Contract"
         ),
         ui.output_ui("contract_verification"),
         text_input,
@@ -73,11 +72,6 @@ def contractinator_server(input, output, session):
                     ),
                     ui.nav_panel(
                         "Bonds",
-                        ui.p(
-                            "Your ability to trade and fetch information for " +
-                            "bonds depends upon your IBKR " +
-                            "trading permissions and data subscriptions."
-                        ),
                         ui.output_data_frame("matching_bonds")
                     )
                 )
@@ -95,8 +89,6 @@ def contractinator_server(input, output, session):
             contract_matches()['bonds'],
             selection_mode="row"
         )
-
-    selected_contract = reactive.value()
 
     @reactive.effect
     @reactive.event(matching_stocks.cell_selection)
@@ -117,47 +109,32 @@ def contractinator_server(input, output, session):
         ui.update_text_area('contract_definition', value =cdef_string)
 
     @reactive.effect
-    @reactive.event(matching_bonds.cell_selection)
-    def a_bond_row_has_just_been_selected():
-        req(len(matching_bonds.cell_selection()['rows']) > 0)
-        contract_row = contract_matches()['bonds'].iloc[
-            matching_bonds.cell_selection()['rows'][0]
-        ]
-        sc = Contract({
-            'issuerId': contract_row['issuer_id'],
-            'issuer': contract_row['issuer'],
-            'exchange': ''
-        })
-        print('hello')
-        idk = str(sc)
-        print(idk)
-        wut = eval('Contract(idk)')
-        print(wut)
-        selected_contract.set(sc)
+    @reactive.event(input.validate_contract_btn)
+    def contract_verification():
+        cd = fetch_contract_details(Contract(eval(input.contract_definition())))
 
-
-    @render.ui
-    @reactive.event(selected_contract)
-    def contract_definition():
-        print(str(selected_contract()))
-        asdf = eval('Contract(str(selected_contract()))')
-        print(asdf)
-        return ui.card(
-            str(selected_contract()),
-            ui.input_action_button(
-                "verify_contract_btn",
-                "Verify Contract?"
+        cdeet_tables = ui.HTML(
+            cd[[
+                "conId", "longName", "symbol", "secType", "subcategory",
+                "primaryExchange", "validExchanges", "currency",
+                "timeZoneId", "stockType", 'secIdList'
+            ]].transpose(copy=True).to_html(
+                header=False,
+                border=0
             )
         )
 
-    @render.ui
-    @reactive.event(input.verify_contract_btn)
-    def contract_verification():
-        try:
-            contract_details = fetch_contract_details(selected_contract())
-            print('hello')
-            print(contract_details)
-        except UserWarning as uw:
-            contract_details = "This definition does not match a contract."
+        m = ui.modal(
+            cdeet_tables,
+            title="Accept this contract??",
+            size='l',
+            easy_close=True,
+            footer=ui.div(
+                ui.input_action_button("accept_contract","OK"),
+                ui.input_action_button(
+                    "dont_accept_contract", "Cancel"
+                )
+            )
+        )
+        ui.modal_show(m)
 
-        return contract_details
