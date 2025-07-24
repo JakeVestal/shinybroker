@@ -23,6 +23,8 @@ website:
 #            file: headless_mode_demo.qmd
       - text: "Reference"
         file: reference/index.qmd
+      - text: "LICENSE"
+        file: LICENSE.qmd
     right:
       - icon: github
         href: https://github.com/JakeVestal/shinybroker

@@ -1,0 +1,9 @@
+ShinyBroker is an ongoing project that is developed and maintained by volunteers
+ at the FinTech Master's Program at Duke University, and is made available to
+ the public for use on paper accounts. ANY USE OF SHINYBROKER IS AT THE
+USER'S SOLE RISK. ShinyBroker authors, contributors and copyright holders, and
+Duke University do not sponsor, endorse, or recommend ShinyBroker in any manner
+and shall not be liable for any direct, indirect, incidental, special,
+consequential, or punitive damages, or any loss of profits, data, use, goodwill,
+ or other intangible losses. For more information, review the LICENSE agreement
+ shipped with this package.

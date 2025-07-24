@@ -1,0 +1,23 @@
+---
+title: "ShinyBroker License Agreement"
+format:
+  html:
+    css: styles.css
+---
+
+## License Agreement
+
+The following is the full text of the ShinyBroker License Agreement, as provided in the `LICENSE` file:
+
+<div style="text-align: justify; font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.5; margin: 0 auto; max-width: 800px;">
+
+```{python}
+#| echo: false
+# Read the LICENSE file from the same directory
+with open("LICENSE", "r") as file:
+    license_text = file.read()
+
+# Output the license text, replacing newlines with Markdown line breaks
+print(license_text.replace("\n", "  \n"))
+```
+</div>

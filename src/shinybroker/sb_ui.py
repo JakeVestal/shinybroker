@@ -195,6 +195,7 @@ def sb_ui(home_ui = ui.p('no ui passed to sb_ui().')):
                                     9,
                                     ui.p(
                                         files(__package__).joinpath(
+                                            "txt_files",
                                             "txt_matching_symbols.txt"
                                         ).read_text(encoding="utf-8")
                                     ),

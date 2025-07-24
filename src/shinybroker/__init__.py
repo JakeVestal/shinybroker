@@ -1,12 +1,20 @@
-VERSION = '0.6.39'
+VERSION = '0.6.40'
 
+from importlib.resources import files
 from rich import print as rprint
 from rich.panel import Panel as rPanel
+
+from re import sub as rsub
+
 rprint(
     rPanel(
-        "ShinyBroker is an ongoing project that is developed and maintained "
-        "by volunteers at the FinTech Master's Program at Duke University and "
-        "is freely available to the public for use on paper trading accounts.",
+        rsub(
+            "\\n",
+            "",
+            files(__package__).joinpath(
+                "txt_files", "txt_intro.txt"
+            ).read_text(encoding="utf-8")
+        ),
         title="Welcome to ShinyBroker",
         subtitle="https://shinybroker.com"
     )
