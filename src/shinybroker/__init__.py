@@ -1,4 +1,4 @@
-VERSION = '0.6.40'
+VERSION = '0.6.41'
 
 from importlib.resources import files
 from rich import print as rprint
@@ -15,8 +15,8 @@ rprint(
                 "txt_files", "txt_intro.txt"
             ).read_text(encoding="utf-8")
         ),
-        title="Welcome to ShinyBroker",
-        subtitle="https://shinybroker.com"
+        title="ShinyBroker Usage and License",
+        subtitle="Read License: https://shinybroker.com/LICENSE.html"
     )
 )
 print('')
