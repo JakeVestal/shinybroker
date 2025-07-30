@@ -34,8 +34,8 @@ app_ui = ui.page_fluid(
 def server(input, output, session):
     @reactive.Effect
     @reactive.event(input.smc_buffer)
-    def update_frog_message():
-        print(smc_buffer)
+    def contractinator_get_matching_contracts():
+        print(input.smc_buffer())
 
 
 # Create the Shiny app
@@ -194,7 +194,7 @@ app.run()
 #     ),
 #     {"style": "position: relative; min-height: 100vh;"}
 # )
-)
+#)
 
 # Define the server logic
 # def server(input, output, session):
