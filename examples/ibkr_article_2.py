@@ -2,7 +2,12 @@ import shinybroker as sb
 from shiny import Inputs, Outputs, Session, ui
 
 ui_ = ui.page_fluid(
-    sb.contractinator_ui(['Asset', 'Benchmark1', 'Benchmark2'])
+    # sb.contractinator_ui(['Asset', 'Benchmark1', 'Benchmark2'])
+    sb.contractinator_ui({
+        'Asset': 'MSTR',
+        'Benchmark1': 'SP500',
+        'Benchmark2': 'Bitcoin'
+    })
 )
 
 def server_function_(

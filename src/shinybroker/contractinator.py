@@ -55,4 +55,29 @@ def contractinator_server(input, output, session):
     @reactive.Effect
     @reactive.event(input.smc_buffer)
     def contractinator_get_matching_contracts():
-        print(input.smc_buffer())
+        cm_df = fetch_matching_symbols(
+            input[f"{input.smc_buffer()}_search_string"]()
+        )
+        print(cm_df)
+        # if cm_df['stocks'].shape[0] == 0:
+        #     if cm_df['bonds'].shape[0] == 0:
+        #         return f"No matches found for: {input.search_string()}"
+        #     else:
+        #         contract_matches.set(cm_df)
+        #         return ui.output_data_frame("matching_bonds")
+        # else:
+        #     if cm_df['bonds'].shape[0] == 0:
+        #         contract_matches.set(cm_df)
+        #         return ui.output_data_frame("matching_stocks")
+        #     else:
+        #         contract_matches.set(cm_df)
+        #         return ui.navset_card_tab(
+        #             ui.nav_panel(
+        #                 "Not Bonds",
+        #                 ui.output_data_frame("matching_stocks")
+        #             ),
+        #             ui.nav_panel(
+        #                 "Bonds",
+        #                 ui.output_data_frame("matching_bonds")
+        #             )
+        #         )
