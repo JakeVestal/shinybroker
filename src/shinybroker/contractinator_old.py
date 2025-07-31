@@ -4,7 +4,7 @@ import re
 from shiny import module, ui, render, reactive, req
 from shinybroker import fetch_matching_symbols, Contract, fetch_contract_details
 
-:
+
 @module.ui
 def contractinator_ui(
         contract_name: str = "",

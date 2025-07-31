@@ -632,6 +632,20 @@ def sb_server(
             string=str(historical_data().__repr__())
         )
 
+    # Contractinator Logic
+    @reactive.Effect
+    @reactive.event(input.smc_buffer)
+    def contractinator_match_search_btn():
+        print(input.smc_buffer())
+        print(f"{input.smc_buffer()}_search_string")
+        idk = input[f"{input.smc_buffer()}_search_string"]()
+        print(idk)
+        ui.update_accordion_panel(
+            "contractinator_accordion",
+            input.smc_buffer(),
+            'somebiz'
+        )
+
     sb_rvs = dict({
         'connection_info': connection_info,
         'contract_details': contract_details,
