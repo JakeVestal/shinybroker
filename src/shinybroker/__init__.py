@@ -1,4 +1,4 @@
-VERSION = '0.6.42'
+VERSION = '0.6.43'
 
 from importlib.resources import files
 from rich import print as rprint
