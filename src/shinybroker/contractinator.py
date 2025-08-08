@@ -45,22 +45,20 @@ def contractinator(contract_names: list | dict = ()):
     if not isinstance(contract_names, dict):
         contract_names = {x: '' for x in contract_names}
 
+    initial_contractinator_items = ui.accordion(
+        *[create_contractinator_panel(k, v) for k, v
+          in contract_names.items()],
+        id="contractinator_accordion"
+    )
+
     return ui.accordion(
         ui.accordion_panel(
             "Contractinator",
-            ui.input_text(
-                id="new_contractinator_panel_name",
-                label="New Contract Name"
-            ),
             ui.input_action_button(
                 id="add_new_contractinator_panel",
                 label="Add New Contract",
             ),
-            ui.accordion(
-                *[create_contractinator_panel(k, v) for k, v
-                  in contract_names.items()],
-                id="contractinator_accordion"
-            ).add_style("max-height:350px;overflow-y:auto;")
+            initial_contractinator_items
         ),
         id="contractinator_top_container"
     )
