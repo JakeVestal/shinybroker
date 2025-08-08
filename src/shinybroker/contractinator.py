@@ -16,13 +16,6 @@ def create_contractinator_panel(contract_name, initial_value):
     )
     return ui.accordion_panel(
         contract_name,
-        ui.output_ui(
-            id=f"{contract_name}_contract_definition"
-        ),
-        ui.output_ui(
-            id=f"{contract_name}_validate_contract_btn"
-        ),
-        ui.output_ui("contract_verification"),
         text_input,
         ui.input_action_button(
             id=f"{contract_name}_contractinator_smc_btn",
@@ -31,17 +24,26 @@ def create_contractinator_panel(contract_name, initial_value):
                 "onclick": "Shiny.setInputValue(" +
                            f"'smc_buffer', '{contract_name}');"
             }
-        ),
-        ui.output_ui("matching_contracts")
+        )
     )
 
-def contractinator_ui(contract_names: list | dict):
+def contractinator(contract_names: list | dict):
 
     if isinstance(contract_names, list):
         contract_names = {x:'' for x in contract_names}
 
     return ui.accordion(
-        *[create_contractinator_panel(k, v) for k, v
-          in contract_names.items()],
-        id="contractinator_accordion"
+        ui.accordion_panel(
+            "Contratinator",
+            ui.input_action_button(
+                id="contractinator_add_panel",
+                label="Add New Contract"
+            ),
+            ui.accordion(
+                *[create_contractinator_panel(k, v) for k, v
+                  in contract_names.items()],
+                id="contractinator_accordion"
+            )
+        ),
+        id="contractinator_main"
     )
