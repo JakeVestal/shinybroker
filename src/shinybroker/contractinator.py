@@ -27,17 +27,34 @@ def create_contractinator_panel(contract_name, initial_value):
         )
     )
 
-def contractinator(contract_names: list | dict):
+def contractinator(contract_names: list | dict = ()):
+    # if dict: the keys are accordion panel names, e.g., "Asset",
+    #   "Benchmark", and so on, and the values are your initial guess for the
+    #   search string.
+    #     contract_names = {
+    #         'Asset': 'MSTR',
+    #         'Benchmark1': 'SP500',
+    #         'Benchmark2': 'Bitcoin'
+    #     }
+    # if list: the keys are just accordion panel names and the initial gueses
+    #   is set to ''; i.e., blank.
+    #     contract_names = ['Asset', 'Benchmark1', 'Benchmark2']
+    # default: empty tuple, just a blank contractinator panel
+    #     contract_names = ()
 
-    if isinstance(contract_names, list):
-        contract_names = {x:'' for x in contract_names}
+    if not isinstance(contract_names, dict):
+        contract_names = {x: '' for x in contract_names}
 
     return ui.accordion(
         ui.accordion_panel(
-            "Contratinator",
+            "Contractinator",
+            ui.input_text(
+                id="new_contractinator_panel_name",
+                label="New Contract Name"
+            ),
             ui.input_action_button(
-                id="contractinator_add_panel",
-                label="Add New Contract"
+                id="add_new_contractinator_panel",
+                label="Add New Contract",
             ),
             ui.accordion(
                 *[create_contractinator_panel(k, v) for k, v
@@ -45,5 +62,5 @@ def contractinator(contract_names: list | dict):
                 id="contractinator_accordion"
             )
         ),
-        id="contractinator_main"
+        id="contractinator_top_container"
     )

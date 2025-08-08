@@ -2,12 +2,13 @@ import shinybroker as sb
 from shiny import Inputs, Outputs, Session, ui
 
 ui_ = ui.page_fluid(
-    # sb.contractinator_ui(['Asset', 'Benchmark1', 'Benchmark2'])
-    sb.contractinator({
-        'Asset': 'MSTR',
-        'Benchmark1': 'SP500',
-        'Benchmark2': 'Bitcoin'
-    })
+    sb.contractinator(['Asset', 'Benchmark1', 'Benchmark2'])
+    # sb.contractinator({
+    #     'Asset': 'MSTR',
+    #     'Benchmark1': 'SP500',
+    #     'Benchmark2': 'Bitcoin'
+    # }),
+    # sb.contractinator()
 )
 
 # Create an instance of a ShinyBroker App object using the default ui and server
