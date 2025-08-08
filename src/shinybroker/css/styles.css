@@ -114,3 +114,67 @@
 #contractinator_accordion .accordion-button:hover::before {
     left: 100%; /* Scanline moves across on hover */
 }
+
+/*!* Caret styling: Targeting Bootstrap icons (bi-chevron-down/up) *!*/
+/*.accordion-button .bi-chevron-down,*/
+/*.accordion-button .bi-chevron-up {*/
+/*    !* Base sci-fi, high-finance styling *!*/
+/*    color: #00b7eb; !* Iron Man cyan for collapsed state *!*/
+/*    filter: drop-shadow(0 0 5px #00b7eb) drop-shadow(0 0 10px #00b7eb); !* Neon glow *!*/
+/*    font-size: 1.2rem; !* Slightly larger for prominence *!*/
+/*    transition: all 0.3s ease; !* Smooth transitions *!*/
+/*    !* High-finance metallic effect *!*/
+/*    background: linear-gradient(45deg, #ffd700, #c0c0c0); !* Gold-to-silver gradient *!*/
+/*    -webkit-background-clip: text; !* Clip gradient to text/icon *!*/
+/*    -webkit-text-fill-color: transparent; !* Transparent text to show gradient *!*/
+/*    margin-left: 10px; !* Space from button text *!*/
+/*}*/
+
+/*!* Expanded state: Up caret with magenta/gold for high-finance flair *!*/
+/*.accordion-button[aria-expanded="true"] .bi-chevron-up {*/
+/*    color: #ff007a; !* Blade Runner magenta *!*/
+/*    filter: drop-shadow(0 0 5px #ff007a) drop-shadow(0 0 10px #ff007a); !* Magenta glow *!*/
+/*    transform: rotate(360deg); !* Subtle rotation for sci-fi effect *!*/
+/*    background: linear-gradient(45deg, #ff007a, #ffd700); !* Magenta-to-gold gradient *!*/
+/*    -webkit-background-clip: text;*/
+/*    -webkit-text-fill-color: transparent;*/
+/*}*/
+
+/*!* Collapsed state: Down caret with cyan/silver *!*/
+/*.accordion-button[aria-expanded="false"] .bi-chevron-down {*/
+/*    color: #00b7eb; !* Reinforce cyan for collapsed *!*/
+/*    filter: drop-shadow(0 0 5px #00b7eb) drop-shadow(0 0 10px #00b7eb);*/
+/*    transform: rotate(0deg); !* Reset rotation *!*/
+/*}*/
+
+/*!* Fallback: If caret is a pseudo-element (e.g., ::after with content) *!*/
+/*.accordion-button::after {*/
+/*    content: none; !* Disable default Bootstrap pseudo-caret if present *!*/
+/*}*/
+
+/*!* Fallback: If caret is a text symbol (e.g., ▼ or ▲) *!*/
+/*.accordion-button:not(.collapsed)::after,*/
+/*.accordion-button.collapsed::after {*/
+/*    display: inline-block;*/
+/*    margin-left: 10px;*/
+/*    font-size: 1.2rem;*/
+/*    transition: all 0.3s ease;*/
+/*    background: linear-gradient(45deg, #ffd700, #c0c0c0); !* Gold-to-silver *!*/
+/*    -webkit-background-clip: text;*/
+/*    -webkit-text-fill-color: transparent;*/
+/*    filter: drop-shadow(0 0 5px #00b7eb) drop-shadow(0 0 10px #00b7eb);*/
+/*}*/
+
+/*!* Expanded state for text caret *!*/
+/*.accordion-button:not(.collapsed)::after {*/
+/*    content: '▲'; !* Up arrow *!*/
+/*    background: linear-gradient(45deg, #ff007a, #ffd700); !* Magenta-to-gold *!*/
+/*    -webkit-background-clip: text;*/
+/*    -webkit-text-fill-color: transparent;*/
+/*    filter: drop-shadow(0 0 5px #ff007a) drop-shadow(0 0 10px #ff007a);*/
+/*}*/
+
+/*!* Collapsed state for text caret *!*/
+/*.accordion-button.collapsed::after {*/
+/*    content: '▼'; !* Down arrow *!*/
+/*}*/
