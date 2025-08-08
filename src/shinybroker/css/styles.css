@@ -42,6 +42,20 @@
     max-width: 450px;
 }
 
-#contractinator_top_container {
+#main_tab {
     margin-bottom: 15px;
+}
+
+#contractinator_top_container > .accordion-item > .accordion-header {
+    border: 1px solid lightgreen;
+    font-size: 1.1em;
+}
+
+#contractinator_accordion{
+    margin-top: 15px;
+}
+
+#contractinator_accordion .accordion-button, h2{
+    color: greenyellow;
+    border: 1px solid lightgoldenrodyellow;
 }

@@ -60,7 +60,7 @@ def contractinator(contract_names: list | dict = ()):
                 *[create_contractinator_panel(k, v) for k, v
                   in contract_names.items()],
                 id="contractinator_accordion"
-            )
+            ).add_style("max-height:350px;overflow-y:auto;")
         ),
         id="contractinator_top_container"
     )
