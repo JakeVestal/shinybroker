@@ -19,6 +19,7 @@ license-files = { paths = ["LICENSE"] }
 dependencies = [
     "faicons",
     "jinja2",
+    "lxml",
     "pandas",
     "plotly",
     "rich",
