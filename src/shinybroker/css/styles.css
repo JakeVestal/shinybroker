@@ -70,7 +70,7 @@
   margin-top: 4px;
 }
 
-/* Formats ALL contractinator contract item buttons */
+/* Formats all contractinator contract item buttons */
 #contractinator_accordion .accordion-button {
     background: linear-gradient(145deg, #1a1a1a, #2a2a3a);
     border: 2px solid #00b7eb;
@@ -83,13 +83,13 @@
 }
 
 /* Hover state */
-#contractinator_accordion .accordion-button:hover {
-    background: linear-gradient(145deg, #2a2a3a, #3a3a4a);
-    border-color: #ff007a;
-    text-shadow: 0 0 5px #00b7eb, 0 0 10px #00b7eb;
-    box-shadow: 0 0 20px rgba(255, 0, 122, 0.7);
-    transform: translateY(-2px); /* Slight lift for dynamic feel */
-}
+/*#contractinator_accordion .accordion-button[aria-expanded="true"]:hover {*/
+/*    background: linear-gradient(145deg, #2a2a3a, #3a3a4a);*/
+/*    border-color: #ff007a;*/
+/*    text-shadow: 0 0 5px #00b7eb, 0 0 10px #00b7eb;*/
+/*    box-shadow: 0 0 20px rgba(255, 0, 122, 0.7);*/
+/*    transform: translateY(-2px); !* Slight lift for dynamic feel *!*/
+/*}*/
 
 /* digital glitch effect */
 #contractinator_accordion .accordion-button::before {
@@ -111,60 +111,37 @@
     left: 100%; /* Scanline moves across on hover */
 }
 
-/* Caret styling: Targeting ::after pseudo-element for the caret */
-.accordion-button::after {
-    content: '▽'; /* Down arrow for collapsed state */
+/* Collapse control styling */
+#contractinator_accordion .accordion-button::after {
+    content: '';
     position: absolute; /* Move to far right */
     right: 10px; /* Align to right edge with padding */
     top: 50%; /* Vertically center */
     transform: translateY(-50%) scale(1); /* Center and default scale */
-    font-size: 1.2rem; /* Slightly larger for prominence */
-    color: #00b7eb; /* Iron Man cyan for collapsed */
-    text-shadow: 0 0 5px #00b7eb, 0 0 10px #00b7eb; /* Neon glow */
-    background: linear-gradient(45deg, #ffd700, #c0c0c0); /* Gold-to-silver high-finance gradient */
-    -webkit-background-clip: text; /* Clip gradient to text */
-    -webkit-text-fill-color: transparent; /* Transparent text for gradient */
-    filter: drop-shadow(0 0 5px #00b7eb) drop-shadow(0 0 10px #00b7eb); /* Double neon glow */
-    transition: all 0.3s ease; /* Smooth transitions for color, rotation, scale */
-}
-
-/* Expanded state: Up caret with magenta/gold */
-.accordion-button[aria-expanded="true"]::after {
-    content: '△'; /* Up arrow for expanded state */
-    color: #ff007a; /* Blade Runner magenta */
-    text-shadow: 0 0 5px #ff007a, 0 0 10px #ff007a; /* Magenta glow */
-    background: linear-gradient(45deg, #ff007a, #ffd700); /* Magenta-to-gold gradient */
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 0 5px #ff007a) drop-shadow(0 0 10px #ff007a);
-    transform: translateY(-50%) rotate(360deg) scale(1.2); /* Center, rotate, and enlarge */
-}
-
-/* Collapsed state: Down caret with cyan/silver */
-.accordion-button[aria-expanded="false"]::after {
-    content: '▽'; /* Explicitly set for clarity */
-    transform: translateY(-50%) scale(1); /* Center and reset scale */
-}
-
-/* Fallback: If Bootstrap uses .collapsed class */
-.accordion-button.collapsed::after {
-    content: '▽';
     color: #00b7eb;
     text-shadow: 0 0 5px #00b7eb, 0 0 10px #00b7eb;
     background: linear-gradient(45deg, #ffd700, #c0c0c0);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text; /* Clip gradient to text */
+    -webkit-text-fill-color: transparent; /* Transparent text for gradient */
     filter: drop-shadow(0 0 5px #00b7eb) drop-shadow(0 0 10px #00b7eb);
-    transform: translateY(-50%) scale(1);
+    transition: all 0.3s ease; /* Smooth transitions for color, rotation, scale */
 }
 
-/*.accordion-button:not(.collapsed)::after {*/
-/*    content: '△';*/
-/*    color: #ff007a;*/
-/*    text-shadow: 0 0 5px #ff007a, 0 0 10px #ff007a;*/
-/*    background: linear-gradient(45deg, #ff007a, #ffd700);*/
-/*    -webkit-background-clip: text;*/
-/*    -webkit-text-fill-color: transparent;*/
-/*    filter: drop-shadow(0 0 5px #ff007a) drop-shadow(0 0 10px #ff007a);*/
-/*    transform: translateY(-50%) rotate(360deg) scale(1.2);*/
-/*}*/
+/* Expanded state: Up tri with magenta/gold */
+#contractinator_accordion .accordion-button[aria-expanded="true"]::after {
+    content: '△'; /* Up tri for expanded state */
+    color: #ff007a;
+    text-shadow: 0 0 5px #ff007a, 0 0 10px #ff007a;
+    background: linear-gradient(45deg, #ff007a, #ffd700);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 5px #ff007a) drop-shadow(0 0 10px #ff007a);
+    transform: translateY(-50%) rotate(360deg)
+        scale(1.2); /* Center, rotate, and enlarge */
+}
+
+/* Collapsed state: Down tri with cyan/silver */
+#contractinator_accordion .accordion-button[aria-expanded="false"]::after {
+    content: '▽'; /* Explicitly set for clarity */
+    transform: translateY(-50%) scale(1); /* Center and reset scale */
+}
