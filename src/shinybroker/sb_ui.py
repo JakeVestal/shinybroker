@@ -38,6 +38,11 @@ def sb_ui(home_ui = ui.p('no ui passed to sb_ui().')):
                         )
                     ),
                     method='inline'
+                ),
+                ui.tags.link(
+                    href="https://fonts.googleapis.com/css2?family=Orbitron"
+                         ":wght@400;600&display=swap",
+                    rel="stylesheet"
                 )
             ),
             ui.include_js(
