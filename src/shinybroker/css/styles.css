@@ -15,24 +15,16 @@
     border-color: #e6c14b;
 }
 
-/* digital glitch effect */
-.btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(212, 175, 55, 0.2),
-        transparent
-    ); /* Faint cyan scanline */
-    transition: 0.5s;
+.btn:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    background-color: #004085;
+    border-color: #d4af37;
 }
-.btn:hover::before {
-    left: 100%; /* Scanline moves across on hover */
+
+.btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.3);
 }
 
 .btn:active {

@@ -13,6 +13,8 @@ from shinybroker.obj_defs import *
 from shinybroker.msgs_to_ibkr import *
 from shinybroker.format_ibkr_inputs import format_contract_details
 from shinybroker.functionary import functionary
+from shinybroker.ib_fetch_functions import (fetch_matching_symbols,
+                                            fetch_contract_details)
 from shiny import Inputs, Outputs, Session, reactive, render, ui
 from sys import exit
 
@@ -633,17 +635,68 @@ def sb_server(
         )
 
     # Contractinator Logic
+
+    # stores contracts found to match the search string
+    contract_matches = reactive.value(
+        {'stocks': pd.DataFrame({}), 'bonds': pd.DataFrame({})}
+    )
+
     @reactive.Effect
     @reactive.event(input.smc_buffer)
     def contractinator_match_search_btn():
-        print(input.smc_buffer())
-        print(f"{input.smc_buffer()}_search_string")
-        idk = input[f"{input.smc_buffer()}_search_string"]()
-        print(idk)
-        ui.update_accordion_panel(
-            "contractinator_accordion",
-            input.smc_buffer(),
-            'somebiz'
+        cm_df = fetch_matching_symbols(
+            input[f"{input.smc_buffer()}_search_string"]()
+        )
+
+        if cm_df['stocks'].shape[0] == 0:
+            if cm_df['bonds'].shape[0] == 0:
+                matches_ui = f"No matches found for: {input.search_string()}"
+            else:
+                contract_matches.set(cm_df)
+                matches_ui = ui.output_data_frame("matching_bonds")
+        else:
+            if cm_df['bonds'].shape[0] == 0:
+                contract_matches.set(cm_df)
+                matches_ui = ui.output_data_frame("matching_stocks")
+            else:
+                contract_matches.set(cm_df)
+                matches_ui = ui.navset_card_tab(
+                    ui.nav_panel(
+                        "Not Bonds",
+                        ui.output_data_frame("matching_stocks")
+                    ),
+                    ui.nav_panel(
+                        "Bonds",
+                        ui.output_data_frame("matching_bonds")
+                    )
+                )
+
+        m = ui.modal(
+            matches_ui,
+            title="Matching Contracts",
+            size='xl',
+            easy_close=True,
+            footer=ui.div(
+                ui.modal_button("accept_contract", "OK"),
+                ui.modal_button(
+                    "dont_accept_contract", "Cancel"
+                )
+            )
+        )
+        ui.modal_show(m)
+
+    @render.data_frame
+    def matching_stocks():
+        return render.DataTable(
+            contract_matches()['stocks'],
+            selection_mode="row"
+        )
+
+    @render.data_frame
+    def matching_bonds():
+        return render.DataTable(
+            contract_matches()['bonds'],
+            selection_mode="row"
         )
 
     sb_rvs = dict({
