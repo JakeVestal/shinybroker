@@ -15,6 +15,26 @@
     border-color: #e6c14b;
 }
 
+/* digital glitch effect */
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(212, 175, 55, 0.2),
+        transparent
+    ); /* Faint cyan scanline */
+    transition: 0.5s;
+}
+.btn:hover::before {
+    left: 100%; /* Scanline moves across on hover */
+}
+
 .btn:active {
     transform: scale(0.95);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -71,7 +91,7 @@
 }
 
 /* Formats all contractinator contract item buttons */
-#contractinator_accordion .accordion-button {
+#contractinator_accordion .accordion-button[aria-expanded="true"] {
     background: linear-gradient(145deg, #1a1a1a, #2a2a3a);
     border: 2px solid #00b7eb;
     border-radius: 8px;
@@ -81,15 +101,30 @@
     overflow: hidden;
     transition: all 0.3s ease; /* Smooth transitions for hover/active states */
 }
+#contractinator_accordion .accordion-button[aria-expanded="false"] {
+    background: linear-gradient(145deg, #1a1a1a, #2a2a3a);
+    border: 2px solid #ff007a;
+    border-radius: 8px;
+    padding: 5px 10px;
+    color: #e0e0e0;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s ease; /* Smooth transitions for hover/active states */
+}
 
 /* Hover state */
-/*#contractinator_accordion .accordion-button[aria-expanded="true"]:hover {*/
-/*    background: linear-gradient(145deg, #2a2a3a, #3a3a4a);*/
-/*    border-color: #ff007a;*/
-/*    text-shadow: 0 0 5px #00b7eb, 0 0 10px #00b7eb;*/
-/*    box-shadow: 0 0 20px rgba(255, 0, 122, 0.7);*/
-/*    transform: translateY(-2px); !* Slight lift for dynamic feel *!*/
-/*}*/
+#contractinator_accordion .accordion-button[aria-expanded="true"]:hover {
+    border-color: #ff007a;
+    text-shadow: 0 0 5px #00b7eb, 0 0 10px #00b7eb;
+    box-shadow: 0 0 20px rgba(255, 0, 122, 0.7);
+    transform: translateY(-2px); /* Slight lift for dynamic feel */
+}
+#contractinator_accordion .accordion-button[aria-expanded="false"]:hover {
+    border-color: #00b7eb;
+    text-shadow: 0 0 5px #ff007a, 0 0 10px #ff007a;
+    box-shadow: 0 0 20px rgba(0, 183, 235, 0.7);
+    transform: translateY(-2px); /* Slight lift for dynamic feel */
+}
 
 /* digital glitch effect */
 #contractinator_accordion .accordion-button::before {

@@ -12,7 +12,8 @@ def create_contractinator_panel(contract_name, initial_value):
         value=initial_value
     ).add_style("display:flex;flex-direction:row;align-items:center;")
     text_input.children[0] = text_input.children[0].add_style(
-        "width:275px;padding-top:5px;"
+        "text-align: right;width: 134px;padding-top: 5px;padding-right:15px;"
+        "font-size: 0.85rem;"
     )
     return ui.accordion_panel(
         contract_name,
