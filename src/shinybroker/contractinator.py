@@ -22,8 +22,9 @@ def create_contractinator_panel(contract_name, initial_value):
             id=f"{contract_name}_contractinator_smc_btn",
             label="Search for Matching Contracts",
             **{
-                "onclick": "Shiny.setInputValue(" +
-                           f"'smc_buffer', '{contract_name}');"
+                "onclick": "Shiny.setInputValue(" 
+                           f"'smc_buffer', '{contract_name}', "
+                           "{priority: 'event'});"
             }
         )
     )

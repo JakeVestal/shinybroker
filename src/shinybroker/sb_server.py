@@ -15,7 +15,7 @@ from shinybroker.format_ibkr_inputs import format_contract_details
 from shinybroker.functionary import functionary
 from shinybroker.ib_fetch_functions import (fetch_matching_symbols,
                                             fetch_contract_details)
-from shiny import Inputs, Outputs, Session, reactive, render, ui
+from shiny import Inputs, Outputs, Session, reactive, render, ui, req
 from sys import exit
 
 
@@ -23,6 +23,13 @@ def sb_server(
         input: Inputs, output: Outputs, session: Session,
         host, port, client_id, verbose
 ):
+
+    ##### General Setup
+
+    @reactive.effect
+    @reactive.event(input.close_modal)
+    def handle_close_modal():
+        ui.modal_remove()
 
     def version_to_int_list(version_str):
         return list(map(int, version_str.split(".")))
@@ -648,14 +655,14 @@ def sb_server(
             input[f"{input.smc_buffer()}_search_string"]()
         )
 
-        if cm_df['stocks'].shape[0] == 0:
-            if cm_df['bonds'].shape[0] == 0:
+        if cm_df['stocks'].empty:
+            if cm_df['bonds'].empty:
                 matches_ui = f"No matches found for: {input.search_string()}"
             else:
                 contract_matches.set(cm_df)
                 matches_ui = ui.output_data_frame("matching_bonds")
         else:
-            if cm_df['bonds'].shape[0] == 0:
+            if cm_df['bonds'].empty:
                 contract_matches.set(cm_df)
                 matches_ui = ui.output_data_frame("matching_stocks")
             else:
@@ -672,37 +679,36 @@ def sb_server(
                 )
 
         m = ui.modal(
+            ui.output_code(
+                "selected_contract_modal",
+                placeholder="Please select a contract row from the table below"
+            ),
             matches_ui,
             title="Matching Contracts",
             size='xl',
-            easy_close=True,
+            easy_close=False,
             footer=ui.div(
-                ui.modal_button("accept_contract", "OK"),
-                ui.modal_button(
-                    "dont_accept_contract", "Cancel"
-                )
+                ui.input_action_button("accept_contract", "OK"),
+                ui.input_action_button("close_modal", "Cancel")
             )
         )
 
         ui.modal_show(m)
 
-        # Use JavaScript to position the modal after it's shown
-        # Center the modal horizontally on viewport
-        # Add custom class for styling
         ui.insert_ui(
             ui.tags.script("""
-                setTimeout(function() {
-                    var modal = document.querySelector('.modal-dialog');
-                    if (modal) {
-                        modal.style.position = 'absolute';
-                        modal.style.left = '50%';
-                        modal.style.transform = 'translateX(-50%)';
-                        modal.style.top = '0px';
-                        modal.style.margin = '0';
-                        modal.closest('.modal').classList.add('top-modal');
-                    }
-                }, 100);
-            """),
+                        setTimeout(function() {
+                            var modal = document.querySelector('.modal-dialog');
+                            if (modal) {
+                                modal.style.position = 'absolute';
+                                modal.style.left = '50%';
+                                modal.style.transform = 'translateX(-50%)';
+                                modal.style.top = '0px';
+                                modal.style.margin = '0';
+                                modal.closest('.modal').classList.add('top-modal');
+                            }
+                        }, 100);
+                    """),
             selector="body",
             where="beforeEnd"
         )
@@ -720,6 +726,34 @@ def sb_server(
             contract_matches()['bonds'],
             selection_mode="row"
         )
+
+    @reactive.effect
+    @reactive.event(matching_stocks.cell_selection)
+    def a_stock_row_has_just_been_selected():
+        req(matching_stocks.cell_selection()['rows'])
+        contract_row = contract_matches()['stocks'].iloc[
+            matching_stocks.cell_selection()['rows'][0]
+        ]
+        sc = Contract({
+            'conId': contract_row['con_id'],
+            'symbol': contract_row['symbol'],
+            'secType': contract_row['sec_type'],
+            'exchange': contract_row['primary_exchange'],
+            'currency': contract_row['currency'],
+            'description': contract_row['description']
+        })
+        cdef_string = re.sub(r", ", ",\\n", str(sc))
+        print(cdef_string)
+        # ui.update_text_area('contract_definition', value=cdef_string)
+
+    # @reactive.effect
+    # @reactive.event(input.accept_contract)
+    # def handle_u_kno():
+    #
+    #     ui.modal_remove()
+
+
+
 
     sb_rvs = dict({
         'connection_info': connection_info,
