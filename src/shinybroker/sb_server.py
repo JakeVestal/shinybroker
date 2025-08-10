@@ -683,7 +683,29 @@ def sb_server(
                 )
             )
         )
+
         ui.modal_show(m)
+
+        # Use JavaScript to position the modal after it's shown
+        # Center the modal horizontally on viewport
+        # Add custom class for styling
+        ui.insert_ui(
+            ui.tags.script("""
+                setTimeout(function() {
+                    var modal = document.querySelector('.modal-dialog');
+                    if (modal) {
+                        modal.style.position = 'absolute';
+                        modal.style.left = '50%';
+                        modal.style.transform = 'translateX(-50%)';
+                        modal.style.top = '0px';
+                        modal.style.margin = '0';
+                        modal.closest('.modal').classList.add('top-modal');
+                    }
+                }, 100);
+            """),
+            selector="body",
+            where="beforeEnd"
+        )
 
     @render.data_frame
     def matching_stocks():
