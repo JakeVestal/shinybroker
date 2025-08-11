@@ -35,9 +35,9 @@ def sb_server(
         return list(map(int, version_str.split(".")))
 
     latest_version = requests.get(
-            "https://pypi.org/pypi/shinybroker/json",
-            timeout=5
-        ).json()['info']['version']
+        "https://pypi.org/pypi/shinybroker/json",
+        timeout=5
+    ).json()['info']['version']
 
     if any(
             [remote > local for remote, local in zip(
@@ -57,7 +57,7 @@ def sb_server(
                     "is highly recommended that you update to the latest "
                     "version. To do so, please: <ol>"
                     "<li>Stop your ShinyBroker app</li>"
-                    "<li>Run <code>pip install shinybroker --upgrade</code> " 
+                    "<li>Run <code>pip install shinybroker --upgrade</code> "
                     "in your terminal</li> "
                     "<li> Restart your ShinyBroker app</li>"
                     "</ol> Doing so will ensure that you have access to the "
@@ -616,7 +616,7 @@ def sb_server(
         hdu[7] = round(float(hdu[7]), 3)
         try:
             hd[hdu[0]]['hst_dta'].loc[
-            np.where(hd[hdu[0]]['hst_dta']['timestamp'] == hdu[2])[0][0], :
+                np.where(hd[hdu[0]]['hst_dta']['timestamp'] == hdu[2])[0][0], :
             ] = [hdu[i] for i in [2, 3, 5, 6, 4, 8, 7, 1]]
         except IndexError:
             hd[hdu[0]]['hst_dta'] = pd.concat(
@@ -679,18 +679,22 @@ def sb_server(
                 )
 
         m = ui.modal(
-            ui.output_code(
-                "selected_contract_modal",
+            ui.input_text_area(
+                id="contractinator_modal_selected_contract",
+                label="Contract Definition:",
+                width="100%",
                 placeholder="Please select a contract row from the table below"
             ),
+            ui.input_action_button("accept_contract", "Save Contract"),
+            ui.input_action_button("accept_contract", "Validate"),
             matches_ui,
-            title="Matching Contracts",
+            title=ui.div(
+                ui.span("Asset"),
+                ui.input_action_button("close_modal", "X"),
+                style="display: flex; align-items: center; width: 100%;"
+            ),
             size='xl',
-            easy_close=False,
-            footer=ui.div(
-                ui.input_action_button("accept_contract", "OK"),
-                ui.input_action_button("close_modal", "Cancel")
-            )
+            easy_close=False
         )
 
         ui.modal_show(m)
@@ -739,17 +743,19 @@ def sb_server(
         contract_row = contract_matches()['stocks'].iloc[
             matching_stocks.cell_selection()['rows'][0]
         ]
-        sc = Contract({
-            'conId': contract_row['con_id'],
-            'symbol': contract_row['symbol'],
-            'secType': contract_row['sec_type'],
-            'exchange': contract_row['primary_exchange'],
-            'currency': contract_row['currency'],
-            'description': contract_row['description']
-        })
-        cdef_string = re.sub(r", ", ",\\n", str(sc))
-        print(cdef_string)
-        # ui.update_text_area('contract_definition', value=cdef_string)
+        ui.update_text_area(
+            id="contractinator_modal_selected_contract",
+            value=input.smc_buffer() + " = sb.Contract(" +  str(
+                Contract({
+                    'conId': contract_row['con_id'],
+                    'symbol': contract_row['symbol'],
+                    'secType': contract_row['sec_type'],
+                    'exchange': contract_row['primary_exchange'],
+                    'currency': contract_row['currency'],
+                    'description': contract_row['description']
+                }).compact()
+            ) + ")"
+        )
 
     # @reactive.effect
     # @reactive.event(input.accept_contract)

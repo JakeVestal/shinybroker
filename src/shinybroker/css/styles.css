@@ -198,3 +198,27 @@
     content: '▽'; /* Explicitly set for clarity */
     transform: translateY(-50%) scale(1); /* Center and reset scale */
 }
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 10px 15px; /* Adjust padding to control spacing, override Bootstrap default if needed */
+}
+
+.modal-title {
+    flex-grow: 1;
+    margin: 0; /* Remove default margin to avoid constraining the inner div */
+    width: 100%;
+}
+
+.modal-title > div {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.modal-title > div > .action-button#close_modal {
+    margin-left: auto; /* Push the button to the rightmost edge */
+}
