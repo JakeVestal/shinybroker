@@ -679,18 +679,33 @@ def sb_server(
                 )
 
         m = ui.modal(
+            ui.input_action_button(
+                "save_contract", "Save Contract", width="135px"
+            ),
+            ui.span(
+                "accept this definition and save it in the contractinator"
+            ),
+            ui.output_ui("validation_table_first_row"),
+            ui.output_ui("validation_table_second_row"),
+            ui.input_action_button(
+                "validate_contract", "Validate", width="135px"
+            ),
+            ui.span(
+                "pass this definition to fetch_contract_details() to  "
+                "verify that it matches the contract you want."
+            ),
             ui.input_text_area(
                 id="contractinator_modal_selected_contract",
-                label="Contract Definition:",
+                label="Contract Definition",
                 width="100%",
                 placeholder="Please select a contract row from the table below"
             ),
-            ui.input_action_button("accept_contract", "Save Contract"),
-            ui.input_action_button("accept_contract", "Validate"),
             matches_ui,
             title=ui.div(
                 ui.span("Asset"),
-                ui.input_action_button("close_modal", "X"),
+                ui.input_action_button("close_modal", "X").add_class(
+                    "modal_close_button"
+                ),
                 style="display: flex; align-items: center; width: 100%;"
             ),
             size='xl',
@@ -745,7 +760,7 @@ def sb_server(
         ]
         ui.update_text_area(
             id="contractinator_modal_selected_contract",
-            value=input.smc_buffer() + " = sb.Contract(" +  str(
+            value=input.smc_buffer() + " = sb.Contract(" + str(
                 Contract({
                     'conId': contract_row['con_id'],
                     'symbol': contract_row['symbol'],
@@ -757,12 +772,56 @@ def sb_server(
             ) + ")"
         )
 
-    # @reactive.effect
-    # @reactive.event(input.accept_contract)
-    # def handle_u_kno():
-    #
-    #     ui.modal_remove()
+    validation_results = reactive.value(pd.DataFrame())
 
+    @reactive.effect
+    @reactive.event(input.validate_contract)
+    def contractinator_validate_contract_was_clicked():
+
+        ui.remove_ui(
+            selector="#contractinator_validate_table_div",
+            immediate=True
+        )
+
+        try:
+            namespace = {}
+            exec('import shinybroker.obj_defs as sb', namespace)
+            exec(
+                input.contractinator_modal_selected_contract(),
+                namespace
+            )
+            cd = fetch_contract_details(namespace[input.smc_buffer()])
+        except Exception as e:
+            ui.notification_show(str(e), type="error")
+            req(False)
+
+        validation_results.set(
+            cd[[
+                "conId", "longName", "symbol", "secType", "subcategory",
+                "primaryExchange", "currency", "timeZoneId",
+                "stockType", 'secIdList'
+            ]]
+        )
+
+    @render.ui
+    def validation_table_first_row():
+        req(not validation_results().empty)
+        return ui.HTML(
+            validation_results().iloc[:, :5].to_html(
+                classes="table validation_table",
+                index=False
+            )
+        )
+
+    @render.ui
+    def validation_table_second_row():
+        req(not validation_results().empty)
+        return ui.HTML(
+            validation_results().iloc[:, 5:].to_html(
+                classes="table validation_table",
+                index=False
+            )
+        )
 
 
 

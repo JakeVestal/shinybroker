@@ -222,3 +222,29 @@
 .modal-title > div > .action-button#close_modal {
     margin-left: auto; /* Push the button to the rightmost edge */
 }
+
+.modal_close_button {
+    color: #ff007a;
+    text-shadow: 0 0 5px #ff007a, 0 0 10px #ff007a;
+    background: linear-gradient(45deg, #ff007a, #ffd700);
+    border: none;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.inline-code {
+    font-family: var(--bs-font-monospace), serif;
+    margin-top: 0;
+    margin-bottom: 0;
+    overflow: auto;
+    font-size: .875em;
+    color: RGB(var(--bs-emphasis-color-rgb, 0, 0, 0));
+    background-color: RGBA(var(--bs-emphasis-color-rgb, 0, 0, 0), 0.04);
+    padding: .5rem;
+    border: 1px solid var(--bs-border-color, #dee2e6);
+    border-radius: 3px;
+}
+
+.validation_table th, .validation_table td {
+  text-align: left;
+}
