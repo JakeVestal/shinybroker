@@ -696,22 +696,27 @@ def sb_server(
         ui.modal_show(m)
 
         ui.insert_ui(
-            ui.tags.script("""
-                        setTimeout(function() {
-                            var modal = document.querySelector('.modal-dialog');
-                            if (modal) {
-                                modal.style.position = 'absolute';
-                                modal.style.left = '50%';
-                                modal.style.transform = 'translateX(-50%)';
-                                modal.style.top = '0px';
-                                modal.style.margin = '0';
-                                modal.closest('.modal').classList.add('top-modal');
-                            }
-                        }, 100);
-                    """),
+            ui.tags.script(
+                """
+                setTimeout(function() {
+                    var modal = document.querySelector('.modal-dialog');
+                    if (modal) {
+                        modal.style.position = 'absolute';
+                        modal.style.left = '50%';
+                        modal.style.transform = 'translateX(-50%)';
+                        modal.style.top = '0px';
+                        modal.style.margin = '0';
+                        modal.closest('.modal').classList.add('top-modal');
+                    }
+                }, 100);
+                """,
+                id="contractinator_modal_script",
+            ),
             selector="body",
             where="beforeEnd"
         )
+
+        ui.remove_ui("#contractinator_modal_script")
 
     @render.data_frame
     def matching_stocks():
