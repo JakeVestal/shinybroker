@@ -4,9 +4,9 @@ from shiny import module, ui, render, reactive, req, App
 from shinybroker import fetch_matching_symbols, Contract, fetch_contract_details
 
 
-def create_contractinator_panel(contract_name, initial_value):
+def create_contractinator_panel(initial_panel, initial_value):
     text_input = ui.input_text(
-        id=f"{contract_name}_search_string",
+        id=f"{initial_panel}_search_string",
         label="Enter search string:",
         width="400px",
         value=initial_value
@@ -16,40 +16,44 @@ def create_contractinator_panel(contract_name, initial_value):
         "font-size: 0.85rem;"
     )
     return ui.accordion_panel(
-        contract_name,
+        initial_panel,
         text_input,
         ui.input_action_button(
-            id=f"{contract_name}_contractinator_smc_btn",
+            id=f"{initial_panel}_contractinator_smc_btn",
             label="Search for Matching Contracts",
             **{
                 "onclick": "Shiny.setInputValue(" 
-                           f"'smc_buffer', '{contract_name}', "
+                           f"'smc_buffer', '{initial_panel}', "
                            "{priority: 'event'});"
             }
         )
     )
 
-def contractinator(contract_names: list | dict = ()):
+def contractinator(
+        initial_panels: list | dict = (),
+        contractinator_file: str | None = None,
+        contracts: dict = None
+):
     # if dict: the keys are accordion panel names, e.g., "Asset",
     #   "Benchmark", and so on, and the values are your initial guess for the
     #   search string.
-    #     contract_names = {
+    #     initial_panels = {
     #         'Asset': 'MSTR',
     #         'Benchmark1': 'SP500',
     #         'Benchmark2': 'Bitcoin'
     #     }
     # if list: the keys are just accordion panel names and the initial gueses
     #   is set to ''; i.e., blank.
-    #     contract_names = ['Asset', 'Benchmark1', 'Benchmark2']
+    #     initial_panels = ['Asset', 'Benchmark1', 'Benchmark2']
     # default: empty tuple, just a blank contractinator panel
-    #     contract_names = ()
+    #     initial_panels = ()
 
-    if not isinstance(contract_names, dict):
-        contract_names = {x: '' for x in contract_names}
+    if not isinstance(initial_panels, dict):
+        initial_panels = {x: '' for x in initial_panels}
 
     initial_contractinator_items = ui.accordion(
         *[create_contractinator_panel(k, v) for k, v
-          in contract_names.items()],
+          in initial_panels.items()],
         id="contractinator_accordion"
     )
 
