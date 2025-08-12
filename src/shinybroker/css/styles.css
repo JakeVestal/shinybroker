@@ -254,3 +254,7 @@
     align-items: center;
     height: 100%;
 }
+
+.contractinator_completed  span > button {
+    border-color: #02db02;
+}

@@ -680,7 +680,13 @@ def sb_server(
 
         m = ui.modal(
             ui.input_action_button(
-                "add_contract", "Add Contract", width="135px"
+                id="add_contract",
+                label="Add Contract",
+                width="135px",
+                **{
+                    "onclick": "contractinator_mark_completed("
+                               f"'{input.smc_buffer()}');"
+                }
             ),
             ui.span(
                 "Accept this definition and add it to the contractinator"
@@ -844,13 +850,23 @@ def sb_server(
             req(False)
 
         ctntr = contractinator().copy()
-        ctntr |= {contract_name: contract_obj}
+        new_contract = {contract_name: contract_obj}
+        ctntr |= new_contract
         contractinator.set(ctntr)
         ui.modal_remove()
-        # ui.update_accordion_panel(
-        #     id="Contractinator",
-        #     target=contract_name,
-        # )
+        ui.update_accordion_panel(
+            "contractinator_accordion",
+            contract_name,
+            ui.pre(
+                contract_name + " = sb.Contract(" +
+                str(new_contract) + ")"
+            ),
+            title=ui.span(
+                ui.span(contract_name),
+                ui.span("  ✔", style="color:green;")
+            ),
+            show=False
+        )
 
     @reactive.effect
     @reactive.event(contractinator)
