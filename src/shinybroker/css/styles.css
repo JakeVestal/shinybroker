@@ -248,3 +248,9 @@
 .validation_table th, .validation_table td {
   text-align: left;
 }
+
+.vertically_centered {
+    display: inline-flex;
+    align-items: center;
+    height: 100%;
+}

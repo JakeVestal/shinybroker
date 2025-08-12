@@ -680,20 +680,21 @@ def sb_server(
 
         m = ui.modal(
             ui.input_action_button(
-                "save_contract", "Save Contract", width="135px"
+                "add_contract", "Add Contract", width="135px"
             ),
             ui.span(
-                "accept this definition and save it in the contractinator"
-            ),
+                "Accept this definition and add it to the contractinator"
+            ).add_class("vertically_centered"),
             ui.output_ui("validation_table_first_row"),
             ui.output_ui("validation_table_second_row"),
             ui.input_action_button(
                 "validate_contract", "Validate", width="135px"
             ),
             ui.span(
-                "pass this definition to fetch_contract_details() to  "
-                "verify that it matches the contract you want."
-            ),
+                "Verify that this contract definition is valid and matches "
+                "the asset you want."
+            ).add_class("vertically_centered"),
+            ui.br(),
             ui.input_text_area(
                 id="contractinator_modal_selected_contract",
                 label="Contract Definition",
