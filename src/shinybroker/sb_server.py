@@ -703,14 +703,15 @@ def sb_server(
             ),
             matches_ui,
             title=ui.div(
-                ui.span("Asset"),
+                ui.span(input.smc_buffer()),
                 ui.input_action_button("close_modal", "X").add_class(
                     "modal_close_button"
                 ),
                 style="display: flex; align-items: center; width: 100%;"
             ),
             size='xl',
-            easy_close=False
+            easy_close=False,
+            footer=None
         )
 
         ui.modal_show(m)
@@ -824,11 +825,44 @@ def sb_server(
             )
         )
 
+    contractinator = reactive.value({})
 
+    @reactive.effect
+    @reactive.event(input.add_contract)
+    def add_contract_was_clicked():
+        try:
+            namespace = {}
+            exec('import shinybroker.obj_defs as sb', namespace)
+            exec(
+                input.contractinator_modal_selected_contract(),
+                namespace
+            )
+            contract_name = input.smc_buffer()
+            contract_obj = namespace[input.smc_buffer()]
+        except Exception as e:
+            ui.notification_show(str(e), type="error")
+            req(False)
+
+        ctntr = contractinator().copy()
+        ctntr |= {contract_name: contract_obj}
+        contractinator.set(ctntr)
+        ui.modal_remove()
+        # ui.update_accordion_panel(
+        #     id="Contractinator",
+        #     target=contract_name,
+        # )
+
+    @reactive.effect
+    @reactive.event(contractinator)
+    def contractinator_changed():
+        req(contractinator())
+        print("contractinator changed")
+        print(contractinator())
 
     sb_rvs = dict({
         'connection_info': connection_info,
         'contract_details': contract_details,
+        'contractinator': contractinator,
         'current_time': current_time,
         'error_messages': error_messages,
         'historical_data': historical_data,
