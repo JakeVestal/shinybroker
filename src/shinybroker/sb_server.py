@@ -651,6 +651,9 @@ def sb_server(
     @reactive.Effect
     @reactive.event(input.smc_buffer)
     def contractinator_match_search_btn():
+
+        validation_results.set(pd.DataFrame({}))
+
         cm_df = fetch_matching_symbols(
             input[f"{input.smc_buffer()}_search_string"]()
         )
@@ -800,20 +803,22 @@ def sb_server(
             )
             cd = fetch_contract_details(namespace[input.smc_buffer()])
         except Exception as e:
+            print(type(e))
+            print(e)
             ui.notification_show(str(e), type="error")
             req(False)
 
         validation_results.set(
-            cd[[
-                "conId", "longName", "symbol", "secType", "subcategory",
-                "primaryExchange", "currency", "timeZoneId",
-                "stockType", 'secIdList'
-            ]]
+            cd[list({"conId", "longName", "symbol", "secType", "subcategory",
+                     "primaryExchange", "currency", "timeZoneId", "stockType",
+                     'secIdList'}.intersection(set(cd.columns)))]
         )
 
     @render.ui
     def validation_table_first_row():
-        req(not validation_results().empty)
+        if validation_results().empty:
+            return ui.HTML(ui.div())
+
         return ui.HTML(
             validation_results().iloc[:, :5].to_html(
                 classes="table validation_table",
@@ -823,7 +828,9 @@ def sb_server(
 
     @render.ui
     def validation_table_second_row():
-        req(not validation_results().empty)
+        if validation_results().empty:
+            return ui.HTML(ui.div())
+
         return ui.HTML(
             validation_results().iloc[:, 5:].to_html(
                 classes="table validation_table",
@@ -868,12 +875,6 @@ def sb_server(
             show=False
         )
 
-    @reactive.effect
-    @reactive.event(contractinator)
-    def contractinator_changed():
-        req(contractinator())
-        print("contractinator changed")
-        print(contractinator())
 
     sb_rvs = dict({
         'connection_info': connection_info,

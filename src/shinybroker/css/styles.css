@@ -51,7 +51,9 @@
 .hidden {display: none;}
 
 #contractinator_top_container {
+    min-width: 300px;
     max-width: 450px;
+    display: inline-block;
 }
 
 #main_tab {

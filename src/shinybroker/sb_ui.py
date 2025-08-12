@@ -43,19 +43,12 @@ def sb_ui(home_ui = ui.p('no ui passed to sb_ui().')):
                     href="https://fonts.googleapis.com/css2?family=Orbitron"
                          ":wght@400;600&display=swap",
                     rel="stylesheet"
-                )
-            ),
-            ui.include_js(
-                str(
-                    files(__package__).joinpath(
-                        "js", "ib_message_handler.js"
-                    )
-                )
-            ),
-            ui.include_js(
-                str(
-                    files(__package__).joinpath(
-                        "js", "sb_functions.js"
+                ),
+                ui.include_js(
+                    str(
+                        files(__package__).joinpath(
+                            "js", "ib_message_handler.js"
+                        )
                     )
                 )
             ),
@@ -334,6 +327,21 @@ def sb_ui(home_ui = ui.p('no ui passed to sb_ui().')):
                     ui.output_table("error_messages_df")
                 ),
                 id="main_tab"
+            ),
+            ui.tags.script(
+                """
+                function contractinator_mark_completed(target) {
+                    const accordionItems = document.querySelectorAll(
+                        '#contractinator_accordion .accordion-item'
+                    );
+                    accordionItems.forEach(item => {
+                        const dataValue = item.getAttribute('data-value');
+                        if (dataValue === target) {
+                            item.classList.add('contractinator_completed');
+                        }
+                    })
+                }
+                """
             )
         ),
         title="ShinyBroker " + str(VERSION),

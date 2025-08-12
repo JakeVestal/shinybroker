@@ -1,6 +1,9 @@
+import warnings
+
 import pandas as pd
 
 from datetime import datetime
+from shinybroker.utils import formatter2
 
 
 def format_historical_data_input(hst_dta):
@@ -123,6 +126,11 @@ def format_symbol_samples_input(symbol_samples):
 
 def format_contract_details(cdeets):
     contract_details_lst = []
+
+    # print("processing contract details")
+    # print(type(cdeets))
+    # print(f"cdeets = {cdeets}")
+
 
     for i in range(len(cdeets)):
         if cdeets[i][0] == 'BOND':
@@ -530,6 +538,33 @@ def format_contract_details(cdeets):
                                 ]
                             })
                         )
+            case "CRYPTO":
+                contract_details_lst.append(
+                    pd.DataFrame({
+                        'symbol': [cdeets[i][0]],
+                        'secType': [cdeets[i][1]],
+                        'exchange': [cdeets[i][3]],
+                        'currency': [cdeets[i][4]],
+                        'localSymbol': [cdeets[i][5]],
+                        'marketName': [cdeets[i][5]],
+                        'tradingClass': [cdeets[i][5]],
+                        'conId': [cdeets[i][8]],
+                        'minTick': [cdeets[i][9]],
+                        'orderTypes': [cdeets[i][10]],
+                        'validExchanges': [cdeets[i][11]],
+                        'priceMagnifier': [cdeets[i][12]],
+                        'longName': [cdeets[i][14]],
+                        'timeZoneId': [cdeets[i][15]],
+                        'tradingHours': [cdeets[i][16]],
+                        'liquidHours': [cdeets[i][17]],
+                        'aggGroup': [cdeets[i][18]],
+                        'underSymbol': [cdeets[i][19]],
+                        'marketRuleIds': [cdeets[i][20]],
+                        'minSize': [cdeets[i][21]],
+                        'sizeIncrement': [cdeets[i][22]],
+                        'suggestedSizeIncrement': [cdeets[i][23]]
+                    })
+                )
             case _:
                 contract_details_lst.append(pd.DataFrame({cdeets}))
 
@@ -567,9 +602,14 @@ def format_contract_details(cdeets):
             ]))
 
             if len(hrs_date) != 1:
-                print("Strange hrs_date string detected:")
-                print(hrs_str)
-                raise NotImplementedError("Unhandled hrs_date string")
+                try:
+                    df = formatter2(hrs_str)
+                except Exception as e:
+                    warnings.warn("weird hrs_str gave an exception:")
+                    print(type(e))
+                    print(e)
+                    print(f"hrs_str = '{hrs_str}'")
+
 
             return pd.DataFrame(
                 data = {
