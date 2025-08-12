@@ -51,6 +51,10 @@ quartodoc:
   # write sidebar data to this file
   sidebar: _sidebar.yml
   sections:
+    - title: Shinybroker Tools
+      desc: Useful components for use in trading apps
+      contents:
+        - contractinator
     - title: ShinyBroker Objects
       desc: These objects are the building blocks that your application uses
         to work with important tasks like fetching market data or submitting

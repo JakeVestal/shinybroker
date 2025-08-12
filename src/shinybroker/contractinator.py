@@ -31,22 +31,43 @@ def create_contractinator_panel(initial_panel, initial_value):
 
 def contractinator(
         initial_panels: list | dict = (),
-        contractinator_file: str | None = None,
+        contractinator_file: str = None,
         contracts: dict = None
 ):
-    # if dict: the keys are accordion panel names, e.g., "Asset",
-    #   "Benchmark", and so on, and the values are your initial guess for the
-    #   search string.
-    #     initial_panels = {
-    #         'Asset': 'MSTR',
-    #         'Benchmark1': 'SP500',
-    #         'Benchmark2': 'Bitcoin'
-    #     }
-    # if list: the keys are just accordion panel names and the initial gueses
-    #   is set to ''; i.e., blank.
-    #     initial_panels = ['Asset', 'Benchmark1', 'Benchmark2']
-    # default: empty tuple, just a blank contractinator panel
-    #     initial_panels = ()
+    """Add a Contractinator to your app
+
+        The Contractinator is a useful tool for working with IBKR contract
+        definitions.
+
+        Parameters
+        ------------
+        initial_panels: list | dict
+            Allows you to initialize the contractinator with specified
+            panel names, with optional initial guesses for search strings to
+            be passed to `fetch_matching_symbols`. Use this if you know what
+            variable names you want to assign to your contracts, but you're
+            not sure how to create viable `Contract` objects for them. If
+            `initial_panels` is a dict; e.g., `{'asset1': 'AAPL'}, then each
+            `key` will be assigned to one panel in the contractinator,
+            and each `value` will appear as the initial value in the search
+            string field for that panel. If `initial_panels` is a list,
+            then empty contractinator panels will be created for each element
+            and the initial value of the search string field will be left blank.
+        contractinator_file: str
+            Path, as a string, that indicates the location of a saved
+            contractinator file that will be used to populate the
+            contractinator when it is created.
+        contracts: dict
+            A Python dictionary in which each `key` contains the name of a
+            contractinator panel and each `value` contains a contract
+            definition. Used to populate the contractinator when it is created.
+
+        Examples
+        --------
+        ```
+        {{< include ../examples/fetch_sec_def_opt_params.py >}}
+        ```
+        """
 
     if not isinstance(initial_panels, dict):
         initial_panels = {x: '' for x in initial_panels}

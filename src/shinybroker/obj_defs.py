@@ -4,13 +4,13 @@ from typing import Union, Dict, Any
 
 class Contract:
     """
-    All tradable assets -- even stocks and currencies -- are considered
-    'contracts' within IBKR's ecosystem. Whether you're placing a trade
-    order, requesting market data, or searching for details about a
-    particular financial instrument on a particular exchange, contracts are the
-    tool you use to specify to Interactive Brokers exactly *which* tradable
-    asset you're referring to. The `Contract` class simplifies the task of
-    creating usable contract objects in ShinyBroker.
+    All tradable assets -- even stocks and currencies -- are 'contracts' in
+    IBKR's ecosystem. Whether you're placing a trade order, requesting market
+    data, or searching for details about a particular financial instrument on a
+    particular exchange, contracts are the tool you use to specify to
+    Interactive Brokers exactly *which* tradable asset you're referring to.
+    The `Contract` class simplifies the task of creating usable contract
+    objects in ShinyBroker.
 
     Parameters
     ----------
