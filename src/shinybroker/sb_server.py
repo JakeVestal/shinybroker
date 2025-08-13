@@ -682,31 +682,11 @@ def sb_server(
                 )
 
         m = ui.modal(
-            ui.input_action_button(
-                id="add_contract",
-                label="Add Contract",
-                width="135px",
-                **{
-                    "onclick": "contractinator_mark_completed("
-                               f"'{input.smc_buffer()}');"
-                }
-            ),
-            ui.span(
-                "Accept this definition and add it to the contractinator"
-            ).add_class("vertically_centered"),
-            ui.output_ui("validation_table_first_row"),
-            ui.output_ui("validation_table_second_row"),
-            ui.input_action_button(
-                "validate_contract", "Validate", width="135px"
-            ),
-            ui.span(
-                "Verify that this contract definition is valid and matches "
-                "the asset you want."
-            ).add_class("vertically_centered"),
+            ui.output_ui("contractinator_validate_and_add_ui"),
             ui.br(),
             ui.input_text_area(
                 id="contractinator_modal_selected_contract",
-                label="Contract Definition",
+                label="Contract Definition:",
                 width="100%",
                 placeholder="Please select a contract row from the table below"
             ),
@@ -749,12 +729,14 @@ def sb_server(
             selection_mode="row"
         )
 
+
     @render.data_frame
     def matching_bonds():
         return render.DataTable(
             contract_matches()['bonds'],
             selection_mode="row"
         )
+
 
     @reactive.effect
     @reactive.event(matching_stocks.cell_selection)
@@ -776,6 +758,39 @@ def sb_server(
                 }).compact()
             ) + ")"
         )
+
+
+    @render.ui
+    def contractinator_validate_and_add_ui():
+        if not input.contractinator_modal_selected_contract().strip():
+            return ui.div()
+
+        return ui.div(
+            ui.input_action_button(
+                id="add_contract",
+                label="Add Contract",
+                width="135px",
+                **{
+                    "onclick": "contractinator_mark_completed("
+                               f"'{input.smc_buffer()}');"
+                }
+            ),
+            ui.span(
+                "Accept this definition and add it to the contractinator",
+                style="padding-left: 25px;"
+            ).add_class("vertically_centered"),
+            ui.output_ui("validation_table_first_row"),
+            ui.output_ui("validation_table_second_row"),
+            ui.input_action_button(
+                "validate_contract", "Validate", width="135px"
+            ),
+            ui.span(
+                "Verify that this contract definition is valid and matches "
+                "the asset you want.",
+                style="padding-left: 25px;"
+            ).add_class("vertically_centered")
+        )
+
 
     validation_results = reactive.value(pd.DataFrame())
 
@@ -806,18 +821,19 @@ def sb_server(
     @render.ui
     def validation_table_first_row():
         if validation_results().empty:
-            return ui.HTML(ui.div())
+            return ui.div()
 
-        return ui.HTML(
-            validation_results().iloc[:, :5].to_html(
+        return validation_results().iloc[
+            :, :min(5, validation_results().shape[1])
+        ].to_html(
                 classes="table validation_table",
                 index=False
             )
-        )
 
     @render.ui
     def validation_table_second_row():
-        if validation_results().empty:
+        vr = validation_results()
+        if vr.empty | vr.shape[1] < 5:
             return ui.HTML(ui.div())
 
         return ui.HTML(
