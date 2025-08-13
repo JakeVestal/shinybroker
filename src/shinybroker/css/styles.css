@@ -80,7 +80,7 @@
     -webkit-background-clip: text;
     filter: drop-shadow(0 0 10px #ff007a);
     transform: translateY(-50%) rotate(360deg)
-        scale(1.2); /* Center, rotate, and enlarge */
+    scale(1.2); /* Center, rotate, and enlarge */
 }
 /* Expanded state: Up tri with magenta/gold */
 #contractinator_top_container > .accordion-item > .accordion-header >
@@ -93,7 +93,7 @@
     -webkit-text-fill-color: transparent;
     filter: drop-shadow(0 0 10px #00b7eb);
     transform: translateY(-50%) rotate(360deg)
-        scale(1.2); /* Center, rotate, and enlarge */
+    scale(1.2); /* Center, rotate, and enlarge */
 }
 
 /* Spacing and scrollbar behavior for accordion items */
@@ -107,7 +107,7 @@
     border: none;
 }
 #contractinator_accordion .accordion-item:not(:first-child) {
-  margin-top: 4px;
+    margin-top: 4px;
 }
 
 /* Formats all contractinator contract item buttons */
@@ -155,10 +155,10 @@
     width: 100%;
     height: 100%;
     background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(0, 183, 235, 0.2),
-        transparent
+            90deg,
+            transparent,
+            rgba(0, 183, 235, 0.2),
+            transparent
     ); /* Faint cyan scanline */
     transition: 0.5s;
 }
@@ -192,7 +192,7 @@
     -webkit-text-fill-color: transparent;
     /*filter: drop-shadow(0 0 1px #ff007a);*/
     transform: translateY(-50%) rotate(360deg)
-        scale(1.2); /* Center, rotate, and enlarge */
+    scale(1.2); /* Center, rotate, and enlarge */
 }
 
 /* Collapsed state: Down tri with cyan/silver */
@@ -248,7 +248,7 @@
 }
 
 .validation_table th, .validation_table td {
-  text-align: left;
+    text-align: left;
 }
 
 .vertically_centered {
@@ -258,5 +258,128 @@
 }
 
 .contractinator_completed  span > button {
-    border-color: #02db02;
+    border-color: #02db02 !important;
+}
+
+/* Target the DataFrame table */
+#new_contractinator_panels_df_output table,
+#new_contractinator_panels_df_output .table {
+    border: 2px solid #00b7eb; /* Iron Man-inspired cyan border */
+    border-radius: 3px; /* Rounded edges for TOS retro feel */
+    background: linear-gradient(145deg, #0f0f1a, #1f1f2a); /* Dark cyberpunk gradient */
+    box-shadow: 0 0 3px rgba(0, 183, 235, 0.5); /* Holographic glow */
+    font-family: 'Orbitron', 'Arial', sans-serif; /* Futuristic font */
+    position: relative;
+    overflow: hidden;
+}
+
+/* Table headers */
+#new_contractinator_panels_df_output th,
+#new_contractinator_panels_df_output thead th {
+    background: linear-gradient(145deg, #1a1a1a, #2a2a3a); /* Darker sci-fi gradient */
+    color: #e0e0e0; /* Light text for contrast */
+    border: 2px solid #00b7eb; /* Cyan border */
+    padding: 5px; /* Slightly larger for readability */
+}
+
+/* Table cells */
+#new_contractinator_panels_df_output td,
+#new_contractinator_panels_df_output tbody td {
+    background: linear-gradient(145deg, #2a2a3a, #3a3a4a); /* Slightly lighter gradient */
+    height: 32px;
+    color: #e0e0e0;
+    border: 1px solid #00b7eb; /* Cyan border for consistency */
+    padding: 8px;
+    transition: all 0.3s ease; /* Smooth hover transitions */
+    box-shadow: inset 0 0 3px rgba(0, 183, 235, 0.2); /* Subtle sci-fi glow */
+}
+
+/* Hover effects on rows */
+#new_contractinator_panels_df_output tr:hover td {
+    background: linear-gradient(145deg, #ff007a, #3a3a4a); /* Blade Runner magenta glow */
+    box-shadow: 0 0 10px rgba(255, 0, 122, 0.7); /* Neon magenta shadow */
+    transform: translateY(-1px); /* Slight lift for interactivity */
+    color: #ffd700; /* Jules Verne gold text on hover */
+    text-shadow: 0 0 5px #ffd700, 0 0 10px #ffd700; /* Gold glow */
+}
+
+/* Optional: Neuromancer-inspired scanline effect */
+#new_contractinator_panels_df_output table::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(0, 183, 235, 0.2),
+            transparent
+    ); /* Faint cyan scanline */
+    transition: 0.5s;
+}
+
+#new_contractinator_panels_df_output table:hover::before {
+    left: 100%; /* Scanline moves across on hover */
+}
+
+.plus-button, .minus-button {
+    margin-bottom: 10px;
+    margin-right: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 3px solid;
+    border-radius: 50%;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+    outline: none;
+    transition: all 0.2s ease;
+    position: relative;
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+.plus-button {
+    color: #00FF66;
+}
+.minus-button{
+    color: #FF1A3D;
+}
+.minus-button > span {
+    transform: translateY(-2px);
+}
+
+.plus-button:hover, .minus-button:hover {
+    text-shadow: 0 0 20px #ffd700;
+    font-size: 1.7rem;
+    background: rgba(255, 255, 255, 0);
+    border: 1px solid #ffd700;
+    outline: none !important;
+}
+.plus-button:hover {
+    color: #00FF66;
+}
+.minus-button:hover {
+    color: #FF1A3D;
+    border: 1px solid #ffd700;
+}
+
+.plus-button:focus, .plus-button:focus-visible,
+.minus-button:focus, .minus-button:focus-visible {
+    background: rgba(255, 255, 255, 0);
+    border: 1px solid !important;
+    outline: none !important;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+.plus-button:active, .minus-button:active {
+    text-shadow: 0 0 10px #ffd700;
+    background: rgba(255, 255, 255, 0);
+    border: 1px solid !important;
+    outline: none !important;
+    font-size: 1.4rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }

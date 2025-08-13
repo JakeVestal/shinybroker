@@ -1,7 +1,11 @@
-import pandas as pd
 import re
+
+import pandas as pd
+
+from shinybroker.ib_fetch_functions import (fetch_matching_symbols,
+                                            fetch_contract_details)
+from shinybroker.obj_defs import Contract
 from shiny import module, ui, render, reactive, req, App
-from shinybroker import fetch_matching_symbols, Contract, fetch_contract_details
 
 
 def create_contractinator_panel(initial_panel, initial_value):
@@ -82,8 +86,8 @@ def contractinator(
         ui.accordion_panel(
             "Contractinator",
             ui.input_action_button(
-                id="add_new_contractinator_panel",
-                label="Add New Contract",
+                id="add_new_contractinator_panels",
+                label="Add New Contracts",
             ),
             initial_contractinator_items
         ),

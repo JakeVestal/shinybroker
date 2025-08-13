@@ -3,10 +3,12 @@ import datetime, select, threading, os, re
 import numpy as np
 import pandas as pd
 import requests
+from pydantic.v1 import TupleError
 
 from shinybroker import VERSION
 from shinybroker.connection import (create_ibkr_socket_conn,
                                     ib_msg_reader_run_loop)
+from shinybroker.contractinator import create_contractinator_panel
 from shinybroker.format_ibkr_inputs import format_contract_details
 from shinybroker.functionary import functionary
 from shinybroker.ib_fetch_functions import (fetch_matching_symbols,
@@ -643,6 +645,55 @@ def sb_server(
 
     # Contractinator Logic
 
+    new_contractinator_panels_df = reactive.value(
+        pd.DataFrame({
+            "name": [''],
+            "search string": ['']
+        })
+    )
+
+    @reactive.effect
+    @reactive.event(input.add_new_contractinator_panels)
+    def insert_new_contractinator_panel():
+        m = ui.modal(
+            ui.input_file(
+                id="contractinator_file_input",
+                label="Upload from file",
+                accept=[".csv"],
+                multiple=False
+            ).add_style("width: 100%;"),
+            ui.input_action_button(
+                id="contractinator_add_a_row",
+                label="+"
+            ).add_class("plus-button"),
+            ui.input_action_button(
+                id="contractinator_remove_a_row",
+                label=ui.span("-")
+            ).add_class("minus-button"),
+            ui.span("Add/Remove rows").add_class("vertically_centered"),
+            ui.output_data_frame("new_contractinator_panels_df_output"),
+            ui.p("Double-click to add your contracts to the table above."),
+            ui.p("Adding a search string is optional."),
+            title=ui.div(
+                ui.span("Add New Contracts"),
+                ui.input_action_button("close_modal", "X").add_class(
+                    "modal_close_button").add_style("margin-right: -15px;"),
+                style="display: flex; align-items: center; width: 100%;"
+            ),
+            size='m',
+            footer=None
+        )
+        ui.modal_show(m)
+
+    @render.data_frame
+    def new_contractinator_panels_df_output():
+        return render.DataGrid(
+            new_contractinator_panels_df(),
+            width='100%',
+            editable=True
+        )
+
+
     # stores contracts found to match the search string
     contract_matches = reactive.value(
         {'stocks': pd.DataFrame({}), 'bonds': pd.DataFrame({})}
@@ -826,9 +877,9 @@ def sb_server(
         return validation_results().iloc[
             :, :min(5, validation_results().shape[1])
         ].to_html(
-                classes="table validation_table",
-                index=False
-            )
+            classes="table validation_table",
+            index=False
+        )
 
     @render.ui
     def validation_table_second_row():

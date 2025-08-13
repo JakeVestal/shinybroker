@@ -34,10 +34,6 @@ ui_ = ui.page_fluid(
 def server_(
         input: Inputs, output: Outputs, session: Session, ib_socket, sb_rvs
 ):
-    @reactive.effect
-    @reactive.event(sb_rvs['contractinator'])
-    def contractinator_test():
-        print(sb_rvs['contractinator']().keys())
 
     price_history = reactive.value(pd.DataFrame({}))
 
