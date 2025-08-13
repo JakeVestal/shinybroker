@@ -5,16 +5,16 @@ import pandas as pd
 import requests
 
 from shinybroker import VERSION
-from shinybroker.connection import (
-    create_ibkr_socket_conn,
-    ib_msg_reader_run_loop
-)
-from shinybroker.obj_defs import *
-from shinybroker.msgs_to_ibkr import *
+from shinybroker.connection import (create_ibkr_socket_conn,
+                                    ib_msg_reader_run_loop)
 from shinybroker.format_ibkr_inputs import format_contract_details
 from shinybroker.functionary import functionary
 from shinybroker.ib_fetch_functions import (fetch_matching_symbols,
                                             fetch_contract_details)
+from shinybroker.msgs_to_ibkr import *
+from shinybroker.obj_defs import *
+from shinybroker.utils import remove_contractinator_modal, inject_js
+
 from shiny import Inputs, Outputs, Session, reactive, render, ui, req
 from sys import exit
 
@@ -29,7 +29,7 @@ def sb_server(
     @reactive.effect
     @reactive.event(input.close_modal)
     def handle_close_modal():
-        ui.modal_remove()
+        remove_contractinator_modal()
 
     def version_to_int_list(version_str):
         return list(map(int, version_str.split(".")))
@@ -725,28 +725,22 @@ def sb_server(
 
         ui.modal_show(m)
 
-        ui.insert_ui(
-            ui.tags.script(
-                """
-                setTimeout(function() {
-                    var modal = document.querySelector('.modal-dialog');
-                    if (modal) {
-                        modal.style.position = 'absolute';
-                        modal.style.left = '50%';
-                        modal.style.transform = 'translateX(-50%)';
-                        modal.style.top = '0px';
-                        modal.style.margin = '0';
-                        modal.closest('.modal').classList.add('top-modal');
-                    }
-                }, 100);
-                """,
-                id="contractinator_modal_script",
-            ),
-            selector="body",
-            where="beforeEnd"
+        inject_js(
+            """
+            setTimeout(function() {
+                var modal = document.querySelector('.modal-dialog');
+                if (modal) {
+                    modal.style.position = 'absolute';
+                    modal.style.left = '50%';
+                    modal.style.transform = 'translateX(-50%)';
+                    modal.style.top = '0px';
+                    modal.style.margin = '0';
+                    modal.closest('.modal').classList.add('top-modal');
+                }
+            }, 100);
+            """
         )
 
-        ui.remove_ui("#contractinator_modal_script")
 
     @render.data_frame
     def matching_stocks():
@@ -788,11 +782,6 @@ def sb_server(
     @reactive.effect
     @reactive.event(input.validate_contract)
     def contractinator_validate_contract_was_clicked():
-
-        ui.remove_ui(
-            selector="#contractinator_validate_table_div",
-            immediate=True
-        )
 
         try:
             namespace = {}
@@ -860,7 +849,7 @@ def sb_server(
         new_contract = {contract_name: contract_obj}
         ctntr |= new_contract
         contractinator.set(ctntr)
-        ui.modal_remove()
+        remove_contractinator_modal()
         ui.update_accordion_panel(
             "contractinator_accordion",
             contract_name,

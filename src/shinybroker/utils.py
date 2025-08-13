@@ -1,7 +1,8 @@
-import struct
-import datetime
+import struct, datetime
 
 import pandas as pd
+
+from shiny import ui
 
 
 def pack_element(msg_emt) -> str:
@@ -54,3 +55,25 @@ def formatter2(hrs_str):
     df = df.fillna('')
 
     return df
+
+
+def remove_contractinator_modal():
+    ui.modal_remove()
+    ui.remove_ui(
+        selector="#contractinator_validate_table_div",
+        immediate=True
+    )
+
+
+def inject_js(
+        script_str: str,
+        selector: str = "body",
+        where: str = "beforeEnd"
+):
+    ui.insert_ui(
+        ui.tags.script(script_str, id="sb_injected_script"),
+        selector = "body",
+        where = "beforeEnd"
+    )
+    ui.remove_ui("#sb_injected_script")
+
