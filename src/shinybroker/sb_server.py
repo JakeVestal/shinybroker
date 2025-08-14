@@ -3,7 +3,6 @@ import datetime, select, threading, os, re
 import numpy as np
 import pandas as pd
 import requests
-from pydantic.v1 import TupleError
 
 from shinybroker import VERSION
 from shinybroker.connection import (create_ibkr_socket_conn,
@@ -647,8 +646,8 @@ def sb_server(
 
     new_contractinator_panels_df = reactive.value(
         pd.DataFrame({
-            "name": [''],
-            "search string": ['']
+            "name": ['','',''],
+            "search string": ['','','']
         })
     )
 
@@ -656,12 +655,6 @@ def sb_server(
     @reactive.event(input.add_new_contractinator_panels)
     def insert_new_contractinator_panel():
         m = ui.modal(
-            ui.input_file(
-                id="contractinator_file_input",
-                label="Upload from file",
-                accept=[".csv"],
-                multiple=False
-            ).add_style("width: 100%;"),
             ui.input_action_button(
                 id="contractinator_add_a_row",
                 label="+"
@@ -671,6 +664,10 @@ def sb_server(
                 label=ui.span("-")
             ).add_class("minus-button"),
             ui.span("Add/Remove rows").add_class("vertically_centered"),
+            ui.input_action_button(
+                id="add_to_contractinator",
+                label="Add to Contractinator"
+            ),
             ui.output_data_frame("new_contractinator_panels_df_output"),
             ui.p("Double-click to add your contracts to the table above."),
             ui.p("Adding a search string is optional."),
@@ -685,6 +682,51 @@ def sb_server(
         )
         ui.modal_show(m)
 
+    @reactive.effect
+    @reactive.event(input.add_to_contractinator)
+    def adding_new_panels_to_contractinator():
+        df = new_contractinator_panels_df_output.data_view()
+        df = df[df['name'] != '']
+        for i in range(len(df)):
+            ui.insert_accordion_panel(
+                id="contractinator_accordion",
+                panel=create_contractinator_panel(
+                    df.loc[i, 'name'], df.loc[i, 'search string']
+                )
+            )
+
+    @reactive.effect
+    @reactive.event(input.contractinator_accordion_titles)
+    def contractinator_remove_contracts_modal():
+        m = ui.modal(
+            ui.input_checkbox_group(
+                id="contractinator_selected_for_removal",
+                label="Select Contracts for Removal:",
+                choices=input.contractinator_accordion_titles()
+            ),
+            id="c",
+            title=ui.input_action_button(
+                id="contractinator_remove_selected_contracts",
+                label="Remove Selected Contracts"
+            ),
+            footer=None
+        )
+        ui.modal_show(m)
+
+    @reactive.effect
+    @reactive.event(input.contractinator_remove_selected_contracts)
+    def contractinator_remove_contracts_modal():
+        ctr = contractinator()
+        for key in input.contractinator_selected_for_removal():
+            ctr.pop(key, None)
+            ui.remove_accordion_panel(
+                id="contractinator_accordion",
+                target=key
+            )
+
+        contractinator.set(ctr)
+        ui.modal_remove()
+
     @render.data_frame
     def new_contractinator_panels_df_output():
         return render.DataGrid(
@@ -692,6 +734,22 @@ def sb_server(
             width='100%',
             editable=True
         )
+
+    @reactive.effect
+    @reactive.event(input.contractinator_add_a_row)
+    def adds_a_new_row_to_new_contractinator_panel_model():
+        df = new_contractinator_panels_df()
+        df = pd.concat(
+            [df, pd.DataFrame({"name": [''], "search string": ['']})],
+            ignore_index=True
+        )
+        new_contractinator_panels_df.set(df)
+
+    @reactive.effect
+    @reactive.event(input.contractinator_remove_a_row)
+    def adds_a_new_row_to_new_contractinator_panel_model():
+        df = new_contractinator_panels_df().iloc[:-1]
+        new_contractinator_panels_df.set(df)
 
 
     # stores contracts found to match the search string
@@ -873,12 +931,13 @@ def sb_server(
     def validation_table_first_row():
         if validation_results().empty:
             return ui.div()
-
-        return validation_results().iloc[
-            :, :min(5, validation_results().shape[1])
-        ].to_html(
-            classes="table validation_table",
-            index=False
+        return ui.HTML(
+            validation_results().iloc[
+                :, :min(5, validation_results().shape[1])
+            ].to_html(
+                classes="table validation_table",
+                index=False
+            )
         )
 
     @render.ui

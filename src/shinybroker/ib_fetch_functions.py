@@ -3,6 +3,7 @@ import warnings
 
 from datetime import datetime
 
+from shiny import ui
 from shinybroker import req_contract_details
 from shinybroker.connection import (
     create_ibkr_socket_conn, send_ib_message, read_ib_msg
@@ -223,6 +224,10 @@ def fetch_historical_data(
         incoming_msg = read_ib_msg(sock=ib_socket)
         if incoming_msg[0] == '4' and incoming_msg[3] in ['162', '200', '321']:
             warnings.warn(incoming_msg[4])
+            try:
+                ui.notification_show(incoming_msg[4], durationStr=None)
+            except Exception:
+                pass
             break
         if incoming_msg[0] == functionary['incoming_msg_codes'][
             'HISTORICAL_DATA'

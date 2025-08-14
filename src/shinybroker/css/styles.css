@@ -10,21 +10,9 @@
 }
 
 .btn:hover {
-    background-color: #0056b3;
+    text-shadow: 0 0 10px #ffd700;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
     border-color: #e6c14b;
-}
-
-.btn:active {
-    transform: scale(0.95);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    background-color: #004085;
-    border-color: #d4af37;
-}
-
-.btn:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.3);
 }
 
 .btn:active {
@@ -52,12 +40,26 @@
 
 #contractinator_top_container {
     min-width: 300px;
-    max-width: 450px;
+    max-width: 400px;
     display: inline-block;
 }
 
 #main_tab {
     margin-bottom: 15px;
+}
+
+.shiny-notification {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 1000 !important;
+    background: #007bff !important;
+    color: white !important;
+    padding: 20px !important;
+    border-radius: 10px !important;
+    font-size: 18px !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
 }
 
 /* ------- Contractinator --------------------------------------------------- */
@@ -261,6 +263,16 @@
     border-color: #02db02 !important;
 }
 
+#new_contractinator_panels_df_output {
+    max-height: 350px;
+    overflow-y: auto;
+}
+
+#contractinator_remove_a_row_modal {
+    max-height: 350px;
+    overflow-y: auto;
+}
+
 /* Target the DataFrame table */
 #new_contractinator_panels_df_output table,
 #new_contractinator_panels_df_output .table {
@@ -268,7 +280,6 @@
     border-radius: 3px; /* Rounded edges for TOS retro feel */
     background: linear-gradient(145deg, #0f0f1a, #1f1f2a); /* Dark cyberpunk gradient */
     box-shadow: 0 0 3px rgba(0, 183, 235, 0.5); /* Holographic glow */
-    font-family: 'Orbitron', 'Arial', sans-serif; /* Futuristic font */
     position: relative;
     overflow: hidden;
 }
@@ -295,7 +306,7 @@
 }
 
 /* Hover effects on rows */
-#new_contractinator_panels_df_output tr:hover td {
+#new_contractinator_panels_df_output td:hover {
     background: linear-gradient(145deg, #ff007a, #3a3a4a); /* Blade Runner magenta glow */
     box-shadow: 0 0 10px rgba(255, 0, 122, 0.7); /* Neon magenta shadow */
     transform: translateY(-1px); /* Slight lift for interactivity */
