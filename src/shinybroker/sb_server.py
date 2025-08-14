@@ -704,11 +704,12 @@ def sb_server(
                 label="Select Contracts for Removal:",
                 choices=input.contractinator_accordion_titles()
             ),
-            id="c",
+            id="contractinator_remove_contracts_modal",
             title=ui.input_action_button(
                 id="contractinator_remove_selected_contracts",
                 label="Remove Selected Contracts"
             ),
+            easy_close=True,
             footer=None
         )
         ui.modal_show(m)

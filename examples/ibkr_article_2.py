@@ -65,13 +65,25 @@ def server_(
         ) for cname, cdef in sb_rvs['contractinator']().items()}
 
         if any(value is None for value in historical_price_data.values()):
-            none_values = [key for key, value in my_dict.items()
+            none_values = [key for key, value in historical_price_data.items()
                            if value is None]
             ui.notification_show(
                 f"No price data was retrieved for {str(none_values)}. Please "
                 f"choose a different contract",
                 duration=None
             )
+            req(False)
+
+        if any(isinstance(value, str) for value in
+               historical_price_data.values()):
+            str_values = [key for key, value in historical_price_data.items()
+                           if isinstance(value, str)]
+            for str_val in str_values:
+                ui.notification_show(
+                f"Message from IBKR regarding {str(none_values)}: " + str_val,
+                duration=None
+            )
+            req(False)
 
         def extract_price_data(name, price_data):
             price_df = price_data['hst_dta'][['timestamp', 'close']].copy()

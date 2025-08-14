@@ -190,6 +190,11 @@ def fetch_historical_data(
     timeout: 3
         Time in seconds to wait for a response.
 
+    Returns:
+        pd.DataFrame: The historical data if fetched successfully.
+        str: In the case of certain server responses, such as not being
+        subscribed to historical data for the asset you're trying to fetch
+        None: Otherwise
     Examples
     --------
     ```
@@ -224,10 +229,7 @@ def fetch_historical_data(
         incoming_msg = read_ib_msg(sock=ib_socket)
         if incoming_msg[0] == '4' and incoming_msg[3] in ['162', '200', '321']:
             warnings.warn(incoming_msg[4])
-            try:
-                ui.notification_show(incoming_msg[4], durationStr=None)
-            except Exception:
-                pass
+            historical_data = incoming_msg[4]
             break
         if incoming_msg[0] == functionary['incoming_msg_codes'][
             'HISTORICAL_DATA'
