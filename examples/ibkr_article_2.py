@@ -1,9 +1,13 @@
 import pandas as pd
-import pickle
 import shinybroker as sb
+import numpy as np
 
+from datetime import datetime
+from faicons import icon_svg
 from functools import reduce
 from shiny import Inputs, Outputs, Session, ui, reactive, req, render
+from shinywidgets import output_widget, render_plotly
+from sklearn import linear_model
 
 
 ui_ = ui.page_fluid(
@@ -36,7 +40,39 @@ ui_ = ui.page_fluid(
         ),
         ui.column(
             4,
-            ui.output_data_frame("price_data_output")
+            ui.output_data_frame("price_history_df_output")
+        )
+    ),
+    ui.row(
+        ui.column(
+            6,
+            ui.h5("Benchmark Plot"),
+            output_widget("alphabeta_scatter")
+        ),
+        ui.column(
+            6,
+            ui.h5("Statsmodels Results"),
+            ui.output_ui("alphabeta_trendline_summary")
+        )
+    ),
+    ui.row(
+        ui.h5('Calculated Returns'),
+        ui.column(
+            7,
+            ui.output_data_frame('historical_log_returns_df_output')
+        ),
+        ui.column(
+            5,
+            ui.value_box(
+                title="Alpha",
+                value=ui.output_ui('alpha_txt'),
+                showcase=icon_svg('chart-line')
+            ),
+            ui.value_box(
+                title="Beta",
+                value=ui.output_ui('beta_txt'),
+                showcase=icon_svg('chart-line')
+            )
         )
     )
 )
@@ -45,11 +81,21 @@ def server_(
         input: Inputs, output: Outputs, session: Session, ib_socket, sb_rvs
 ):
 
-    price_history = reactive.value(pd.DataFrame({}))
+    price_history_df = reactive.value(pd.DataFrame({}))
+    @render.data_frame
+    def price_history_df_output():
+        req(not price_history_df().empty)
+        return render.DataTable(price_history_df())
+
+    historical_log_returns_df = reactive.value(pd.DataFrame({}))
+    @render.data_frame
+    def historical_log_returns_df_output():
+        req(not historical_log_returns_df().empty)
+        return render.DataTable(historical_log_returns_df())
 
     @reactive.effect
     @reactive.event(input.fetch_price_data)
-    def fetch_price_data():
+    def update_price_history_df():
         req(input.fetch_price_data() > 0)
         if len(sb_rvs['contractinator']()) < 3:
             ui.notification_show(
@@ -64,56 +110,134 @@ def server_(
             barSizeSetting=input.bar_size_setting()
         ) for cname, cdef in sb_rvs['contractinator']().items()}
 
-        if any(value is None for value in historical_price_data.values()):
-            none_values = [key for key, value in historical_price_data.items()
-                           if value is None]
-            ui.notification_show(
-                f"No price data was retrieved for {str(none_values)}. Please "
-                f"choose a different contract",
-                duration=None
-            )
-            req(False)
+        # if any(value is None for value in historical_price_data.values()):
+        #     none_values = [key for key, value in historical_price_data.items()
+        #                    if value is None]
+        #     ui.notification_show(
+        #         f"No price data was retrieved for {str(none_values)}. Please "
+        #         f"choose a different contract",
+        #         duration=None
+        #     )
+        #     req(False)
 
         if any(isinstance(value, str) for value in
                historical_price_data.values()):
             str_values = [key for key, value in historical_price_data.items()
-                           if isinstance(value, str)]
+                          if isinstance(value, str)]
             for str_val in str_values:
                 ui.notification_show(
-                f"Message from IBKR regarding {str(none_values)}: " + str_val,
-                duration=None
-            )
+                    f"Message from IBKR regarding {str(str_val)}:\n"
+                    f"{historical_price_data[str_val]}",
+                    duration=None
+                )
             req(False)
 
         def extract_price_data(name, price_data):
             price_df = price_data['hst_dta'][['timestamp', 'close']].copy()
             price_df.rename(columns={'close': name}, inplace=True)
-            print(f"{price_df.shape[0]} price rows extracted for {name}")
             return price_df
 
-        def merge_stock_dfs(df_list):
-            merged_df = reduce(
+        list_of_price_dfs = [
+            extract_price_data(key, value) for key, value in
+            zip(historical_price_data.keys(),historical_price_data.values())
+        ]
+
+        def merge_list_of_dfs(list_of_dfs):
+            return reduce(
                 lambda left, right: pd.merge(
-                    left, right, on='timestamp',
-                    how='outer'
+                    left, right, on='timestamp', how='outer'
                 ),
-                df_list
+                list_of_dfs
             )
-            return merged_df
 
-        prc_hst = merge_stock_dfs(
-            [extract_price_data(key, value) for key, value in zip(
-                historical_price_data.keys(), historical_price_data.values())]
+        prc_hst_df = merge_list_of_dfs(list_of_price_dfs)
+        print("Calculated historical log returns:")
+        print(prc_hst_df)
+        price_history_df.set(prc_hst_df)
+
+
+    @reactive.effect
+    @reactive.event(price_history_df)
+    def update_historical_log_returns_df():
+        req(not price_history_df().empty)
+        prc_hst = price_history_df()
+        hlr_df = pd.DataFrame(
+            np.log(
+                np.array(prc_hst.iloc[:-1, 1:]) / np.array(prc_hst.iloc[1:, 1:])
+            )
         )
+        hlr_df.insert(loc=0, value=prc_hst.iloc[1:, 0])
+        hlr_df.columns = prc_hst.columns
+        print("Calculated historical log returns:")
+        print(hlr_df)
+        historical_log_returns_df.set(pd.DataFrame(hlr_df))
 
-        price_history.set(prc_hst)
 
-    @render.data_frame
-    def price_data_output():
-        return render.DataTable(
-            price_history()
-        )
-
+    # alpha = reactive.value(float())
+    # beta = reactive.value(float())
+    #
+    # @reactive.effect
+    # def update_alpha_beta():
+    #     req(not historical_log_returns_df().empty)
+    #
+    #     regr = linear_model.LinearRegression()
+    #     regr.fit(
+    #         log_rtns.spx_returns.values.reshape(log_rtns.shape[0], 1),
+    #         log_rtns.aapl_returns.values.reshape(log_rtns.shape[0], 1)
+    #     )
+    #     alpha.set(regr.intercept_[0])
+    #     beta.set(regr.coef_[0][0])
+    #
+    # @reactive.effect
+    # def update_alpha_beta():
+    #     log_rtns = calculate_log_returns()
+    #
+    #     if log_rtns is None:
+    #         raise SilentException()
+    #
+    #     regr = linear_model.LinearRegression()
+    #     regr.fit(
+    #         log_rtns.spx_returns.values.reshape(log_rtns.shape[0], 1),
+    #         log_rtns.aapl_returns.values.reshape(log_rtns.shape[0], 1)
+    #     )
+    #     alpha.set(regr.intercept_[0])
+    #     beta.set(regr.coef_[0][0])
+    #
+    # @render.text
+    # def alpha_txt():
+    #     a = req(alpha())
+    #     return f"{a * 100:.7f} %"
+    #
+    # @render.text
+    # def beta_txt():
+    #     b = req(beta())
+    #     return str(round(b, 3))
+    #
+    # @reactive.calc
+    # def calculate_alphabeta_scatter():
+    #     req(not historical_log_returns_df().empty)
+    #
+    #     fig = px.scatter(
+    #         historical_log_returns_df,
+    #         x='spx_returns',
+    #         y='aapl_returns',
+    #         trendline='ols'
+    #     )
+    #     fig.layout.xaxis.tickformat = ',.2%'
+    #     fig.layout.yaxis.tickformat = ',.2%'
+    #     fig.update_layout(plot_bgcolor='white')
+    #     return fig
+    #
+    # @render_plotly
+    # def alphabeta_scatter():
+    #     return calculate_alphabeta_scatter()
+    #
+    # @render.ui
+    # def alphabeta_trendline_summary():
+    #     summy = px.get_trendline_results(
+    #         calculate_alphabeta_scatter()
+    #     ).px_fit_results.iloc[0].summary().as_html()
+    #     return ui.HTML(summy)
 
 
 

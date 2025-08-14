@@ -26,7 +26,7 @@ def create_contractinator_panel(initial_panel, initial_value):
             id=f"{initial_panel}_contractinator_smc_btn",
             label="Search for Matching Contracts",
             **{
-                "onclick": "Shiny.setInputValue(" 
+                "onclick": "Shiny.setInputValue("
                            f"'smc_buffer', '{initial_panel}', "
                            "{priority: 'event'});"
             }
@@ -88,12 +88,21 @@ def contractinator(
                 "Contractinator",
                 ui.input_action_button(
                     id="add_new_contractinator_panels",
-                    label="Add New Contracts",
-                ),
+                    label="Add New Contracts"
+                ).add_class("contractinator_controls_btn"),
                 ui.input_action_button(
                     id="remove_contractinator_panels",
-                    label="Remove Contracts",
-                ),
+                    label="Remove Contracts"
+                ).add_class("contractinator_controls_btn"),
+                ui.div(style="height: 5px;"),
+                ui.input_action_button(
+                    id="save_contractinator",
+                    label="Save Contracts"
+                ).add_class("contractinator_controls_btn"),
+                ui.input_action_button(
+                    id="load_contractinator",
+                    label="Load Contracts"
+                ).add_class("contractinator_controls_btn"),
                 initial_contractinator_items
             ),
             id="contractinator_top_container"

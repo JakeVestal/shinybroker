@@ -752,6 +752,32 @@ def sb_server(
         df = new_contractinator_panels_df().iloc[:-1]
         new_contractinator_panels_df.set(df)
 
+    @reactive.effect
+    @reactive.event(input.save_contractinator)
+    def saves_your_contractinator():
+        print('hello')
+        print(input.save_contractinator())
+        m = ui.modal(
+            ui.help_text(
+                "Saves the contracts in your contractinator as a csv"
+            ),
+            ui.input_text(
+                id="save_contractinator_filename",
+                label="Choose a filename:",
+            ),
+            ui.input_file(
+                id="save_contractinator_path",
+                label="Choose a save location:",
+            ),
+            title = ui.div(
+                ui.span("Save Contractinator"),
+                ui.input_action_button("close_modal", "X").add_class(
+                    "modal_close_button").add_style("margin-right: -15px;"),
+                style="display: flex; align-items: center; width: 100%;"
+            )
+        )
+        ui.modal_show(m)
+
 
     # stores contracts found to match the search string
     contract_matches = reactive.value(
