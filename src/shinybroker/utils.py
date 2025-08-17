@@ -37,15 +37,15 @@ def formatter2(hrs_str):
             data={
                 "end_time": [a[1].split(":")[1] for a in z]
             },
-            index=[datetime.datetime.strptime(x, "%Y%m%d").date() for x in
-                   [a[1].split(":")[0] for a in z]]
+            index=[datetime.datetime.strptime(x, "%Y%m%d").date()
+                   for x in [a[1].split(":")[0] for a in z]]
         ),
         pd.DataFrame(
             data = {
                 "start_time": [a[0].split(":")[1] for a in z]
             },
-            index = [datetime.datetime.strptime(x, "%Y%m%d").date() for x in
-                     [a[0].split(":")[0] for a in z]]
+            index = [datetime.datetime.strptime(x, "%Y%m%d").date()
+                     for x in [a[0].split(":")[0] for a in z]]
         ),
         left_index=True,
         right_index=True,

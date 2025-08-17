@@ -1,4 +1,4 @@
-import datetime, select, threading, os, re
+import datetime, select, threading, os, re, requests
 
 import numpy as np
 import pandas as pd
@@ -12,6 +12,7 @@ from shinybroker.format_ibkr_inputs import format_contract_details
 from shinybroker.functionary import functionary
 from shinybroker.ib_fetch_functions import (fetch_matching_symbols,
                                             fetch_contract_details)
+from shinybroker.modals import *
 from shinybroker.msgs_to_ibkr import *
 from shinybroker.obj_defs import *
 from shinybroker.utils import remove_contractinator_modal, inject_js
@@ -46,28 +47,7 @@ def sb_server(
                 version_to_int_list(VERSION)
             )]
     ):
-        ui.modal_show(
-            ui.modal(
-                ui.HTML(
-                    "You are using ShinyBroker Version <strong>" +
-                    VERSION +
-                    "</strong> but Version <strong>" +
-                    latest_version +
-                    "</strong> is available.<br><br>"
-                    "Because ShinyBroker is under frequent development, it "
-                    "is highly recommended that you update to the latest "
-                    "version. To do so, please: <ol>"
-                    "<li>Stop your ShinyBroker app</li>"
-                    "<li>Run <code>pip install shinybroker --upgrade</code> "
-                    "in your terminal</li> "
-                    "<li> Restart your ShinyBroker app</li>"
-                    "</ol> Doing so will ensure that you have access to the "
-                    "latest features and bug fixes."
-                ),
-                title="Please Update ShinyBroker",
-                easy_close=True
-            )
-        )
+        ui.modal_show(sb_upgrade_version_modal(VERSION, latest_version))
 
     # host='127.0.0.1'
     # port=7497
@@ -78,23 +58,7 @@ def sb_server(
             host=host, port=port, client_id=client_id
         )
     except ConnectionRefusedError:
-        ui.modal_show(
-            ui.modal(
-                ui.HTML(
-                    "ShinyBroker tried to connect to an IBKR client on <br>"
-                    "<br><strong>host</strong>: " + str(host) + "<br>" +
-                    "<strong>port</strong>: " + str(port) + "<br>" +
-                    "<strong>client_id</strong>: " + str(client_id) + "<br>" +
-                    "<br>...but connection was refused. Please make sure that "
-                    "an IBKR client such as TWS or IBKG is running and "
-                    "configured to accept API connections. See the <a href = "
-                    "'https://shinybroker.com'>ShinyBroker website</a> for "
-                    "a detailed setup example."
-                ),
-                title="Can't connect to IBKR",
-                easy_close=True
-            )
-        )
+        ui.modal_show(sb_couldnt_connect_modal(host, port, client_id))
         exit(0)
         return None
 
@@ -654,33 +618,7 @@ def sb_server(
     @reactive.effect
     @reactive.event(input.add_new_contractinator_panels)
     def insert_new_contractinator_panel():
-        m = ui.modal(
-            ui.input_action_button(
-                id="contractinator_add_a_row",
-                label="+"
-            ).add_class("plus-button"),
-            ui.input_action_button(
-                id="contractinator_remove_a_row",
-                label=ui.span("-")
-            ).add_class("minus-button"),
-            ui.span("Add/Remove rows").add_class("vertically_centered"),
-            ui.input_action_button(
-                id="add_to_contractinator",
-                label="Add to Contractinator"
-            ),
-            ui.output_data_frame("new_contractinator_panels_df_output"),
-            ui.p("Double-click to add your contracts to the table above."),
-            ui.p("Adding a search string is optional."),
-            title=ui.div(
-                ui.span("Add New Contracts"),
-                ui.input_action_button("close_modal", "X").add_class(
-                    "modal_close_button").add_style("margin-right: -15px;"),
-                style="display: flex; align-items: center; width: 100%;"
-            ),
-            size='m',
-            footer=None
-        )
-        ui.modal_show(m)
+        ui.modal_show(sb_insert_new_contractinator_panel_modal)
 
     @reactive.effect
     @reactive.event(input.add_to_contractinator)
@@ -698,21 +636,11 @@ def sb_server(
     @reactive.effect
     @reactive.event(input.contractinator_accordion_titles)
     def contractinator_remove_contracts_modal():
-        m = ui.modal(
-            ui.input_checkbox_group(
-                id="contractinator_selected_for_removal",
-                label="Select Contracts for Removal:",
-                choices=input.contractinator_accordion_titles()
-            ),
-            id="contractinator_remove_contracts_modal",
-            title=ui.input_action_button(
-                id="contractinator_remove_selected_contracts",
-                label="Remove Selected Contracts"
-            ),
-            easy_close=True,
-            footer=None
+        ui.modal_show(
+            sb_contractinator_remove_contracts_modal(
+                input.contractinator_accordion_titles()
+            )
         )
-        ui.modal_show(m)
 
     @reactive.effect
     @reactive.event(input.contractinator_remove_selected_contracts)
@@ -757,26 +685,7 @@ def sb_server(
     def saves_your_contractinator():
         print('hello')
         print(input.save_contractinator())
-        m = ui.modal(
-            ui.help_text(
-                "Saves the contracts in your contractinator as a csv"
-            ),
-            ui.input_text(
-                id="save_contractinator_filename",
-                label="Choose a filename:",
-            ),
-            ui.input_file(
-                id="save_contractinator_path",
-                label="Choose a save location:",
-            ),
-            title = ui.div(
-                ui.span("Save Contractinator"),
-                ui.input_action_button("close_modal", "X").add_class(
-                    "modal_close_button").add_style("margin-right: -15px;"),
-                style="display: flex; align-items: center; width: 100%;"
-            )
-        )
-        ui.modal_show(m)
+        ui.modal_show(sb_saves_your_contractinator_modal)
 
 
     # stores contracts found to match the search string
@@ -790,8 +699,10 @@ def sb_server(
 
         validation_results.set(pd.DataFrame({}))
 
+        contract_name = input.smc_buffer()
+
         cm_df = fetch_matching_symbols(
-            input[f"{input.smc_buffer()}_search_string"]()
+            input[f"{contract_name}_search_string"]()
         )
 
         if cm_df['stocks'].empty:
@@ -817,29 +728,9 @@ def sb_server(
                     )
                 )
 
-        m = ui.modal(
-            ui.output_ui("contractinator_validate_and_add_ui"),
-            ui.br(),
-            ui.input_text_area(
-                id="contractinator_modal_selected_contract",
-                label="Contract Definition:",
-                width="100%",
-                placeholder="Please select a contract row from the table below"
-            ),
-            matches_ui,
-            title=ui.div(
-                ui.span(input.smc_buffer()),
-                ui.input_action_button("close_modal", "X").add_class(
-                    "modal_close_button"
-                ),
-                style="display: flex; align-items: center; width: 100%;"
-            ),
-            size='xl',
-            easy_close=False,
-            footer=None
+        ui.modal_show(
+            sb_contractinator_match_search_modal(matches_ui, contract_name)
         )
-
-        ui.modal_show(m)
 
         inject_js(
             """
