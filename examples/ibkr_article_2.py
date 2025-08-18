@@ -1,4 +1,5 @@
 import pandas as pd
+import plotly.express as px
 import shinybroker as sb
 import numpy as np
 
@@ -44,25 +45,13 @@ ui_ = ui.page_fluid(
         )
     ),
     ui.row(
-        ui.column(
-            6,
-            ui.h5("Benchmark Plot"),
-            output_widget("alphabeta_scatter")
-        ),
-        ui.column(
-            6,
-            ui.h5("Statsmodels Results"),
-            ui.output_ui("alphabeta_trendline_summary")
-        )
-    ),
-    ui.row(
         ui.h5('Calculated Returns'),
         ui.column(
-            7,
+            9,
             ui.output_data_frame('historical_log_returns_df_output')
         ),
         ui.column(
-            5,
+            3,
             ui.value_box(
                 title="Alpha",
                 value=ui.output_ui('alpha_txt'),
@@ -73,6 +62,30 @@ ui_ = ui.page_fluid(
                 value=ui.output_ui('beta_txt'),
                 showcase=icon_svg('chart-line')
             )
+        )
+    ),
+    ui.row(
+        ui.column(
+            6,
+            ui.h5("Benchmark Plot"),
+            output_widget("alphabeta_scatter")
+        ),
+        ui.column(
+            6,
+            ui.input_selectize(
+                id='x_axis_contract',
+                label='X-axis:',
+                choices=[],
+                multiple=False
+            ),
+            ui.input_selectize(
+                id='y_axis_contract',
+                label='Y-axis:',
+                choices=[],
+                multiple=False
+            ),
+            ui.h5("Statsmodels Results"),
+            ui.output_ui("alphabeta_trendline_summary")
         )
     )
 )
@@ -99,6 +112,29 @@ def server_(
         for col in hlr_df.columns[1:]:
             hlr_df[col] = (hlr_df[col] * 100).round(5).astype(str) + '%'
         return render.DataTable(hlr_df)
+
+    @reactive.effect
+    @reactive.event(sb_rvs['contractinator'])
+    def updates_x_and_y_axis_selector_choices():
+        ctr = sb_rvs['contractinator']()
+        req(len(ctr) > 1)
+        ui.update_selectize(
+            id='x_axis_contract',
+            choices=list(ctr.keys()),
+            selected=list(ctr.keys())[0]
+        )
+        ui.update_selectize(
+            id='y_axis_contract',
+            choices=list(ctr.keys()),
+            selected=list(ctr.keys())[1]
+        )
+
+    # @render.text
+    # def ctr_not_empty():
+    #     # This output is used for the JavaScript condition
+    #     # Returns "true" if dict is not empty, "false" if empty
+    #     print(str(len(sb_rvs['contractinator'].get()) > 0).lower())
+    #     return str(len(sb_rvs['contractinator'].get()) > 0).lower()
 
     @reactive.effect
     @reactive.event(input.fetch_price_data)
@@ -171,7 +207,6 @@ def server_(
     def update_historical_log_returns_df():
         prc_hst = price_history_df()
         req(not prc_hst.empty)
-        print(prc_hst)
         hlr_df = pd.DataFrame(
             np.log(
                 np.array(prc_hst.iloc[1:, 1:]) / np.array(prc_hst.iloc[:-1, 1:])
@@ -189,71 +224,67 @@ def server_(
         historical_log_returns_df.set(pd.DataFrame(hlr_df))
 
 
-    # alpha = reactive.value(float())
-    # beta = reactive.value(float())
-    #
-    # @reactive.effect
-    # def update_alpha_beta():
-    #     req(not historical_log_returns_df().empty)
-    #
-    #     regr = linear_model.LinearRegression()
-    #     regr.fit(
-    #         log_rtns.spx_returns.values.reshape(log_rtns.shape[0], 1),
-    #         log_rtns.aapl_returns.values.reshape(log_rtns.shape[0], 1)
-    #     )
-    #     alpha.set(regr.intercept_[0])
-    #     beta.set(regr.coef_[0][0])
-    #
-    # @reactive.effect
-    # def update_alpha_beta():
-    #     log_rtns = calculate_log_returns()
-    #
-    #     if log_rtns is None:
-    #         raise SilentException()
-    #
-    #     regr = linear_model.LinearRegression()
-    #     regr.fit(
-    #         log_rtns.spx_returns.values.reshape(log_rtns.shape[0], 1),
-    #         log_rtns.aapl_returns.values.reshape(log_rtns.shape[0], 1)
-    #     )
-    #     alpha.set(regr.intercept_[0])
-    #     beta.set(regr.coef_[0][0])
-    #
-    # @render.text
-    # def alpha_txt():
-    #     a = req(alpha())
-    #     return f"{a * 100:.7f} %"
-    #
-    # @render.text
-    # def beta_txt():
-    #     b = req(beta())
-    #     return str(round(b, 3))
-    #
-    # @reactive.calc
-    # def calculate_alphabeta_scatter():
-    #     req(not historical_log_returns_df().empty)
-    #
-    #     fig = px.scatter(
-    #         historical_log_returns_df,
-    #         x='spx_returns',
-    #         y='aapl_returns',
-    #         trendline='ols'
-    #     )
-    #     fig.layout.xaxis.tickformat = ',.2%'
-    #     fig.layout.yaxis.tickformat = ',.2%'
-    #     fig.update_layout(plot_bgcolor='white')
-    #     return fig
-    #
-    # @render_plotly
-    # def alphabeta_scatter():
-    #     return calculate_alphabeta_scatter()
-    #
-    # @render.ui
-    # def alphabeta_trendline_summary():
-    #     summy = px.get_trendline_results(
-    #         calculate_alphabeta_scatter()
-    #     ).px_fit_results.iloc[0].summary().as_html()
-    #     return ui.HTML(summy)
+    alpha = reactive.value(float())
+    beta = reactive.value(float())
+
+    @reactive.effect
+    def update_alpha_beta():
+        req(input.x_axis_contract())
+        req(input.y_axis_contract())
+        hlr_df = historical_log_returns_df().copy()
+        req(not hlr_df.empty)
+
+        regr = linear_model.LinearRegression()
+        regr.fit(
+            hlr_df[input.x_axis_contract()].values.reshape(
+                hlr_df.shape[0], 1),
+            hlr_df[input.y_axis_contract()].values.reshape(
+                hlr_df.shape[0], 1)
+        )
+        alpha.set(regr.intercept_[0])
+        beta.set(regr.coef_[0][0])
+
+
+    @render.text
+    def alpha_txt():
+        a = req(alpha())
+        return f"{a * 100:.7f} %"
+
+    @render.text
+    def beta_txt():
+        b = req(beta())
+        return str(round(b, 3))
+
+    @reactive.calc
+    def calculate_alphabeta_scatter():
+        req(input.x_axis_contract())
+        req(input.y_axis_contract())
+        hlr_df = historical_log_returns_df().copy()
+        req(not hlr_df.empty)
+
+        print(hlr_df)
+
+        fig = px.scatter(
+            hlr_df,
+            x=input.x_axis_contract(),
+            y=input.y_axis_contract(),
+            trendline='ols'
+        )
+        fig.layout.xaxis.tickformat = ',.2%'
+        fig.layout.yaxis.tickformat = ',.2%'
+        fig.update_layout(plot_bgcolor='white')
+        return fig
+
+    @render_plotly
+    def alphabeta_scatter():
+        return calculate_alphabeta_scatter()
+
+    @render.ui
+    def alphabeta_trendline_summary():
+        summy = px.get_trendline_results(
+            calculate_alphabeta_scatter()
+        ).px_fit_results.iloc[0].summary().as_html()
+        return ui.HTML(summy)
 
 
 
