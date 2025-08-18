@@ -1,0 +1,40 @@
+# contractinator { #shinybroker.contractinator }
+
+`contractinator`
+
+
+
+## Functions
+
+| Name | Description |
+| --- | --- |
+| [contractinator](#shinybroker.contractinator.contractinator) | Add a Contractinator to your app |
+
+### contractinator { #shinybroker.contractinator.contractinator }
+
+```python
+contractinator.contractinator(
+    initial_panels=(),
+    contractinator_file=None,
+    contracts=None,
+)
+```
+
+Add a Contractinator to your app
+
+The Contractinator is a useful tool for working with IBKR contract
+definitions.
+
+#### Parameters {.doc-section .doc-section-parameters}
+
+| Name                | Type                             | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | Default   |
+|---------------------|----------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------|
+| initial_panels      | [list](`list`) \| [dict](`dict`) | Allows you to initialize the contractinator with specified panel names, with optional initial guesses for search strings to be passed to `fetch_matching_symbols`. Use this if you know what variable names you want to assign to your contracts, but you're not sure how to create viable `Contract` objects for them. If `initial_panels` is a dict; e.g., `{'asset1': 'AAPL'}, then each `key` will be assigned to one panel in the contractinator, and each `value` will appear as the initial value in the search string field for that panel. If `initial_panels` is a list, then empty contractinator panels will be created for each element and the initial value of the search string field will be left blank. | `()`      |
+| contractinator_file | [str](`str`)                     | Path, as a string, that indicates the location of a saved contractinator file that will be used to populate the contractinator when it is created.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | `None`    |
+| contracts           | [dict](`dict`)                   | A Python dictionary in which each `key` contains the name of a contractinator panel and each `value` contains a contract definition. Used to populate the contractinator when it is created.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | `None`    |
+
+#### Examples {.doc-section .doc-section-examples}
+
+```
+{{< include ../examples/fetch_sec_def_opt_params.py >}}
+```
