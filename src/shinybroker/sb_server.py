@@ -819,7 +819,11 @@ def sb_server(
             ui.input_action_button(
                 id="add_contract",
                 label="Add Contract",
-                width="135px"
+                width="135px",
+                **{
+                    "onclick": "contractinator_mark_completed("
+                               f"'{input.smc_buffer()}');"
+                }
             ),
             ui.span(
                 "Accept this definition and add it to the contractinator",
@@ -924,10 +928,6 @@ def sb_server(
             ui.pre(
                 contract_name + " = sb.Contract(" +
                 str(new_contract) + ")"
-            ),
-            title=ui.span(
-                ui.span(contract_name),
-                ui.span("  ✔", style="color:green;")
             ),
             show=False
         )

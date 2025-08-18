@@ -26,7 +26,7 @@ ui_ = ui.page_fluid(
             ui.input_text(
                 id="duration_string",
                 label="Duration String",
-                value="1 D"
+                value="5 D"
             ),
             ui.input_text(
                 id="bar_size_setting",
@@ -84,14 +84,21 @@ def server_(
     price_history_df = reactive.value(pd.DataFrame({}))
     @render.data_frame
     def price_history_df_output():
-        req(not price_history_df().empty)
-        return render.DataTable(price_history_df())
+        prc_hst = price_history_df().copy()
+        req(not prc_hst.empty)
+        for col in prc_hst.columns[1:]:
+            prc_hst[col] = '$' + prc_hst[col].round(2).apply(lambda x: f"{x:,.2f}")
+        prc_hst[prc_hst == "$nan"] = '-'
+        return render.DataTable(prc_hst)
 
     historical_log_returns_df = reactive.value(pd.DataFrame({}))
     @render.data_frame
     def historical_log_returns_df_output():
-        req(not historical_log_returns_df().empty)
-        return render.DataTable(historical_log_returns_df())
+        hlr_df = historical_log_returns_df().copy()
+        req(not hlr_df.empty)
+        for col in hlr_df.columns[1:]:
+            hlr_df[col] = (hlr_df[col] * 100).round(5).astype(str) + '%'
+        return render.DataTable(hlr_df)
 
     @reactive.effect
     @reactive.event(input.fetch_price_data)
@@ -141,6 +148,10 @@ def server_(
             zip(historical_price_data.keys(),historical_price_data.values())
         ]
 
+        import pickle
+        with open('list_of_price_dfs.pickle', 'wb') as handle:
+            pickle.dump(list_of_price_dfs, handle)
+
         def merge_list_of_dfs(list_of_dfs):
             return reduce(
                 lambda left, right: pd.merge(
@@ -158,15 +169,21 @@ def server_(
     @reactive.effect
     @reactive.event(price_history_df)
     def update_historical_log_returns_df():
-        req(not price_history_df().empty)
         prc_hst = price_history_df()
+        req(not prc_hst.empty)
+        print(prc_hst)
         hlr_df = pd.DataFrame(
             np.log(
-                np.array(prc_hst.iloc[:-1, 1:]) / np.array(prc_hst.iloc[1:, 1:])
+                np.array(prc_hst.iloc[1:, 1:]) / np.array(prc_hst.iloc[:-1, 1:])
             )
         )
-        hlr_df.insert(loc=0, value=prc_hst.iloc[1:, 0])
+
+        hlr_df.insert(loc=0, column='', value=np.array(prc_hst.iloc[1:, 0]))
         hlr_df.columns = prc_hst.columns
+        hlr_df['diff'] = prc_hst['timestamp'].diff()[1:].reset_index(drop=True)
+        hlr_df = hlr_df[
+            hlr_df['diff'] == hlr_df['diff'].value_counts().idxmax()].drop(
+            'diff', axis='columns').dropna()
         print("Calculated historical log returns:")
         print(hlr_df)
         historical_log_returns_df.set(pd.DataFrame(hlr_df))

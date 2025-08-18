@@ -127,6 +127,5 @@ def contractinator(
                 });
             });
             """
-        ),
-        style="display:inline-block"
+        )
     )
