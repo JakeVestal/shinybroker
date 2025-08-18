@@ -184,10 +184,6 @@ def server_(
             zip(historical_price_data.keys(),historical_price_data.values())
         ]
 
-        import pickle
-        with open('list_of_price_dfs.pickle', 'wb') as handle:
-            pickle.dump(list_of_price_dfs, handle)
-
         def merge_list_of_dfs(list_of_dfs):
             return reduce(
                 lambda left, right: pd.merge(
