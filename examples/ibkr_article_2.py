@@ -126,8 +126,7 @@ def server_(
                           if isinstance(value, str)]
             for str_val in str_values:
                 ui.notification_show(
-                    f"Message from IBKR regarding {str(str_val)}:\n"
-                    f"{historical_price_data[str_val]}",
+                    historical_price_data[str_val],
                     duration=None
                 )
             req(False)
