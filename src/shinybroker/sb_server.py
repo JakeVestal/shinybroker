@@ -615,11 +615,42 @@ def sb_server(
         })
     )
 
+    # Add new contracts
+
+    # Add new contractinator panels modal
     @reactive.effect
     @reactive.event(input.add_new_contractinator_panels)
     def insert_new_contractinator_panel():
         ui.modal_show(sb_insert_new_contractinator_panel_modal)
 
+    # render the +/- data frame for the modal insert new modal
+    @render.data_frame
+    def new_contractinator_panels_df_output():
+        return render.DataGrid(
+            new_contractinator_panels_df(),
+            width='100%',
+            editable=True
+        )
+
+    # backend for the + button
+    @reactive.effect
+    @reactive.event(input.contractinator_add_a_row)
+    def adds_a_new_row_to_new_contractinator_panel_model():
+        df = new_contractinator_panels_df()
+        df = pd.concat(
+            [df, pd.DataFrame({"name": [''], "search string": ['']})],
+            ignore_index=True
+        )
+        new_contractinator_panels_df.set(df)
+
+    # backend for the - button
+    @reactive.effect
+    @reactive.event(input.contractinator_remove_a_row)
+    def removes_a_row_from_contractinator_panel_model():
+        df = new_contractinator_panels_df().iloc[:-1]
+        new_contractinator_panels_df.set(df)
+
+    # Add new contractinator panels logic
     @reactive.effect
     @reactive.event(input.add_to_contractinator)
     def adding_new_panels_to_contractinator():
@@ -633,6 +664,7 @@ def sb_server(
                 )
             )
 
+    ### remove contractinator panel modal
     @reactive.effect
     @reactive.event(input.contractinator_accordion_titles)
     def contractinator_remove_contracts_modal():
@@ -642,9 +674,10 @@ def sb_server(
             )
         )
 
+    # remove contractinator panel logic
     @reactive.effect
     @reactive.event(input.contractinator_remove_selected_contracts)
-    def contractinator_remove_contracts_modal():
+    def update_contractinator_upon_removal():
         ctr = contractinator()
         for key in input.contractinator_selected_for_removal():
             ctr.pop(key, None)
@@ -652,34 +685,11 @@ def sb_server(
                 id="contractinator_accordion",
                 target=key
             )
-
         contractinator.set(ctr)
         ui.modal_remove()
 
-    @render.data_frame
-    def new_contractinator_panels_df_output():
-        return render.DataGrid(
-            new_contractinator_panels_df(),
-            width='100%',
-            editable=True
-        )
 
-    @reactive.effect
-    @reactive.event(input.contractinator_add_a_row)
-    def adds_a_new_row_to_new_contractinator_panel_model():
-        df = new_contractinator_panels_df()
-        df = pd.concat(
-            [df, pd.DataFrame({"name": [''], "search string": ['']})],
-            ignore_index=True
-        )
-        new_contractinator_panels_df.set(df)
-
-    @reactive.effect
-    @reactive.event(input.contractinator_remove_a_row)
-    def adds_a_new_row_to_new_contractinator_panel_model():
-        df = new_contractinator_panels_df().iloc[:-1]
-        new_contractinator_panels_df.set(df)
-
+    # Save Contractinator
     @reactive.effect
     @reactive.event(input.save_contractinator)
     def saves_your_contractinator():
@@ -693,6 +703,9 @@ def sb_server(
         {'stocks': pd.DataFrame({}), 'bonds': pd.DataFrame({})}
     )
 
+    ### Searching for and validating matches
+
+    # upon button press, smc_buffer is updated over Javascript
     @reactive.Effect
     @reactive.event(input.smc_buffer)
     def contractinator_match_search_btn():
@@ -748,7 +761,7 @@ def sb_server(
             """
         )
 
-
+    # Render matching stocks
     @render.data_frame
     def matching_stocks():
         return render.DataTable(
@@ -756,7 +769,7 @@ def sb_server(
             selection_mode="row"
         )
 
-
+    # Render matching bonds
     @render.data_frame
     def matching_bonds():
         return render.DataTable(
@@ -764,7 +777,7 @@ def sb_server(
             selection_mode="row"
         )
 
-
+    # User clicks a stock
     @reactive.effect
     @reactive.event(matching_stocks.cell_selection)
     def a_stock_row_has_just_been_selected():
@@ -786,21 +799,27 @@ def sb_server(
             ) + ")"
         )
 
+    # User clicks a bond
+    @reactive.effect
+    @reactive.event(matching_bonds.cell_selection)
+    def a_stock_row_has_just_been_selected():
+        ui.notification_show(
+            "Searching for bonds requires specific IBKR trading permissions "
+            "and data subscriptions and is not part of ShinyBroker free tier."
+        )
 
+    # Handles display/not display in modal of validate & add contract btn and
+    # validation table depending on
     @render.ui
     def contractinator_validate_and_add_ui():
         if not input.contractinator_modal_selected_contract().strip():
-            return ui.div()
+            return ui.div(style="height: 5px;")
 
         return ui.div(
             ui.input_action_button(
                 id="add_contract",
                 label="Add Contract",
-                width="135px",
-                **{
-                    "onclick": "contractinator_mark_completed("
-                               f"'{input.smc_buffer()}');"
-                }
+                width="135px"
             ),
             ui.span(
                 "Accept this definition and add it to the contractinator",
@@ -821,6 +840,7 @@ def sb_server(
 
     validation_results = reactive.value(pd.DataFrame())
 
+    # when "validate" is clicked, fetch contract details and update table
     @reactive.effect
     @reactive.event(input.validate_contract)
     def contractinator_validate_contract_was_clicked():
@@ -845,6 +865,7 @@ def sb_server(
                      'secIdList'}.intersection(set(cd.columns)))]
         )
 
+    # validation table row 1
     @render.ui
     def validation_table_first_row():
         if validation_results().empty:
@@ -858,6 +879,7 @@ def sb_server(
             )
         )
 
+    # validation table row 2
     @render.ui
     def validation_table_second_row():
         vr = validation_results()
@@ -873,6 +895,8 @@ def sb_server(
 
     contractinator = reactive.value({})
 
+    # Add Contract was clicked
+    #  - add to the contractinator with
     @reactive.effect
     @reactive.event(input.add_contract)
     def add_contract_was_clicked():
