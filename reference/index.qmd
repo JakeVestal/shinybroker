@@ -1,12 +1,20 @@
 # Reference {.doc .doc-index}
 
+## Shinybroker Tools
+
+Useful components for use in trading apps
+
+| | |
+| --- | --- |
+| [contractinator](contractinator.qmd#shinybroker.contractinator) |  |
+
 ## ShinyBroker Objects
 
 These objects are the building blocks that your application uses to work with important tasks like fetching market data or submitting a trade order.
 
 | | |
 | --- | --- |
-| [Contract](Contract.qmd#shinybroker.Contract) | All tradable assets -- even stocks and currencies -- are considered |
+| [Contract](Contract.qmd#shinybroker.Contract) | All tradable assets -- even stocks and currencies -- are 'contracts' in |
 
 ## Market Data Functions
 

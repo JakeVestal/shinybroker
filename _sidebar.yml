@@ -3,6 +3,9 @@ website:
   - contents:
     - reference/index.qmd
     - contents:
+      - reference/contractinator.qmd
+      section: Shinybroker Tools
+    - contents:
       - reference/Contract.qmd
       section: ShinyBroker Objects
     - contents:

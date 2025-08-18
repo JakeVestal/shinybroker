@@ -22,7 +22,7 @@
   </url>
   <url>
     <loc>https://shinybroker.com/reference/index.html</loc>
-    <lastmod>2025-07-31T14:33:50.786Z</lastmod>
+    <lastmod>2025-08-18T17:53:11.698Z</lastmod>
   </url>
   <url>
     <loc>https://shinybroker.com/reference/fetch_sec_def_opt_params.html</loc>
@@ -37,24 +37,28 @@
     <lastmod>2025-07-03T14:32:28.486Z</lastmod>
   </url>
   <url>
-    <loc>https://shinybroker.com/LICENSE.html</loc>
-    <lastmod>2025-07-24T13:42:03.990Z</lastmod>
-  </url>
-  <url>
-    <loc>https://shinybroker.com/index.html</loc>
-    <lastmod>2024-09-06T12:13:04.731Z</lastmod>
-  </url>
-  <url>
-    <loc>https://shinybroker.com/headless_mode_demo.html</loc>
-    <lastmod>2025-01-16T16:38:35.757Z</lastmod>
+    <loc>https://shinybroker.com/reference/fetch_historical_data.html</loc>
+    <lastmod>2025-08-18T17:53:11.722Z</lastmod>
   </url>
   <url>
     <loc>https://shinybroker.com/query_and_display_market_data.html</loc>
     <lastmod>2024-08-29T14:54:20.958Z</lastmod>
   </url>
   <url>
-    <loc>https://shinybroker.com/reference/fetch_historical_data.html</loc>
-    <lastmod>2025-07-03T14:32:28.476Z</lastmod>
+    <loc>https://shinybroker.com/headless_mode_demo.html</loc>
+    <lastmod>2025-01-16T16:38:35.757Z</lastmod>
+  </url>
+  <url>
+    <loc>https://shinybroker.com/index.html</loc>
+    <lastmod>2024-09-06T12:13:04.731Z</lastmod>
+  </url>
+  <url>
+    <loc>https://shinybroker.com/LICENSE.html</loc>
+    <lastmod>2025-07-24T13:42:03.990Z</lastmod>
+  </url>
+  <url>
+    <loc>https://shinybroker.com/reference/contractinator.html</loc>
+    <lastmod>2025-08-18T17:53:11.707Z</lastmod>
   </url>
   <url>
     <loc>https://shinybroker.com/reference/req_historical_data.html</loc>
@@ -74,7 +78,7 @@
   </url>
   <url>
     <loc>https://shinybroker.com/reference/Contract.html</loc>
-    <lastmod>2025-07-14T15:52:17.316Z</lastmod>
+    <lastmod>2025-08-18T17:53:11.710Z</lastmod>
   </url>
   <url>
     <loc>https://shinybroker.com/reference/req_sec_def_opt_params.html</loc>
