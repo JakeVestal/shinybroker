@@ -904,6 +904,8 @@ def sb_server(
     @reactive.effect
     @reactive.event(input.add_contract)
     def add_contract_was_clicked():
+        req(input.add_contract() > 0)
+        contract_name = input.smc_buffer()
         try:
             namespace = {}
             exec('import shinybroker.obj_defs as sb', namespace)
@@ -911,8 +913,7 @@ def sb_server(
                 input.contractinator_modal_selected_contract(),
                 namespace
             )
-            contract_name = input.smc_buffer()
-            contract_obj = namespace[input.smc_buffer()]
+            contract_obj = namespace[contract_name]
         except Exception as e:
             ui.notification_show(str(e), type="error")
             req(False)

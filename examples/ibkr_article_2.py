@@ -16,9 +16,9 @@ ui_ = ui.page_fluid(
         ui.column(
             5,
             sb.contractinator({
-                'Asset': 'MSTR',
-                'Benchmark1': 'S&P 500',
-                'Benchmark2': 'Bitcoin'
+                'MSTR': 'MSTR',
+                'SP500': 'S&P 500',
+                'Bitcoin': 'Bitcoin'
             })
         ),
         ui.column(
