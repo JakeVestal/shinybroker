@@ -78,7 +78,8 @@ def sb_contractinator_remove_contracts_modal(contract_titles):
         content = [
             ui.input_action_button(
                 id="contractinator_remove_selected_contracts",
-                label="Remove Selected Contracts"
+                label="Remove Selected Contracts",
+                onclick="update_contractinator_accordion_titles()"
             ),
             ui.input_checkbox_group(
                 id="contractinator_selected_for_removal",
