@@ -88,20 +88,24 @@ def contractinator(
                 "Contractinator",
                 ui.input_action_button(
                     id="add_new_contractinator_panels",
-                    label="Add New Contracts"
+                    label="Add New Contracts",
+                    onclick="update_contractinator_accordion_titles()"
                 ).add_class("contractinator_controls_btn"),
                 ui.input_action_button(
                     id="remove_contractinator_panels",
-                    label="Remove Contracts"
+                    label="Remove Contracts",
+                    onclick="update_contractinator_accordion_titles()"
                 ).add_class("contractinator_controls_btn"),
                 ui.div(style="height: 5px;"),
                 ui.input_action_button(
                     id="save_contractinator",
-                    label="Save Contracts"
+                    label="Save Contracts",
+                    onclick="update_contractinator_accordion_titles()"
                 ).add_class("contractinator_controls_btn"),
                 ui.input_action_button(
                     id="load_contractinator",
-                    label="Load Contracts"
+                    label="Load Contracts",
+                    onclick="update_contractinator_accordion_titles()"
                 ).add_class("contractinator_controls_btn"),
                 initial_contractinator_items
             ),
