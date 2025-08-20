@@ -609,10 +609,7 @@ def sb_server(
     # Contractinator Logic
 
     new_contractinator_panels_df = reactive.value(
-        pd.DataFrame({
-            "name": ['','',''],
-            "search string": ['','','']
-        })
+        pd.DataFrame(columns=["name", "search string"])
     )
 
     # Add new contracts
@@ -626,8 +623,14 @@ def sb_server(
     # render the +/- data frame for the modal insert new modal
     @render.data_frame
     def new_contractinator_panels_df_output():
+        ncpdf = new_contractinator_panels_df()
+        if ncpdf.empty:
+            ncpdf = pd.DataFrame({
+                "name": ['','',''],
+                "search string": ['','','']
+            })
         return render.DataGrid(
-            new_contractinator_panels_df(),
+            ncpdf,
             width='100%',
             editable=True
         )
