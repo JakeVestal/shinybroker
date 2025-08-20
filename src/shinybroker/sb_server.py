@@ -639,7 +639,7 @@ def sb_server(
     @reactive.effect
     @reactive.event(input.contractinator_add_a_row)
     def adds_a_new_row_to_new_contractinator_panel_model():
-        df = new_contractinator_panels_df()
+        df = new_contractinator_panels_df_output.data_view()
         df = pd.concat(
             [df, pd.DataFrame({"name": [''], "search string": ['']})],
             ignore_index=True
