@@ -106,26 +106,5 @@ def contractinator(
                 initial_contractinator_items
             ),
             id="contractinator_top_container"
-        ),
-        ui.tags.script(
-            """
-            $(document).ready(function() {
-                // Function to get accordion titles
-                function getAccordionTitles() {
-                    var titles = [];
-                    $('#contractinator_accordion .accordion-button').each(
-                        function() {titles.push($(this).text().trim());});
-                    return titles;
-                }
-    
-                // Listen for button clicks
-                $('#remove_contractinator_panels').on('click', function() {
-                    var titles = getAccordionTitles();
-                    // Send titles to Shiny
-                    Shiny.setInputValue('contractinator_accordion_titles', 
-                    titles);
-                });
-            });
-            """
         )
     )

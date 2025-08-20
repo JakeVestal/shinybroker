@@ -342,6 +342,13 @@ def sb_ui(home_ui = ui.p('no ui passed to sb_ui().')):
                     })
                 }
                 """
+            ),
+            ui.include_js(
+                str(
+                    files(__package__).joinpath(
+                        "js", "sb_functions.js"
+                    )
+                )
             )
         ),
         title="ShinyBroker " + str(VERSION),

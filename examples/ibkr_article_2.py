@@ -41,13 +41,15 @@ ui_ = ui.page_fluid(
         ),
         ui.column(
             4,
+            ui.h5("Retrieved Price History"),
+            ui.p(id="price_history_df_caption"),
             ui.output_data_frame("price_history_df_output")
         )
     ),
     ui.row(
-        ui.h5('Calculated Returns'),
         ui.column(
             9,
+            ui.h5('Calculated Returns'),
             ui.output_data_frame('historical_log_returns_df_output')
         ),
         ui.column(
@@ -66,12 +68,7 @@ ui_ = ui.page_fluid(
     ),
     ui.row(
         ui.column(
-            6,
-            ui.h5("Benchmark Plot"),
-            output_widget("alphabeta_scatter")
-        ),
-        ui.column(
-            6,
+            2,
             ui.input_selectize(
                 id='x_axis_contract',
                 label='X-axis:',
@@ -83,11 +80,15 @@ ui_ = ui.page_fluid(
                 label='Y-axis:',
                 choices=[],
                 multiple=False
-            ),
-            ui.h5("Statsmodels Results"),
-            ui.output_ui("alphabeta_trendline_summary")
+            )
+        ),
+        ui.column(
+            10,
+            ui.h5("Benchmark Plot"),
+            output_widget("alphabeta_scatter")
         )
-    )
+    ),
+    ui.row(ui.output_ui("alphabeta_trendline_summary"))
 )
 
 def server_(
@@ -280,7 +281,10 @@ def server_(
         summy = px.get_trendline_results(
             calculate_alphabeta_scatter()
         ).px_fit_results.iloc[0].summary().as_html()
-        return ui.HTML(summy)
+        return ui.div(
+            ui.h5("Statsmodels Results"),
+            ui.HTML(summy)
+        )
 
 
 

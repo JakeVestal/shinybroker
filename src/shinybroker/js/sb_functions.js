@@ -1,11 +1,6 @@
-function contractinator_mark_completed(target) {
-    const accordionItems = document.querySelectorAll(
-        '#contractinator_accordion .accordion-item'
-    );
-    accordionItems.forEach(item => {
-        const dataValue = item.getAttribute('data-value');
-        if (dataValue === target) {
-            item.classList.add('contractinator_completed');
-        }
-    })
+function update_contractinator_accordion_titles() {
+    var titles = [];
+    $('#contractinator_accordion .accordion-button').each(
+        function() {titles.push($(this).text().trim());});
+    Shiny.setInputValue('contractinator_accordion_titles', titles);
 }
