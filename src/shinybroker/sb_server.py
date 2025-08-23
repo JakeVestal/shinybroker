@@ -609,7 +609,7 @@ def sb_server(
     # Contractinator Logic
 
     new_contractinator_panels_df = reactive.value(
-        pd.DataFrame(columns=["name", "search string"])
+        pd.DataFrame(columns=["name", "search string", " ", "  "])
     )
 
     # Add new contracts
@@ -627,12 +627,26 @@ def sb_server(
         if ncpdf.empty:
             ncpdf = pd.DataFrame({
                 "name": ['','',''],
-                "search string": ['','','']
+                "search string": ['','',''],
+                " ": [
+                    ui.input_action_button(
+                        id=f"contractinator_add_a_row{i}",
+                        label="+"
+                    ).add_class("plus-button")
+                    for i in range(0, 3)
+                ],
+                "  ": [
+                    ui.input_action_button(
+                        id=f"contractinator_remove_a_row{i}",
+                        label=ui.span("-"),
+                    ).add_class("minus-button")
+                    for i in range(0,3)
+                ]
             })
-        return render.DataGrid(
+        return render.DataTable(
             ncpdf,
-            width='100%',
-            editable=True
+            editable=True,
+            selection_mode='none'
         )
 
     # backend for the + button
@@ -656,15 +670,16 @@ def sb_server(
     @reactive.effect
     @reactive.event(new_contractinator_panels_df_output.data_view)
     def runs_whenever_data_view_updates():
-        dv = new_contractinator_panels_df_output.data_view()
-        duplicated_new_contract_name = dv.loc[
-            dv['name'].duplicated(keep=False), 'name'
-        ]
-        if len(duplicated_new_contract_name) > 0:
-            ui.notification_show(
-                f"{str(duplicated_new_contract_name).unique()[0]} is "
-                "a duplicated name. Please choose a new unique name.",
-            )
+        print(new_contractinator_panels_df_output.data_view())
+        # dv = new_contractinator_panels_df_output.data_view()
+        # duplicated_new_contract_name = dv.loc[
+        #     dv['name'].duplicated(keep=False), 'name'
+        # ]
+        # if len(duplicated_new_contract_name) > 0:
+        #     ui.notification_show(
+        #         f"{str(duplicated_new_contract_name).unique()[0]} is "
+        #         "a duplicated name. Please choose a new unique name.",
+        #     )
 
 
 

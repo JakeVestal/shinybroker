@@ -339,6 +339,13 @@
     left: 100%; /* Scanline moves across on hover */
 }
 
+#new_contractinator_panels_df_output thead,
+#new_contractinator_panels_df_output .dataTables_scrollHead table,
+#new_contractinator_panels_df_output > div,
+#new_contractinator_panels_df_output > div > div {
+    border: none !important;
+}
+
 .plus-button, .minus-button {
     background: rgba(255, 255, 255, 0.1);
     border: none;

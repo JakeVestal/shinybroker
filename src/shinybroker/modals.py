@@ -54,15 +54,6 @@ def sb_couldnt_connect_modal(hst, prt, cid):
 sb_insert_new_contractinator_panel_modal = create_sb_modal(
     content = [
         ui.input_action_button(
-            id="contractinator_add_a_row",
-            label="+"
-        ).add_class("plus-button"),
-        ui.input_action_button(
-            id="contractinator_remove_a_row",
-            label=ui.span("-")
-        ).add_class("minus-button"),
-        ui.span("Add/Remove rows").add_class("vertically_centered"),
-        ui.input_action_button(
             id="add_to_contractinator",
             label="Add to Contractinator"
         ),
@@ -70,7 +61,8 @@ sb_insert_new_contractinator_panel_modal = create_sb_modal(
         ui.p("Double-click to add your contracts to the table above."),
         ui.p("Adding a search string is optional.")
     ],
-    title_txt = "Add New Contracts"
+    title_txt = "Add New Contracts",
+    size='l'
 )
 
 def sb_contractinator_remove_contracts_modal(contract_titles):
