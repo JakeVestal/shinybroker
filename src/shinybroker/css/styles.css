@@ -263,11 +263,6 @@
     border-color: #02db02 !important;
 }
 
-#new_contractinator_panels_df_output {
-    max-height: 350px;
-    overflow-y: auto;
-}
-
 #contractinator_remove_a_row_modal {
     max-height: 350px;
     overflow-y: auto;
@@ -276,45 +271,54 @@
 /* Target the DataFrame table */
 #new_contractinator_panels_df_output table,
 #new_contractinator_panels_df_output .table {
-    border: 2px solid #00b7eb; /* Iron Man-inspired cyan border */
-    border-radius: 3px; /* Rounded edges for TOS retro feel */
-    background: linear-gradient(145deg, #0f0f1a, #1f1f2a); /* Dark cyberpunk gradient */
-    box-shadow: 0 0 3px rgba(0, 183, 235, 0.5); /* Holographic glow */
+    border: none !important;
     position: relative;
     overflow: hidden;
+    table-layout: fixed;
 }
 
-/* Table headers */
-#new_contractinator_panels_df_output th,
-#new_contractinator_panels_df_output thead th {
-    background: linear-gradient(145deg, #1a1a1a, #2a2a3a); /* Darker sci-fi gradient */
+/* th, NOT button columns */
+#new_contractinator_panels_df_output th:not(:nth-last-child(-n+2)),
+#new_contractinator_panels_df_output tbody th:not(:nth-last-child(-n+2)) {
+    background: linear-gradient(145deg, #1a1a1a, #2a2a3a);
     color: #e0e0e0; /* Light text for contrast */
-    border: 2px solid #00b7eb; /* Cyan border */
+    border: 2px solid #00b7eb;
     padding: 5px; /* Slightly larger for readability */
 }
 
-/* Table cells */
-#new_contractinator_panels_df_output td,
-#new_contractinator_panels_df_output tbody td {
-    background: linear-gradient(145deg, #2a2a3a, #3a3a4a); /* Slightly lighter gradient */
+/* td, NOT button columns */
+#new_contractinator_panels_df_output td:not(:nth-last-child(-n+2)),
+#new_contractinator_panels_df_output tbody td:not(:nth-last-child(-n+2)) {
+    background: linear-gradient(145deg, #2a2a3a, #3a3a4a);
     height: 32px;
+    width: 150px;
     color: #e0e0e0;
-    border: 1px solid #00b7eb; /* Cyan border for consistency */
+    border: 1px solid #00b7eb;
     padding: 8px;
     transition: all 0.3s ease; /* Smooth hover transitions */
     box-shadow: inset 0 0 3px rgba(0, 183, 235, 0.2); /* Subtle sci-fi glow */
 }
 
-/* Hover effects on rows */
-#new_contractinator_panels_df_output td:hover {
-    background: linear-gradient(145deg, #ff007a, #3a3a4a); /* Blade Runner magenta glow */
+/* td, button columns */
+#new_contractinator_panels_df_output td:nth-last-child(-n+2),
+#new_contractinator_panels_df_output tbody td:nth-last-child(-n+2),
+#new_contractinator_panels_df_output th:nth-last-child(-n+2),
+#new_contractinator_panels_df_output tbody th:nth-last-child(-n+2) {
+    background: transparent;
+    border: none;
+    width: 17px !important;
+}
+
+/* Hover effects on rows: NOT button columns */
+#new_contractinator_panels_df_output td:not(:nth-last-child(-n+2)):hover {
+    background: linear-gradient(145deg, #ff007a, #3a3a4a);
     box-shadow: 0 0 10px rgba(255, 0, 122, 0.7); /* Neon magenta shadow */
     transform: translateY(-1px); /* Slight lift for interactivity */
     color: #ffd700; /* Jules Verne gold text on hover */
     text-shadow: 0 0 5px #ffd700, 0 0 10px #ffd700; /* Gold glow */
 }
 
-/* Optional: Neuromancer-inspired scanline effect */
+/* Neuromancer scanline effect */
 #new_contractinator_panels_df_output table::before {
     content: '';
     position: absolute;
@@ -336,17 +340,15 @@
 }
 
 .plus-button, .minus-button {
-    margin-bottom: 10px;
-    margin-right: 10px;
     background: rgba(255, 255, 255, 0.1);
-    border: 3px solid;
+    border: none;
     border-radius: 50%;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
     outline: none;
     transition: all 0.2s ease;
     position: relative;
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
