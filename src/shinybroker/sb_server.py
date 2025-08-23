@@ -653,6 +653,21 @@ def sb_server(
         df = new_contractinator_panels_df().iloc[:-1]
         new_contractinator_panels_df.set(df)
 
+    @reactive.effect
+    @reactive.event(new_contractinator_panels_df_output.data_view)
+    def runs_whenever_data_view_updates():
+        dv = new_contractinator_panels_df_output.data_view()
+        duplicated_new_contract_name = dv.loc[
+            dv['name'].duplicated(keep=False), 'name'
+        ]
+        if len(duplicated_new_contract_name) > 0:
+            ui.notification_show(
+                f"{str(duplicated_new_contract_name).unique()[0]} is "
+                "a duplicated name. Please choose a new unique name.",
+            )
+
+
+
     # Add new contractinator panels logic
     @reactive.effect
     @reactive.event(input.add_to_contractinator)
@@ -669,8 +684,10 @@ def sb_server(
 
     ### remove contractinator panel modal
     @reactive.effect
-    @reactive.event(input.contractinator_accordion_titles)
+    @reactive.event(input.remove_contractinator_panels)
     def contractinator_remove_contracts_modal():
+        print('hello')
+        print(input.contractinator_accordion_titles())
         ui.modal_show(
             sb_contractinator_remove_contracts_modal(
                 input.contractinator_accordion_titles()
