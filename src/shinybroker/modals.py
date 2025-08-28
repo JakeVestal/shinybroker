@@ -51,7 +51,7 @@ def sb_couldnt_connect_modal(hst, prt, cid):
         title_txt = "Can't connect to IBKR",
     )
 
-sb_insert_new_contractinator_panel_modal = create_sb_modal(
+sb_add_rmv_contractinator_panel_modal = create_sb_modal(
     content = [
         ui.input_action_button(
             id="add_to_contractinator",

@@ -616,9 +616,9 @@ def sb_server(
 
     # Add new contractinator panels modal
     @reactive.effect
-    @reactive.event(input.add_new_contractinator_panels)
+    @reactive.event(input.add_rmv_contractinator_panels)
     def insert_new_contractinator_panel():
-        ui.modal_show(sb_insert_new_contractinator_panel_modal)
+        ui.modal_show(sb_add_rmv_contractinator_panel_modal)
 
     # render the +/- data frame for the modal insert new modal
     @render.data_frame
