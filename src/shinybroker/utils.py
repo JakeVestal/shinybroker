@@ -77,3 +77,25 @@ def inject_js(
     )
     ui.remove_ui("#sb_injected_script")
 
+def add_contractinator_btns_column(df):
+    end_index = df.shape[0]
+    df[" "] = [
+        ui.input_action_button(
+            id=f"contractinator_add_a_row{i}",
+            label="+",
+            onclick=f"add_a_contractinator_row({i})"
+        ).add_class("plus-button") for i in range(0, end_index)
+    ]
+    if(df.shape[0] == 1):
+        df["  "] = ['']
+    else:
+        df["  "] = [
+            ui.input_action_button(
+                id=f"contractinator_remove_a_row{i}",
+                label=ui.span("-"),
+                onclick=f"rmv_a_contractinator_row({i})"
+            ).add_class("minus-button") for i in range(0, end_index)
+        ]
+
+    df.reset_index()
+    return df

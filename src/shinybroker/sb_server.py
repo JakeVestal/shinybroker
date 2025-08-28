@@ -15,7 +15,8 @@ from shinybroker.ib_fetch_functions import (fetch_matching_symbols,
 from shinybroker.modals import *
 from shinybroker.msgs_to_ibkr import *
 from shinybroker.obj_defs import *
-from shinybroker.utils import remove_contractinator_modal, inject_js
+from shinybroker.utils import (remove_contractinator_modal, inject_js,
+                               add_contractinator_btns_column)
 
 from shiny import Inputs, Outputs, Session, reactive, render, ui, req
 from sys import exit
@@ -612,6 +613,42 @@ def sb_server(
         pd.DataFrame(columns=["name", "search string", " ", "  "])
     )
 
+    @reactive.effect
+    @reactive.event(input.contractinator_accordion_titles)
+    def idk_rn():
+        print(input.contractinator_accordion_titles())
+
+    @reactive.effect
+    @reactive.event(input.contractinator_row_to_add)
+    def idk_rn2():
+        insert_index = input.contractinator_row_to_add()['value']
+        ncpdf = new_contractinator_panels_df().copy()
+        new_row_df = pd.DataFrame({
+            "name": ['',],
+            "search string": [''],
+            " ": [''],
+            "  ": ['']
+        })
+        df_new = pd.concat(
+            [
+                ncpdf.iloc[:insert_index],
+                new_row_df,
+                ncpdf.iloc[insert_index:]
+            ]
+        ).reset_index(drop=True)
+        new_contractinator_panels_df.set(add_contractinator_btns_column(df_new))
+
+    @reactive.effect
+    @reactive.event(input.contractinator_row_to_rmv)
+    def idk_rn3():
+        ncpdf = new_contractinator_panels_df().copy()
+        rmv_index = input.contractinator_row_to_rmv()['value']
+        print(f"rmv_index: {rmv_index}")
+        print(f"rmv_index type: {type(rmv_index)}")
+        df_new = ncpdf.drop(rmv_index).reset_index(drop=True)
+        print(df_new)
+        new_contractinator_panels_df.set(add_contractinator_btns_column(df_new))
+
     # Add new contracts
 
     # Add new contractinator panels modal
@@ -625,62 +662,30 @@ def sb_server(
     def new_contractinator_panels_df_output():
         ncpdf = new_contractinator_panels_df()
         if ncpdf.empty:
-            ncpdf = pd.DataFrame({
-                "name": ['','',''],
-                "search string": ['','',''],
-                " ": [
-                    ui.input_action_button(
-                        id=f"contractinator_add_a_row{i}",
-                        label="+"
-                    ).add_class("plus-button")
-                    for i in range(0, 3)
-                ],
-                "  ": [
-                    ui.input_action_button(
-                        id=f"contractinator_remove_a_row{i}",
-                        label=ui.span("-"),
-                    ).add_class("minus-button")
-                    for i in range(0,3)
-                ]
-            })
+            new_contractinator_panels_df.set(
+                add_contractinator_btns_column(
+                    pd.DataFrame({
+                        "name": ['','',''],
+                        "search string": ['','',''],
+                        " ": ['','',''],
+                        "  ": ['','','']
+                    })
+                )
+            )
+            req(False)
         return render.DataTable(
             ncpdf,
             editable=True,
-            selection_mode='none'
+            selection_mode='none',
+            height="auto",
+            styles={
+                "max-height": "500px",
+                "overflow-y": "auto"
+            }
         )
 
-    # backend for the + button
-    @reactive.effect
-    @reactive.event(input.contractinator_add_a_row)
-    def adds_a_new_row_to_new_contractinator_panel_model():
-        df = new_contractinator_panels_df_output.data_view()
-        df = pd.concat(
-            [df, pd.DataFrame({"name": [''], "search string": ['']})],
-            ignore_index=True
-        )
-        new_contractinator_panels_df.set(df)
 
-    # backend for the - button
-    @reactive.effect
-    @reactive.event(input.contractinator_remove_a_row)
-    def removes_a_row_from_contractinator_panel_model():
-        df = new_contractinator_panels_df().iloc[:-1]
-        new_contractinator_panels_df.set(df)
-
-    @reactive.effect
-    @reactive.event(new_contractinator_panels_df_output.data_view)
-    def runs_whenever_data_view_updates():
-        print(new_contractinator_panels_df_output.data_view())
-        # dv = new_contractinator_panels_df_output.data_view()
-        # duplicated_new_contract_name = dv.loc[
-        #     dv['name'].duplicated(keep=False), 'name'
-        # ]
-        # if len(duplicated_new_contract_name) > 0:
-        #     ui.notification_show(
-        #         f"{str(duplicated_new_contract_name).unique()[0]} is "
-        #         "a duplicated name. Please choose a new unique name.",
-        #     )
-
+#### YOU ARE HERE.
 
 
     # Add new contractinator panels logic
