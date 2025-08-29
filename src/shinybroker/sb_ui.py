@@ -328,21 +328,6 @@ def sb_ui(home_ui = ui.p('no ui passed to sb_ui().')):
                 ),
                 id="main_tab"
             ),
-            ui.tags.script(
-                """
-                function contractinator_mark_completed(target) {
-                    const accordionItems = document.querySelectorAll(
-                        '#contractinator_accordion .accordion-item'
-                    );
-                    accordionItems.forEach(item => {
-                        const dataValue = item.getAttribute('data-value');
-                        if (dataValue === target) {
-                            item.classList.add('contractinator_completed');
-                        }
-                    })
-                }
-                """
-            ),
             ui.include_js(
                 str(
                     files(__package__).joinpath(
