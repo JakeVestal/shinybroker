@@ -34,7 +34,7 @@ def sb_ui(home_ui = ui.p('no ui passed to sb_ui().')):
                 ui.include_css(
                     str(
                         files(__package__).joinpath(
-                            "css", "styles.css"
+                            "www", "css", "styles.css"
                         )
                     ),
                     method='inline'
@@ -47,7 +47,7 @@ def sb_ui(home_ui = ui.p('no ui passed to sb_ui().')):
                 ui.include_js(
                     str(
                         files(__package__).joinpath(
-                            "js", "ib_message_handler.js"
+                            "www", "js", "ib_message_handler.js"
                         )
                     )
                 )
@@ -331,7 +331,7 @@ def sb_ui(home_ui = ui.p('no ui passed to sb_ui().')):
             ui.include_js(
                 str(
                     files(__package__).joinpath(
-                        "js", "sb_functions.js"
+                        "www", "js", "sb_functions.js"
                     )
                 )
             )
