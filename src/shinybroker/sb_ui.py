@@ -333,7 +333,8 @@ def sb_ui(home_ui = ui.p('no ui passed to sb_ui().')):
                     files(__package__).joinpath(
                         "www", "js", "sb_functions.js"
                     )
-                )
+                ),
+                method='inline'
             )
         ),
         title="ShinyBroker " + str(VERSION),
