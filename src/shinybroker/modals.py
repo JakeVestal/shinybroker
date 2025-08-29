@@ -54,49 +54,15 @@ def sb_couldnt_connect_modal(hst, prt, cid):
 sb_add_rmv_contractinator_panel_modal = create_sb_modal(
     content = [
         ui.input_action_button(
-            id="add_to_contractinator",
-            label="Add to Contractinator"
+            id="update_contractinator",
+            label="Update Contractinator"
         ),
         ui.output_data_frame("new_contractinator_panels_df_output"),
         ui.p("Double-click to add your contracts to the table above."),
         ui.p("Adding a search string is optional.")
     ],
-    title_txt = "Add New Contracts",
+    title_txt = "Add/Remove Contracts",
     size='l'
-)
-
-def sb_contractinator_remove_contracts_modal(contract_titles):
-    return create_sb_modal(
-        content = [
-            ui.input_action_button(
-                id="contractinator_remove_selected_contracts",
-                label="Remove Selected Contracts",
-                onclick="update_contractinator_accordion_titles()"
-            ),
-            ui.input_checkbox_group(
-                id="contractinator_selected_for_removal",
-                label="Select Contracts for Removal:",
-                choices=contract_titles
-            )
-        ],
-        title_txt = "Remove Contracts"
-    )
-
-sb_saves_your_contractinator_modal = create_sb_modal(
-    content = [
-        ui.help_text(
-            "Saves the contracts in your contractinator as a csv"
-        ),
-        ui.input_text(
-            id="save_contractinator_filename",
-            label="Choose a filename:",
-        ),
-        ui.input_file(
-            id="save_contractinator_path",
-            label="Choose a save location:",
-        )
-    ],
-    title_txt = "Save Contractinator"
 )
 
 def sb_contractinator_match_search_modal(mtch_ui, ttxt):
