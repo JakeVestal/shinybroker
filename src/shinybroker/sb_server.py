@@ -613,14 +613,48 @@ def sb_server(
         pd.DataFrame(columns=["name", "search string", " ", "  "])
     )
 
+    # Add new contractinator panels modal
     @reactive.effect
-    @reactive.event(input.contractinator_accordion_titles)
-    def idk_rn():
+    @reactive.event(input.add_rmv_contractinator_panels)
+    def initializes_new_contractinator_panels_df_and_shows_modal():
         print(input.contractinator_accordion_titles())
+        ui.modal_show(sb_add_rmv_contractinator_panel_modal)
+
+
+    # render the +/- data frame for the modal insert new modal
+    @render.data_frame
+    def new_contractinator_panels_df_output():
+        ncpdf = new_contractinator_panels_df()
+        # print(input.contractinator_accordion_titles)
+        # if ncpdf.empty:
+        #     new_contractinator_panels_df.set(
+        #         add_contractinator_btns_column(
+        #             pd.DataFrame({
+        #                 "name": ['', '', ''],
+        #                 "search string": ['', '', ''],
+        #                 " ": ['', '', ''],
+        #                 "  ": ['', '', '']
+        #             })
+        #         )
+        #     )
+        #     req(False)++
+
+        return render.DataTable(
+            ncpdf,
+            editable=True,
+            selection_mode='none',
+            height="auto",
+            styles={
+                "max-height": "500px",
+                "overflow-y": "auto"
+            }
+        )
+
+
 
     @reactive.effect
     @reactive.event(input.contractinator_row_to_add)
-    def idk_rn2():
+    def adds_a_row_to_new_contractinator_panels_df():
         insert_index = input.contractinator_row_to_add()['value']
         ncpdf = new_contractinator_panels_df().copy()
         new_row_df = pd.DataFrame({
@@ -640,49 +674,12 @@ def sb_server(
 
     @reactive.effect
     @reactive.event(input.contractinator_row_to_rmv)
-    def idk_rn3():
+    def rmvs_a_row_from_new_contractinator_panels_df():
         ncpdf = new_contractinator_panels_df().copy()
         rmv_index = input.contractinator_row_to_rmv()['value']
-        print(f"rmv_index: {rmv_index}")
-        print(f"rmv_index type: {type(rmv_index)}")
         df_new = ncpdf.drop(rmv_index).reset_index(drop=True)
-        print(df_new)
         new_contractinator_panels_df.set(add_contractinator_btns_column(df_new))
 
-    # Add new contracts
-
-    # Add new contractinator panels modal
-    @reactive.effect
-    @reactive.event(input.add_rmv_contractinator_panels)
-    def insert_new_contractinator_panel():
-        ui.modal_show(sb_add_rmv_contractinator_panel_modal)
-
-    # render the +/- data frame for the modal insert new modal
-    @render.data_frame
-    def new_contractinator_panels_df_output():
-        ncpdf = new_contractinator_panels_df()
-        if ncpdf.empty:
-            new_contractinator_panels_df.set(
-                add_contractinator_btns_column(
-                    pd.DataFrame({
-                        "name": ['','',''],
-                        "search string": ['','',''],
-                        " ": ['','',''],
-                        "  ": ['','','']
-                    })
-                )
-            )
-            req(False)
-        return render.DataTable(
-            ncpdf,
-            editable=True,
-            selection_mode='none',
-            height="auto",
-            styles={
-                "max-height": "500px",
-                "overflow-y": "auto"
-            }
-        )
 
 
     # Add new contractinator panels logic
@@ -690,7 +687,12 @@ def sb_server(
     @reactive.event(input.update_contractinator)
     def adding_new_panels_to_contractinator():
         df = new_contractinator_panels_df_output.data_view()
-        df = df[df['name'] != '']
+        df = df[df['name'] != ''].copy()
+
+        invalid_ids = [
+            name for name in df['name'] if not is_valid_html_id(str(name))
+        ]
+
         already_in_contractinator = set(input.contractinator_accordion_titles())
         incoming_update = set(df['name'])
         duped_names = intersection(already_in_contractinator, incoming_update)
@@ -936,8 +938,8 @@ def sb_server(
             "contractinator_accordion",
             contract_name,
             ui.pre(
-                contract_name + " = sb.Contract(" +
-                str(new_contract) + ")"
+                f"{contract_name} = sb.Contract({str(new_contract)})",
+                id=f"{contract_name}_final_contract"
             ),
             show=False
         )
