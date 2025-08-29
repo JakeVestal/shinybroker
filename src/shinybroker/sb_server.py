@@ -535,7 +535,9 @@ def sb_server(
     )
     def request_historical_data():
         hd = historical_data()
-        exec(input.hd_contract_definition())
+        namespace = {}
+        exec('from shinybroker import Contract', namespace)
+        exec(input.hd_contract_definition(), namespace)
         (rd, wt, er) = select.select([], [ib_socket], [])
         try:
             subscription_id = max(list(map(int, hd.keys()))) + 1
@@ -543,13 +545,19 @@ def sb_server(
             subscription_id = 1
         subscription_id = str(subscription_id)
         wt[0].send(
-            eval(
-                "req_historical_data(" + subscription_id + ", contract, " +
-                "endDateTime, durationStr, barSizeSetting, whatToShow, " +
-                "useRTH, formatDate, keepUpToDate)"
+            req_historical_data(
+                subscription_id,
+                namespace['contract'],
+                namespace['endDateTime'],
+                namespace['durationStr'],
+                namespace['barSizeSetting'],
+                namespace['whatToShow'],
+                namespace['useRTH'],
+                namespace['formatDate'],
+                namespace['keepUpToDate']
             )
         )
-        hd.update({subscription_id: eval('contract.compact()')})
+        hd.update({subscription_id: namespace['contract'].compact()})
         historical_data.set(hd.copy())
 
     @reactive.effect
