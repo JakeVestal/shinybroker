@@ -436,7 +436,9 @@ def sb_server(
     )
     def request_market_data():
         mkt_dta = mkt_data()
-        exec(input.md_contract_definition())
+        namespace = {}
+        exec('from shinybroker import Contract', namespace)
+        exec(input.md_contract_definition(), namespace)
         (rd, wt, er) = select.select([], [ib_socket], [])
         try:
             subscription_id = max(list(map(int, mkt_dta.keys()))) + 1
@@ -444,12 +446,15 @@ def sb_server(
             subscription_id = 1
         subscription_id = str(subscription_id)
         wt[0].send(
-            eval(
-                "req_mkt_data(" + subscription_id + ", contract, " +
-                "genericTickList, snapshot, regulatorySnapshot)"
+            req_mkt_data(
+                subscription_id,
+                namespace['contract'],
+                namespace['genericTickList'],
+                namespace['snapshot'],
+                namespace['regulatorySnapshot']
             )
         )
-        mkt_dta.update({subscription_id: eval('contract.compact()')})
+        mkt_dta.update({subscription_id: namespace['contract'].compact()})
         mkt_data.set(mkt_dta.copy())
 
     @reactive.effect
