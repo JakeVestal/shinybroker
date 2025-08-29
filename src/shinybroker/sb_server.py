@@ -685,58 +685,27 @@ def sb_server(
         )
 
 
-#### YOU ARE HERE.
-
-
     # Add new contractinator panels logic
     @reactive.effect
-    @reactive.event(input.add_to_contractinator)
+    @reactive.event(input.update_contractinator)
     def adding_new_panels_to_contractinator():
         df = new_contractinator_panels_df_output.data_view()
         df = df[df['name'] != '']
-        for i in range(len(df)):
-            ui.insert_accordion_panel(
-                id="contractinator_accordion",
-                panel=create_contractinator_panel(
-                    df.loc[i, 'name'], df.loc[i, 'search string']
-                )
-            )
-
-    ### remove contractinator panel modal
-    @reactive.effect
-    @reactive.event(input.remove_contractinator_panels)
-    def contractinator_remove_contracts_modal():
-        print('hello')
-        print(input.contractinator_accordion_titles())
-        ui.modal_show(
-            sb_contractinator_remove_contracts_modal(
-                input.contractinator_accordion_titles()
-            )
-        )
-
-    # remove contractinator panel logic
-    @reactive.effect
-    @reactive.event(input.contractinator_remove_selected_contracts)
-    def update_contractinator_upon_removal():
-        ctr = contractinator()
-        for key in input.contractinator_selected_for_removal():
-            ctr.pop(key, None)
-            ui.remove_accordion_panel(
-                id="contractinator_accordion",
-                target=key
-            )
-        contractinator.set(ctr)
-        ui.modal_remove()
-
-
-    # Save Contractinator
-    @reactive.effect
-    @reactive.event(input.save_contractinator)
-    def saves_your_contractinator():
-        print('hello')
-        print(input.save_contractinator())
-        ui.modal_show(sb_saves_your_contractinator_modal)
-
+        already_in_contractinator = set(input.contractinator_accordion_titles())
+        incoming_update = set(df['name'])
+        duped_names = intersection(already_in_contractinator, incoming_update)
+        contracts_to_remove = already_in_contractinator - incoming_update
+        contracts_to_add = incoming_update - already_in_contractinator
+        print(f"duped_names: {",".join(duped_names)}")
+        print(f"contracts_to_remove: {",".join(contracts_to_remove)}")
+        print(f"contracts_to_add: {",".join(contracts_to_add)}")
+        # for i in range(len(df)):
+        #     ui.insert_accordion_panel(
+        #         id="contractinator_accordion",
+        #         panel=create_contractinator_panel(
+        #             df.loc[i, 'name'], df.loc[i, 'search string']
+        #         )
+        #     )
 
     # stores contracts found to match the search string
     contract_matches = reactive.value(
