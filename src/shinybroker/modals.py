@@ -59,6 +59,10 @@ sb_add_rmv_contractinator_panel_modal = create_sb_modal(
         ),
         ui.output_data_frame("new_contractinator_panels_df_output"),
         ui.p("Double-click to add your contracts to the table above."),
+        ui.p(
+            "The names you choose must start with a letter or underscore and "
+            "contain only letters, digits, hyphens, or underscores."
+        ),
         ui.p("Adding a search string is optional.")
     ],
     title_txt = "Add/Remove Contracts",
