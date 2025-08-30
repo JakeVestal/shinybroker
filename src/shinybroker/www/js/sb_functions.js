@@ -1,25 +1,25 @@
-// function update_contractinator_accordion_info() {
-//     let acc_info = [];
-//     $('#contractinator_accordion .accordion-button').each(function() {
-//         let name = $(this).text().trim();
-//         let complete = $(this).hasClass('contractinator_completed');
-//         let contents;
-//         if (complete) {
-//             contents = document.getElementById(
-//                 name + "_final_contract").textContent;
-//         } else {
-//             contents = document.getElementById(name + "_search_string").value;
-//         }
-//         acc_info.push({
-//             name: name,
-//             complete: complete,
-//             contents: contents
-//         });
-//     });
-//     Shiny.setInputValue(
-//         'contractinator_accordion_info', acc_info, {priority: 'event'}
-//     );
-// }
+function update_contractinator_accordion_info() {
+    let acc_info = [];
+    $('#contractinator_accordion .accordion-button').each(function() {
+        let name = $(this).text().trim();
+        let complete = $(this).hasClass('contractinator_completed');
+        let contents;
+        if (complete) {
+            contents = document.getElementById(
+                name + "_final_contract").textContent;
+        } else {
+            contents = document.getElementById(name + "_search_string").value;
+        }
+        acc_info.push({
+            name: name,
+            complete: complete,
+            contents: contents
+        });
+    });
+    Shiny.setInputValue(
+        'contractinator_accordion_info', acc_info, {priority: 'event'}
+    );
+}
 function add_a_contractinator_row(add_row) {
     Shiny.setInputValue(
         'contractinator_row_to_add',

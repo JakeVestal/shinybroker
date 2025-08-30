@@ -630,7 +630,10 @@ def sb_server(
     @reactive.effect
     @reactive.event(input.add_rmv_contractinator_panels)
     def initializes_new_contractinator_panels_df_and_shows_modal():
-        print(input.contractinator_accordion_titles())
+        print("aslknasdgvjnk")
+        print(input.add_rmv_contractinator_panels())
+        print(input.contractinator_accordion_info())
+        print('wut')
         ui.modal_show(sb_add_rmv_contractinator_panel_modal)
 
 
@@ -638,7 +641,7 @@ def sb_server(
     @render.data_frame
     def new_contractinator_panels_df_output():
         ncpdf = new_contractinator_panels_df()
-        # print(input.contractinator_accordion_titles)
+        # print(input.contractinator_accordion_info())
         # if ncpdf.empty:
         #     new_contractinator_panels_df.set(
         #         add_contractinator_btns_column(
@@ -706,11 +709,12 @@ def sb_server(
             name for name in df['name'] if not is_valid_html_id(str(name))
         ]
 
-        already_in_contractinator = set(input.contractinator_accordion_titles())
+        already_in_contractinator = set(input.contractinator_accordion_info())
         incoming_update = set(df['name'])
         duped_names = intersection(already_in_contractinator, incoming_update)
         contracts_to_remove = already_in_contractinator - incoming_update
         contracts_to_add = incoming_update - already_in_contractinator
+        print(f"invalid_ids: {",".join(invalid_ids)}")
         print(f"duped_names: {",".join(duped_names)}")
         print(f"contracts_to_remove: {",".join(contracts_to_remove)}")
         print(f"contracts_to_add: {",".join(contracts_to_add)}")

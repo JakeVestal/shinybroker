@@ -89,7 +89,7 @@ def contractinator(
                 ui.input_action_button(
                     id="add_rmv_contractinator_panels",
                     label="Add/Remove Contracts",
-                    onclick="update_contractinator_accordion_titles()"
+                    onclick="update_contractinator_accordion_info()"
                 ).add_class("contractinator_controls_btn"),
                 ui.div(style="height: 5px;"),
                 initial_contractinator_items
