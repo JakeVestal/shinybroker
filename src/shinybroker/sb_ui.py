@@ -36,8 +36,7 @@ def sb_ui(home_ui = ui.p('no ui passed to sb_ui().')):
                         files(__package__).joinpath(
                             "www", "css", "styles.css"
                         )
-                    ),
-                    method='inline'
+                    )
                 ),
                 ui.tags.link(
                     href="https://fonts.googleapis.com/css2?family=Orbitron"
@@ -49,7 +48,16 @@ def sb_ui(home_ui = ui.p('no ui passed to sb_ui().')):
                         files(__package__).joinpath(
                             "www", "js", "ib_message_handler.js"
                         )
-                    )
+                    ),
+                    method='link_files'
+                ),
+                ui.include_js(
+                    str(
+                        files(__package__).joinpath(
+                            "www", "js", "sb_functions.js"
+                        )
+                    ),
+                    method='link_files'
                 )
             ),
             ui.navset_pill(
@@ -327,14 +335,6 @@ def sb_ui(home_ui = ui.p('no ui passed to sb_ui().')):
                     ui.output_table("error_messages_df")
                 ),
                 id="main_tab"
-            ),
-            ui.include_js(
-                str(
-                    files(__package__).joinpath(
-                        "www", "js", "sb_functions.js"
-                    )
-                ),
-                method='inline'
             )
         ),
         title="ShinyBroker " + str(VERSION),
