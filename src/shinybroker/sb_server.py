@@ -623,17 +623,22 @@ def sb_server(
     # Contractinator Logic
 
     new_contractinator_panels_df = reactive.value(
-        pd.DataFrame(columns=["name", "search string", " ", "  "])
+        pd.DataFrame(columns=["name", "contents", " ", "  "])
     )
 
     # Add new contractinator panels modal
     @reactive.effect
     @reactive.event(input.add_rmv_contractinator_panels)
     def initializes_new_contractinator_panels_df_and_shows_modal():
-        print("aslknasdgvjnk")
-        print(input.add_rmv_contractinator_panels())
-        print(input.contractinator_accordion_info())
-        print('wut')
+        acc_info = pd.DataFrame(input.contractinator_accordion_info())
+        print(acc_info)
+        completed_cells = np.where(acc_info['complete'])[0]
+        print(completed_cells)
+        new_contractinator_panels_df.set(
+            add_contractinator_btns_column(
+                acc_info[["name", "contents"]]
+            )
+        )
         ui.modal_show(sb_add_rmv_contractinator_panel_modal)
 
 

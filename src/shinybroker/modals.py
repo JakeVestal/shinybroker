@@ -53,17 +53,35 @@ def sb_couldnt_connect_modal(hst, prt, cid):
 
 sb_add_rmv_contractinator_panel_modal = create_sb_modal(
     content = [
-        ui.input_action_button(
-            id="update_contractinator",
-            label="Update Contractinator"
-        ),
+        ui.div(
+            ui.p(
+                "Use the table below to add, remove, or edit items. ",
+                ui.br(),
+                ui.strong("Double-click").add_style("color:#ff007a;"),
+                " a cell in the table to edit.",
+                ui.br(),
+                "Click \"",
+                ui.span("Update Contractinator").add_style("color:#d4af37;"),
+                "\" when ready."
+            ).add_style("flex:1;margin-right:20px;"),
+            ui.input_action_button(
+                id="update_contractinator",
+                label="Update Contractinator"
+            ).add_style(
+                "display:flex; justify-content:center; align-items:center; "
+                "flex: 0 0 auto; margin-bottom: 15px;"
+            )
+        ).add_style("display:flex; justify-content:space-between;"
+                    "align-items:center; width: 100%; padding-right: 75px;"),
         ui.output_data_frame("new_contractinator_panels_df_output"),
-        ui.p("Double-click to add your contracts to the table above."),
         ui.p(
-            "The names you choose must start with a letter or underscore and "
-            "contain only letters, digits, hyphens, or underscores."
-        ),
-        ui.p("Adding a search string is optional.")
+            ui.strong("NOTE"),
+            ": All ",
+            ui.span("name").add_class("inline-code"),
+            " values must start with a letter or underscore and "
+            "may contain only letters, digits, hyphens, "
+            "or underscores."
+        )
     ],
     title_txt = "Add/Remove Contracts",
     size='l'
@@ -81,6 +99,6 @@ def sb_contractinator_match_search_modal(mtch_ui, ttxt):
             ),
             mtch_ui
         ],
-        title_txt = ttxt,
+        title_txt = ttxt + ": Match Search",
         size='xl'
     )
