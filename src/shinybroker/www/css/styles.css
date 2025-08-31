@@ -72,32 +72,6 @@
     font-family: 'Orbitron', 'Arial', sans-serif;
 }
 
-/* Expanded state: Up tri with magenta/gold */
-#contractinator_top_container > .accordion-item > .accordion-header >
-.accordion-button[aria-expanded="true"]::after {
-    content: '^'; /* Up tri for expanded state */
-    color: #ff007a;
-    text-shadow: 0 0 10px #ff007a, 0 0 20px #ff007a;
-    background: linear-gradient(45deg, #ff007a, #ffd700);
-    -webkit-background-clip: text;
-    filter: drop-shadow(0 0 10px #ff007a);
-    transform: translateY(-50%) rotate(360deg)
-    scale(1.2); /* Center, rotate, and enlarge */
-}
-/* Expanded state: Up tri with magenta/gold */
-#contractinator_top_container > .accordion-item > .accordion-header >
-.accordion-button[aria-expanded="false"]::after {
-    content: '⌄'; /* Up tri for expanded state */
-    color: #00b7eb;
-    text-shadow: 0 0 10px #00b7eb, 0 0 20px #00b7eb;
-    background: linear-gradient(45deg, #00b7eb, #ffd700);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 0 10px #00b7eb);
-    transform: translateY(-50%) rotate(360deg)
-    scale(1.2); /* Center, rotate, and enlarge */
-}
-
 /* Spacing and scrollbar behavior for accordion items */
 #contractinator_accordion{
     margin-top: 15px;
