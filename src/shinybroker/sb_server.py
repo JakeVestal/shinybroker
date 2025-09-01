@@ -628,7 +628,6 @@ def sb_server(
 
     # Add new contractinator panels modal
     @reactive.effect
-    @reactive.event(input.add_rmv_contractinator_panels)
     def initializes_new_contractinator_panels_df_and_shows_modal():
         acc_info = pd.DataFrame(input.contractinator_accordion_info())
         print(acc_info)
@@ -704,32 +703,32 @@ def sb_server(
 
 
     # Add new contractinator panels logic
-    @reactive.effect
-    @reactive.event(input.update_contractinator)
-    def adding_new_panels_to_contractinator():
-        df = new_contractinator_panels_df_output.data_view()
-        df = df[df['name'] != ''].copy()
-
-        invalid_ids = [
-            name for name in df['name'] if not is_valid_html_id(str(name))
-        ]
-
-        already_in_contractinator = set(input.contractinator_accordion_info())
-        incoming_update = set(df['name'])
-        duped_names = intersection(already_in_contractinator, incoming_update)
-        contracts_to_remove = already_in_contractinator - incoming_update
-        contracts_to_add = incoming_update - already_in_contractinator
-        print(f"invalid_ids: {",".join(invalid_ids)}")
-        print(f"duped_names: {",".join(duped_names)}")
-        print(f"contracts_to_remove: {",".join(contracts_to_remove)}")
-        print(f"contracts_to_add: {",".join(contracts_to_add)}")
-        # for i in range(len(df)):
-        #     ui.insert_accordion_panel(
-        #         id="contractinator_accordion",
-        #         panel=create_contractinator_panel(
-        #             df.loc[i, 'name'], df.loc[i, 'search string']
-        #         )
-        #     )
+    # @reactive.effect
+    # @reactive.event(input.update_contractinator)
+    # def adding_new_panels_to_contractinator():
+    #     df = new_contractinator_panels_df_output.data_view()
+    #     df = df[df['name'] != ''].copy()
+    #
+    #     invalid_ids = [
+    #         name for name in df['name'] if not is_valid_html_id(str(name))
+    #     ]
+    #
+    #     already_in_contractinator = set(input.contractinator_accordion_info())
+    #     incoming_update = set(df['name'])
+    #     duped_names = intersection(already_in_contractinator, incoming_update)
+    #     contracts_to_remove = already_in_contractinator - incoming_update
+    #     contracts_to_add = incoming_update - already_in_contractinator
+    #     print(f"invalid_ids: {",".join(invalid_ids)}")
+    #     print(f"duped_names: {",".join(duped_names)}")
+    #     print(f"contracts_to_remove: {",".join(contracts_to_remove)}")
+    #     print(f"contracts_to_add: {",".join(contracts_to_add)}")
+    #     # for i in range(len(df)):
+    #     #     ui.insert_accordion_panel(
+    #     #         id="contractinator_accordion",
+    #     #         panel=create_contractinator_panel(
+    #     #             df.loc[i, 'name'], df.loc[i, 'search string']
+    #     #         )
+    #     #     )
 
     # stores contracts found to match the search string
     contract_matches = reactive.value(
@@ -746,6 +745,8 @@ def sb_server(
         validation_results.set(pd.DataFrame({}))
 
         contract_name = input.smc_buffer()
+
+        print(contract_name)
 
         cm_df = fetch_matching_symbols(
             input[f"{contract_name}_search_string"]()

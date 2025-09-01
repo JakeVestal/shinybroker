@@ -16,9 +16,17 @@ ui_ = ui.page_fluid(
         ui.column(
             5,
             sb.contractinator({
-                'MSTR': 'MSTR',
-                'SP500': 'S&P 500',
-                'Bitcoin': 'Bitcoin'
+                'bitcoin': 'bitcoin',
+                'ethereum': 'etherium',
+                'litecoin': 'litecoin',
+                'bitcoin_cash': 'bitcoin cash',
+                'solana': 'solana',
+                'cardano': 'cardano',
+                'ripple': 'ripple',
+                'doge': 'dogecoin',
+                'avalanche': 'avalanche',
+                'chainlink': 'chainlink',
+                'sui': 'sui'
             })
         ),
         ui.column(

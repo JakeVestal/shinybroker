@@ -1,7 +1,7 @@
 function update_contractinator_accordion_info() {
     let acc_info = [];
-    $('#contractinator_accordion .accordion-button').each(function() {
-        let name = $(this).text().trim();
+    $('#contractinator_accordion .accordion-item').each(function() {
+        let name = $(this).find('.accordion-title').first().text().trim();
         let complete = $(this).hasClass('contractinator_completed');
         let contents;
         if (complete) {
