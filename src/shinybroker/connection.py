@@ -11,7 +11,7 @@ def read_ib_msg(sock):
     msg = list(
         filter(
             None,
-            [x.decode('ascii') for x in sock.recv(
+            [x.decode('utf-8', errors='replace') for x in sock.recv(
                 msg_size
             ).split(b"\x00")]
         )
